@@ -2,7 +2,7 @@ import { cn } from "@util/cn";
 import { HTMLAttributes } from "react";
 import "./index.css";
 
-export default function Spinner({ className }: HTMLAttributes<SVGElement>): JSX.Element {
+export function Spinner({ className }: HTMLAttributes<SVGElement>): JSX.Element {
 	return (
 		<svg
 			className={ cn("spinner max-w-[48px] stroke-gray-800 dark:stroke-gray-200", className) }

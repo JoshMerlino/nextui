@@ -1,5 +1,5 @@
-import Ripple from "@components/Ripple";
-import Spinner from "@components/Spinner";
+import { Ripple } from "@components/Ripple";
+import { Spinner } from "@components/Spinner";
 import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { ButtonHTMLAttributes } from "react";
@@ -50,7 +50,7 @@ interface Props {
 
 }
 
-export default function Button({ children, icon: Icon, className, size = "medium", color = "primary", variant = "raised", loading, iconPosition = "before", disableRipple, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & Partial<Props>) {
+export function Button({ children, icon: Icon, className, size = "medium", color = "primary", variant = "raised", loading, iconPosition = "before", disableRipple, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & Partial<Props>) {
 
 	// Record of classnames to apply based on props
 	const classes: ClassValue[] = [

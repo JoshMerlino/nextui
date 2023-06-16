@@ -5,12 +5,21 @@ import { ClassValue } from "clsx";
 import { useEffect, useRef } from "react";
 import "./index.css";
 
-export interface Props {
+interface Props {
+
+	/**
+	 * Weather or not to emit the ripple from the center of the element
+	 * @default false
+	 */
 	emitFromCenter: boolean;
+
+	/**
+	 * Custom class overrides
+	 */
 	className?: ClassValue;
 }
 
-export default function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Element {
+export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Element {
 
 	// The duration of the ripple animation
 	const DURATION = 500;

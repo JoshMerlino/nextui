@@ -91,7 +91,8 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		// Outlined
 		case "outlined":
 			classes.push({
-				"border border-gray-500 border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": color === "neutral",
+				"border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": true,
+				"border-gray-500": color === "neutral",
 				"border-primary": color === "primary",
 				"border-error": color === "error",
 				"border-success": color === "success",

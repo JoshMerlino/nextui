@@ -80,7 +80,7 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		default:
 			classes.push({
 				"shadow-md hover:shadow-lg": true,
-				"text-white bg-gray-500 hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700": true,
+				"text-white bg-gray-500 hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700": color === "neutral",
 				"text-primary-text bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800": color === "primary",
 				"text-error-text bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800": color === "error",
 				"text-success-text bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800": color === "success",
@@ -91,7 +91,7 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		// Outlined
 		case "outlined":
 			classes.push({
-				"border border-gray-500 border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": true,
+				"border border-gray-500 border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": color === "neutral",
 				"border-primary": color === "primary",
 				"border-error": color === "error",
 				"border-success": color === "success",
@@ -101,14 +101,15 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		// Flat
 		case "flat":
 			ripple.push({
-				"bg-gray-500": true,
+				"bg-gray-500": color === "neutral",
 				"bg-primary": color === "primary",
 				"bg-error": color === "error",
 				"bg-success": color === "success",
 				"bg-warning": color === "warning",
 			});
 			classes.push({
-				"text-gray-500 bg-gray-500 bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
+				"bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
+				"text-gray-800 dark:text-gray-200 bg-gray-500": color === "neutral",
 				"active:bg-opacity-20": disableRipple,
 				"active:bg-opacity-10": !disableRipple,
 				"text-primary bg-primary": color === "primary",

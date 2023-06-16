@@ -13,11 +13,17 @@ interface Props {
 	 * Color of the button
 	 * @default "neutral"
 	 */
-	color: "primary" | "neutral" | "error" | "warning" | "success";
+	color?: "primary" | "neutral" | "error" | "warning" | "success";
+
+	/**
+	 * Size of the button (this can be overridden by className)
+	 * @default "large"
+	 */
+	size?: "small" | "medium" | "large";
 	
 }
 
-export function Spinner({ className, color = "neutral" }: Props): JSX.Element {
+export function Spinner({ className, color = "neutral", size = "large" }: Props): JSX.Element {
 
 	// Record of classnames to apply based on props
 	const classes = cn({
@@ -25,12 +31,16 @@ export function Spinner({ className, color = "neutral" }: Props): JSX.Element {
 		"stroke-primary": color === "primary",
 		"stroke-error": color === "error",
 		"stroke-warning": color === "warning",
-		"stroke-success": color === "success",
+		"stroke-success": color === "success"
 	});
 
 	return (
 		<svg
-			className={ cn("spinner max-w-[48px] h-full", className) }
+			className={cn("spinner max-w-[48px] h-full", {
+				"w-6": size === "small",
+				"w-9": size === "medium",
+				"w-12": size === "large",
+			}, className) }
 			viewBox="0 0 50 50">
 			<circle
 				className={ cn("path", classes) }
@@ -42,4 +52,5 @@ export function Spinner({ className, color = "neutral" }: Props): JSX.Element {
 				strokeWidth="5" />
 		</svg>
 	);
+	
 }

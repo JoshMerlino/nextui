@@ -61,20 +61,17 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		// Base class
 		"rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate",
 
+		// Size classes
 		{
-
-			// Size classes
 			"px-4 h-9 py-1 text-sm": true,
 			"px-3 h-7 py-0.5 text-xs": size === "small",
 			"px-6 h-11 py-2 text-base": size === "large",
-			
 		}
 
 	];
 
-	// Classes for the ripple effect & stroke
+	// Classes for the ripple effect
 	const ripple: ClassValue[] = [];
-	const stroke: ClassValue[] = [];
 
 	// Variant classes
 	switch (variant) {
@@ -110,13 +107,6 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 				"bg-success": color === "success",
 				"bg-warning": color === "warning",
 			});
-			stroke.push({
-				"stroke-gray-500": true,
-				"stroke-primary": color === "primary",
-				"stroke-error": color === "error",
-				"stroke-success": color === "success",
-				"stroke-warning": color === "warning",
-			});
 			classes.push({
 				"text-gray-500 bg-gray-500 bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
 				"active:bg-opacity-20": disableRipple,
@@ -137,14 +127,14 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 			
 			{/* Icon */}
 			{ (!!Icon && iconPosition === "before" && !loading) && <Icon className={cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl")} /> }
-			{ (loading && iconPosition === "before") && <Spinner className={cn(stroke, size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5")} />}
+			{ (loading && iconPosition === "before") && <Spinner color={variant === "raised" ? "neutral" : color} className={cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5")} />}
 			
 			{/* Children */}
 			{children}
 
 			{/* Icon */}
 			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl")} /> }
-			{ (loading && iconPosition === "after") && <Spinner className={cn(stroke, size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5")} />}
+			{ (loading && iconPosition === "after") && <Spinner color={variant === "raised" ? "neutral" : color} className={cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5")} />}
 			
 		</button>
 	);

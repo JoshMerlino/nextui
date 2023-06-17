@@ -86,7 +86,7 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 
 					document.body.addEventListener("mouseup", function() {
 						ripple.style.opacity = "0";
-						setTimeout(() => ripple.remove(), DURATION * 2);
+						ripple.addEventListener("transitionend", () => ripple.addEventListener("transitionend", () => ripple.remove(), { once: true }), { once: true });
 					}, { once: true });
 					
 				});

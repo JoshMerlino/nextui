@@ -4,6 +4,7 @@ import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { ButtonHTMLAttributes } from "react";
 import { IconType } from "react-icons";
+import "./index.css";
 
 interface Props {
 	

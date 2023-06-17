@@ -18,9 +18,9 @@ interface Props {
 
 export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], ...props }: Props & HTMLAttributes<HTMLElement>): JSX.Element {
 	return (
-		<div className="absolute flex inset-0 isolate">
+		<div className="absolute inset-0 flex isolate">
 			<div>{drawer}</div>
-			<div className={cn("grow", className)}>{children}</div>
+			<div className={cn("grow relative bg-inherit", className)}>{children}</div>
 			<div className={cn("absolute inset-0 bg-black/25 backdrop-blur-xl transition-[opacity,backdrop-filter] xl:hidden", open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0")} onClick={() => setOpen(false)} {...props}/>
 		</div>
 	);

@@ -44,7 +44,7 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 	const nipple: ClassValue[] = [
 	
 		// Base class
-		"absolute inset-0 m-1 rounded-full transition-transform scale-0 peer-checked:scale-100 pointer-events-none",
+		"absolute inset-0 m-[5px] rounded-full transition-transform scale-0 peer-checked:scale-100 pointer-events-none",
 		
 		// Color
 		{

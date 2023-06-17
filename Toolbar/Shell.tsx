@@ -48,7 +48,7 @@ export function ToolbarShell({ children, className, toolbar, state: [ raised, se
 	return (
 		<div className="absolute inset-0 flex flex-col overflow-auto bg-inherit isolate" ref={ref}>
 			<div className="sticky top-0 z-[10]">{toolbar}</div>
-			<div className={cn("grow overflow-visible", className)}>{children}</div>
+			<div className={cn("grow overflow-visible bg-inherit", className)}>{children}</div>
 		</div>
 	);
 }

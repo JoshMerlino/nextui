@@ -55,7 +55,7 @@ export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition =
 
 	return (
 		<li className={cn(classes)} {...props}>
-			<Ripple className={ active && "bg-primary"}/>
+			<Ripple className={ active ? "bg-primary" : "bg-gray-400 dark:bg-gray-600"}/>
 			{ (!!Icon && iconPosition === "before") && <Icon className="text-2xl shrink-0" /> }
 			<span className="flex flex-col px-2 font-medium">{ children }</span>
 			{ (!!Icon && iconPosition === "after") && <Icon className="ml-auto text-2xl shrink-0" /> }

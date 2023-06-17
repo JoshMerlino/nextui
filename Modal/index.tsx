@@ -25,7 +25,7 @@ interface Props {
 
 }
 
-export function Modal({ children, closeOnBlur = true, state, className }: Props & HTMLAttributes<HTMLDivElement>) {
+export function Modal({ children, closeOnBlur = true, state: [ state, setState ], className, ...props }: Props & HTMLAttributes<HTMLDialogElement>) {
 
 	// Is bouncing state
 	const [ isBouncing, setIsBouncing ] = useState(false);
@@ -34,13 +34,13 @@ export function Modal({ children, closeOnBlur = true, state, className }: Props 
 	const ref = useRef<HTMLDialogElement>(null);
 
 	// Hook into open prop
-	const [ isOpen, setIsOpen ] = useState(state[0] === true);
-	useEffect(() => setIsOpen(state[0] === true), [ state ]);
+	const [ isOpen, setIsOpen ] = useState(state === true);
+	useEffect(() => setIsOpen(state === true), [ state ]);
 	
 	// Open dialog using the new dialog element in accordance with the state
 	useEffect(function() {
 		if (!ref.current) return;
-		if (state[0]) ref.current.showModal();
+		if (state) ref.current.showModal();
 		else setTimeout(() => ref.current?.close(), 250);
 	}, [ ref, state ]);
 	
@@ -63,23 +63,44 @@ export function Modal({ children, closeOnBlur = true, state, className }: Props 
 				// Bounce dialog
 				setIsBouncing(true);
 				setTimeout(() => setIsBouncing(false), 100);
-
 				return;
 				
 			}
 
 			// Close dialog
-			state[1](false);
+			setState(false);
 
 		}
 
 		ref.current.addEventListener("click", onClick);
 		return () => ref.current?.removeEventListener("click", onClick);
 		
-	}, [ ref, closeOnBlur, isOpen, state ]);
+	}, [ ref, closeOnBlur, isOpen, state, setState ]);
+	
+	// On escape key, gracefully close the dialog
+	useEffect(function() {
+		
+		function onKeydown(event: KeyboardEvent) {
+
+			// If the key is not escape, return
+			if (event.key !== "Escape") return;
+
+			// If the dialog is not open, return
+			if (!ref.current || !ref.current.open) return;
+
+			// Close the dialog
+			event.preventDefault();
+			setState(false);
+
+		}
+
+		window.addEventListener("keydown", onKeydown);
+		return () => window.removeEventListener("keydown", onKeydown);
+
+	}, [ ref, isOpen, state, setState ]);
 
 	return (
-		<dialog ref={ref} className={cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent")}>
+		<dialog ref={ref} className={cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent")} {...props}>
 			<div className={cn("flex flex-col gap-4 p-4 overflow-hidden text-gray-600 bg-white rounded-lg shadow-2xl dark:shadow-black/20 dark:bg-gray-800 dark:text-gray-400 drop-shadow-xl transition-transform", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className)}>
 				{children}
 			</div>

@@ -1,7 +1,7 @@
 import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { InputHTMLAttributes } from "react";
-import { MdCheck } from "react-icons/md";
+import { MdCheck, MdRemove } from "react-icons/md";
 
 interface Props {
 
@@ -10,6 +10,12 @@ interface Props {
 	 * @default "primary"
 	 */
 	color: "primary" | "neutral" | "error" | "warning" | "success";
+
+	/**
+	 * Whether the checkbox is indeterminate
+	 * @default false
+	 */
+	indeterminate: boolean;
 
 }
 
@@ -47,7 +53,9 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 					className={ cn(checkbox) }
 					type="checkbox"
 					{...props} />
-				<MdCheck className="m-0.5 text-white scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none" />
+				<div className="m-0.5 text-white scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none">
+					{ props.indeterminate ? <MdRemove/> : <MdCheck/> }
+				</div>
 			</div>
 			{children && <label className={cn("select-none", className)} htmlFor={props.id}>{children}</label>}
 		</div>

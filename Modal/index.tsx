@@ -23,9 +23,15 @@ interface Props {
 	 */
 	closeOnBlur?: boolean;
 
+	/**
+	 * Close on escape key
+	 * @default true
+	 */
+	bindEscKey?: boolean;
+
 }
 
-export function Modal({ children, closeOnBlur = true, state: [ state, setState ], className, ...props }: Props & HTMLAttributes<HTMLDialogElement>) {
+export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, ...props }: Props & HTMLAttributes<HTMLDialogElement>) {
 
 	// Is bouncing state
 	const [ isBouncing, setIsBouncing ] = useState(false);
@@ -90,14 +96,18 @@ export function Modal({ children, closeOnBlur = true, state: [ state, setState ]
 
 			// Close the dialog
 			event.preventDefault();
-			setState(false);
+			if (bindEscKey) setState(false);
+			else {
+				setIsBouncing(true);
+				setTimeout(() => setIsBouncing(false), 100);
+			}
 
 		}
 
 		window.addEventListener("keydown", onKeydown);
 		return () => window.removeEventListener("keydown", onKeydown);
 
-	}, [ ref, isOpen, state, setState ]);
+	}, [ ref, isOpen, state, setState, bindEscKey ]);
 
 	return (
 		<dialog ref={ref} className={cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent")} {...props}>

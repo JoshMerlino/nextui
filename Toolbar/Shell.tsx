@@ -16,9 +16,14 @@ interface Props {
 	 */
 	state: [boolean, (open: boolean) => void];
 
+	/**
+	 * The content to render before the toolbar.
+	 */
+	before?: ReactNode;
+
 }
 
-export function ToolbarShell({ children, className, toolbar, state: [ raised, setRaised ] }: Props & HTMLAttributes<HTMLElement>) {
+export function ToolbarShell({ children, className, before, toolbar, state: [ raised, setRaised ] }: Props & HTMLAttributes<HTMLElement>) {
 
 	// Get a ref to the content
 	const ref = useRef<HTMLDivElement>(null);
@@ -28,7 +33,6 @@ export function ToolbarShell({ children, className, toolbar, state: [ raised, se
 
 		// See if the element is scrolled
 		function onScroll() {
-			console.log("scro");
 			if (!ref.current) return;
 
 			// If the element is scrolled, raise the toolbar
@@ -47,6 +51,7 @@ export function ToolbarShell({ children, className, toolbar, state: [ raised, se
 
 	return (
 		<div className="absolute inset-0 flex flex-col overflow-auto bg-inherit isolate" ref={ref}>
+			{ before }
 			<div className="sticky top-0 z-[10]">{toolbar}</div>
 			<div className={cn("grow overflow-visible bg-inherit", className)}>{children}</div>
 		</div>

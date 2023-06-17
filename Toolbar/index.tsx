@@ -29,7 +29,7 @@ export function Toolbar({ children, glassmorphism = true, className, raised }: H
 		"min-h-[64px] transition-shadow flex items-center px-4",
 
 		// Glassmorphism
-		glassmorphism ? "bg-transparent backdrop-blur-lg bg-white/50 dark:bg-gray-950/50" : "bg-white dark:bg-gray-800",
+		glassmorphism ? "backdrop-blur-lg bg-white/50 dark:bg-gray-950/50" : "bg-white dark:bg-gray-800",
 
 		// Raised
 		raised ? "shadow-lg" : "shadow-none",

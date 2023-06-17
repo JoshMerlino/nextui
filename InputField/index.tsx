@@ -74,10 +74,10 @@ export function InputField({ color = "primary", className, size = "medium", labe
 		// Color
 		{
 			"focus:border-gray-800 dark:focus:border-gray-200": color === "neutral",
-			"focus:border-primary": color === "primary",
-			"focus:border-error": color === "error",
-			"focus:border-warning": color === "warning",
-			"focus:border-success": color === "success",
+			"focus:border-primary dark:focus:border-primary": color === "primary",
+			"focus:border-error dark:focus:border-error": color === "error",
+			"focus:border-warning dark:focus:border-warning": color === "warning",
+			"focus:border-success dark:focus:border-success": color === "success",
 		},
 		
 		// Mobile check

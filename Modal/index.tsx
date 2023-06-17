@@ -18,7 +18,7 @@ interface Props {
 	state: [ boolean, (open: boolean) => void ];
 
 	/**
-	 * Close on blur & escape key
+	 * Close on click away
 	 * @default true
 	 */
 	closeOnBlur?: boolean;

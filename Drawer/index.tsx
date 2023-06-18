@@ -1,7 +1,10 @@
+import "./index.css";
+
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
 import { cn } from "../util";
-import "./index.css";
+
+export { DrawerExpandableGroup } from "./ExpandableGroup";
 export { DrawerItem } from "./Item";
 export { DrawerScrim } from "./Scrim";
 

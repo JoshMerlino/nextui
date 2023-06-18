@@ -4,7 +4,7 @@ import { IconType } from "react-icons";
 import { Ripple } from "../Ripple";
 import { cn } from "../util";
 
-interface Props {
+export interface ItemProps {
 
 	/**
 	 * Disable the ripple
@@ -37,7 +37,7 @@ interface Props {
 
 }
 
-export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition = "before", size = "large", active, ...props }: Partial<Props> & HTMLAttributes<HTMLLIElement>) {
+export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition = "before", size = "large", active, ...props }: Partial<ItemProps> & HTMLAttributes<HTMLLIElement>) {
 
 	// Record of classnames to apply based on props
 	const classes: ClassValue[] = [

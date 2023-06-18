@@ -1,7 +1,6 @@
 import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
-import { IconType } from "react-icons";
 import "./index.css";
 export { DrawerItem } from "./Item";
 export { DrawerScrim } from "./Scrim";
@@ -33,7 +32,7 @@ export function Drawer({ children, className, state: [ open ], ...props }: Props
 	];
 
 	return (
-		<aside className={cn(classes)} {...props}>
+		<aside className={ cn(classes) } { ...props }>
 			<ul>
 				{children}
 			</ul>

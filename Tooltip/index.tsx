@@ -37,9 +37,9 @@ export function Tooltip({ tooltip, anchor = "top", children, className }: PropsW
 	];
 
 	return (
-		<div className={cn(classes)}>
+		<div className={ cn(classes) }>
 			{children}
-			<div className={cn(tooltipClasses)}>{tooltip}</div>
+			<div className={ cn(tooltipClasses) }>{tooltip}</div>
 		</div>
 	);
 }

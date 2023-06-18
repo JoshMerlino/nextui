@@ -36,7 +36,7 @@ export function Spinner({ className, color = "neutral", size = "large" }: Props)
 
 	return (
 		<svg
-			className={cn("spinner max-w-[48px] h-full", {
+			className={ cn("spinner max-w-[48px] h-full", {
 				"w-6": size === "small",
 				"w-9": size === "medium",
 				"w-12": size === "large",

@@ -109,20 +109,20 @@ export function InputField({ color = "primary", className, size = "medium", labe
 	];
 
 	return (
-		<div className={cn(container)}>
+		<div className={ cn(container) }>
 
 			{/* Input */}
 			<input
 				className={ cn(input, className) }
-				{...props} />
+				{ ...props } />
 
 			{/* Label */}
 			{ label && <label
 				className={ cn(labelStyles) }
-				htmlFor={props.id}>{label}</label>}
+				htmlFor={ props.id }>{label}</label>}
 			
 			{/* Hint */}
-			<p className={cn("bottom-0 text-xs font-medium font-roboto text-gray-600 dark:text-gray-400 group-[.hascontents]:peer-invalid:!text-error group-[.invalid]:!text-error absolute")}>{hint}</p>
+			<p className={ cn("bottom-0 text-xs font-medium font-roboto text-gray-600 dark:text-gray-400 group-[.hascontents]:peer-invalid:!text-error group-[.invalid]:!text-error absolute") }>{hint}</p>
 			
 		</div>
 	);

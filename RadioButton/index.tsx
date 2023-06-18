@@ -1,7 +1,6 @@
 import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { InputHTMLAttributes } from "react";
-import { MdCheck } from "react-icons/md";
 
 interface Props {
 
@@ -63,10 +62,10 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 				<input
 					className={ cn(radioButton) }
 					type="radio"
-					{...props} />
-				<div className={cn(nipple)} />
+					{ ...props } />
+				<div className={ cn(nipple) } />
 			</div>
-			{children && <label className={cn("select-none", className)} htmlFor={props.id}>{children}</label>}
+			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}
 		</div>
 	);
 }

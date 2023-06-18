@@ -52,12 +52,12 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 				<input
 					className={ cn(checkbox) }
 					type="checkbox"
-					{...props} />
+					{ ...props } />
 				<div className="m-0.5 text-white scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none">
-					{ props.indeterminate ? <MdRemove/> : <MdCheck/> }
+					{ props.indeterminate ? <MdRemove /> : <MdCheck /> }
 				</div>
 			</div>
-			{children && <label className={cn("select-none", className)} htmlFor={props.id}>{children}</label>}
+			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}
 		</div>
 	);
 }

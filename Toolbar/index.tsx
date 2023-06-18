@@ -40,7 +40,7 @@ export function Toolbar({ children, glassmorphism = true, className, raised }: H
 	];
 
 	return (
-		<header className={cn(classes)}>
+		<header className={ cn(classes) }>
 			{children}
 		</header>
 	);

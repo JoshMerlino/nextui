@@ -41,7 +41,7 @@ export function ToolbarShell({ children, className, before, toolbar, state: [ ra
 			// If the element is not scrolled, lower the toolbar
 			else if (raised) setRaised(false);
 			
-		};
+		}
 
 		// Add the event listener
 		ref.current.addEventListener("scroll", onScroll);
@@ -50,10 +50,10 @@ export function ToolbarShell({ children, className, before, toolbar, state: [ ra
 	}, [ raised, setRaised ]);
 
 	return (
-		<div className="absolute inset-0 flex flex-col overflow-auto bg-inherit isolate" ref={ref}>
+		<div className="absolute inset-0 flex flex-col overflow-auto bg-inherit isolate" ref={ ref }>
 			{ before }
 			<div className="sticky top-0 z-[10]">{toolbar}</div>
-			<div className={cn("grow overflow-visible bg-inherit", className)}>{children}</div>
+			<div className={ cn("grow overflow-visible bg-inherit", className) }>{children}</div>
 		</div>
 	);
 }

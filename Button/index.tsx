@@ -1,9 +1,9 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { ButtonHTMLAttributes } from "react";
 import { IconType } from "react-icons";
 import { Ripple } from "../Ripple";
 import { Spinner } from "../Spinner";
+import { cn } from "../util";
 import "./index.css";
 
 interface Props {

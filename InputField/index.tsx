@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { InputHTMLAttributes, useEffect } from "react";
+import { cn } from "../util";
 
 interface Props {
 

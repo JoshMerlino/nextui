@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@util/cn";
 import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
+import { cn } from "../util";
 
 interface Props {
 

@@ -1,8 +1,8 @@
 export { ToolbarShell } from "./Shell";
 
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
+import { cn } from "../util";
 
 interface Props {
 

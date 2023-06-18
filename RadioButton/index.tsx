@@ -1,6 +1,6 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { InputHTMLAttributes } from "react";
+import { cn } from "../util";
 
 interface Props {
 

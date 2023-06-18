@@ -1,8 +1,8 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
 import { IconType } from "react-icons";
 import { Ripple } from "../Ripple";
+import { cn } from "../util";
 
 interface Props {
 

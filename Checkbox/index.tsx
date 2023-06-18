@@ -1,7 +1,7 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { InputHTMLAttributes } from "react";
 import { MdCheck, MdRemove } from "react-icons/md";
+import { cn } from "../util";
 
 interface Props {
 

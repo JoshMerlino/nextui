@@ -1,5 +1,5 @@
-import { cn } from "@util/cn";
 import { HTMLAttributes, ReactNode } from "react";
+import { cn } from "../util";
 
 interface Props {
 

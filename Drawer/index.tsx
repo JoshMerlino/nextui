@@ -1,6 +1,6 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
+import { cn } from "../util";
 import "./index.css";
 export { DrawerItem } from "./Item";
 export { DrawerScrim } from "./Scrim";

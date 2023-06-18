@@ -1,5 +1,5 @@
-import { cn } from "@util/cn";
 import { ClassValue } from "clsx";
+import { cn } from "../util";
 import "./index.css";
 
 interface Props {

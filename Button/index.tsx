@@ -86,6 +86,9 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 				"text-error-text bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800": color === "error",
 				"text-success-text bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800": color === "success",
 				"text-warning-text bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800": color === "warning",
+
+				// Disabled
+				"text-gray-500 dark:text-gray-400 !bg-gray-500/40 cursor-not-allowed !shadow-sm": props.disabled,
 			});
 			break;
 		
@@ -98,6 +101,7 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 				"border-error": color === "error",
 				"border-success": color === "success",
 				"border-warning": color === "warning",
+				
 			});
 
 		// Flat
@@ -118,6 +122,10 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 				"text-error bg-error": color === "error",
 				"text-success bg-success": color === "success",
 				"text-warning bg-warning": color === "warning",
+
+				// Disabled
+				"!bg-transparent !text-gray-500/75 cursor-not-allowed border-gray-500/25": props.disabled,
+
 			});
 			break;
 	}
@@ -130,14 +138,14 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 			
 			{/* Icon */}
 			{ (!!Icon && iconPosition === "before" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5") } color={ variant === "raised" ? "neutral" : color } />}
+			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
 			
 			{/* Children */}
 			{children}
 
 			{/* Icon */}
 			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5") } color={ variant === "raised" ? "neutral" : color } />}
+			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
 			
 		</button>
 	);

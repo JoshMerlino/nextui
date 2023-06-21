@@ -43,7 +43,7 @@ export function Spinner({ className, color = "neutral", size = "large" }: Props)
 			}, className) }
 			viewBox="0 0 50 50">
 			<circle
-				className={ cn("path", classes) }
+				className={ cn("path", classes, className) }
 				cx="25"
 				cy="25"
 				fill="none"

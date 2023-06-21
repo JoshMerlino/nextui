@@ -77,49 +77,49 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 	// Variant classes
 	switch (variant) {
 
-	// Raised
-	default:
-		classes.push({
-			"shadow-md hover:shadow-lg": true,
-			"text-white bg-gray-500 hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700": color === "neutral",
-			"text-primary-text bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800": color === "primary",
-			"text-error-text bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800": color === "error",
-			"text-success-text bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800": color === "success",
-			"text-warning-text bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800": color === "warning",
-		});
-		break;
+		// Raised
+		default:
+			classes.push({
+				"shadow-md hover:shadow-lg": true,
+				"text-white bg-gray-500 hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700": color === "neutral",
+				"text-primary-text bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800": color === "primary",
+				"text-error-text bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800": color === "error",
+				"text-success-text bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800": color === "success",
+				"text-warning-text bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800": color === "warning",
+			});
+			break;
 		
 		// Outlined
-	case "outlined":
-		classes.push({
-			"border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": true,
-			"border-gray-500": color === "neutral",
-			"border-primary": color === "primary",
-			"border-error": color === "error",
-			"border-success": color === "success",
-			"border-warning": color === "warning",
-		});
+		case "outlined":
+			classes.push({
+				"border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": true,
+				"border-gray-500": color === "neutral",
+				"border-primary": color === "primary",
+				"border-error": color === "error",
+				"border-success": color === "success",
+				"border-warning": color === "warning",
+			});
 
 		// Flat
-	case "flat":
-		ripple.push({
-			"bg-gray-500": color === "neutral",
-			"bg-primary": color === "primary",
-			"bg-error": color === "error",
-			"bg-success": color === "success",
-			"bg-warning": color === "warning",
-		});
-		classes.push({
-			"bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
-			"text-gray-800 dark:text-gray-200 bg-gray-500": color === "neutral",
-			"active:bg-opacity-20": disableRipple,
-			"active:bg-opacity-10": !disableRipple,
-			"text-primary bg-primary": color === "primary",
-			"text-error bg-error": color === "error",
-			"text-success bg-success": color === "success",
-			"text-warning bg-warning": color === "warning",
-		});
-		break;
+		case "flat":
+			ripple.push({
+				"bg-gray-500": color === "neutral",
+				"bg-primary": color === "primary",
+				"bg-error": color === "error",
+				"bg-success": color === "success",
+				"bg-warning": color === "warning",
+			});
+			classes.push({
+				"bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
+				"text-gray-800 dark:text-gray-200 bg-gray-500": color === "neutral",
+				"active:bg-opacity-20": disableRipple,
+				"active:bg-opacity-10": !disableRipple,
+				"text-primary bg-primary": color === "primary",
+				"text-error bg-error": color === "error",
+				"text-success bg-success": color === "success",
+				"text-warning bg-warning": color === "warning",
+			});
+			break;
 	}
 
 	return (

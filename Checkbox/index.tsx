@@ -32,15 +32,18 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 
 		// Color
 		{
-			"checked:!border-primary checked:after:bg-primary/10": color === "primary",
-			"checked:!border-gray-800 dark:checked:!border-gray-200 checked:after:bg-gray/10": color === "neutral",
-			"checked:!border-error checked:after:bg-error/10": color === "error",
-			"checked:!border-warning checked:after:bg-warning/10": color === "warning",
-			"checked:!border-success checked:after:bg-success/10": color === "success",
+			"checked:border-primary checked:after:bg-primary/10": color === "primary",
+			"checked:border-gray-800 dark:checked:border-gray-200 checked:after:bg-gray/10": color === "neutral",
+			"checked:border-error checked:after:bg-error/10": color === "error",
+			"checked:border-warning checked:after:bg-warning/10": color === "warning",
+			"checked:border-success checked:after:bg-success/10": color === "success",
 		},
 
 		// Ripple jawn
-		"after:content[''] after:bg-gray-500/10 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 focus:after:scale-100 group-active/checkbox:after:scale-100 duration-100 after:transition-transform active:border-gray-600 active:dark:border-gray-500 after:z-10",
+		!props.disabled && "after:content[''] after:bg-gray-500/10 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 focus:after:scale-100 group-active/checkbox:after:scale-100 duration-100 after:transition-transform active:border-gray-600 active:dark:border-gray-500 after:z-10",
+
+		// Disabled
+		props.disabled && "cursor-not-allowed !border-gray-500",
 
 		className,
 
@@ -59,7 +62,10 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 			"text-error-text": color === "error",
 			"text-warning-text": color === "warning",
 			"text-success-text": color === "success",
-		}
+		},
+
+		// Disabled
+		props.disabled && "opacity-50 !text-white",
 
 	];
 

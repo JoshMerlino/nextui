@@ -38,17 +38,17 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 
 		// Variant
 		{
-			"border-2 w-[52px] h-8 checked:border-transparent bg-gray-200 border-gray-500 disabled:!bg-gray-300": variant === "default",
-			"w-[34px] h-[14px] checked:bg-opacity-50 disabled:checked:!bg-opacity-50 bg-gray-300": variant === "legacy"
+			"border-2 w-[52px] h-8 checked:border-transparent dark:checked:border-transparent bg-gray-200 border-gray-500 disabled:!bg-gray-300 dark:disabled:!bg-gray-800 dark:bg-gray-800 dark:border-gray-600": variant === "default",
+			"w-[34px] h-[14px] checked:bg-opacity-50 dark:checked:bg-opacity-50 disabled:checked:!bg-opacity-50 bg-gray-300 dark:bg-gray-500": variant === "legacy"
 		},
 
 		// Colors
 		{
-			"checked:bg-primary": color === "primary",
-			"checked:bg-gray-800": color === "neutral",
-			"checked:bg-error": color === "error",
-			"checked:bg-warning": color === "warning",
-			"checked:bg-success": color === "success",
+			"checked:bg-primary dark:checked:bg-primary": color === "primary",
+			"checked:bg-gray-800 checked:dark:bg-gray-200": color === "neutral",
+			"checked:bg-error dark:checked:bg-error": color === "error",
+			"checked:bg-warning dark:checked:bg-warning": color === "warning",
+			"checked:bg-success dark:checked:bg-success": color === "success",
 		},
 		
 	];
@@ -57,12 +57,12 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 	const thumb: ClassValue[] = [
 
 		// Base class
-		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent overflow-hidden flex items-center justify-center peer-disabled:cursor-not-allowed",
+		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent overflow-hidden flex items-center justify-center peer-disabled:cursor-not-allowed ",
 
 		// Colors
 		{
 			"peer-checked:text-primary": color === "primary",
-			"peer-checked:text-gray-800": color === "neutral",
+			"peer-checked:text-gray-800 dark:peer-checked:text-gray-200 dark:peer-checked:bg-gray-800 dark:peer-disabled:peer-checked:bg-gray-200": color === "neutral",
 			"peer-checked:text-error": color === "error",
 			"peer-checked:text-warning": color === "warning",
 			"peer-checked:text-success": color === "success",
@@ -70,8 +70,8 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 
 		// Variant
 		{
-			"bg-gray-800 peer-disabled:opacity-50 m-2 peer-checked:m-1 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 peer-disabled:peer-checked:!text-inherit": variant === "default",
-			"w-5 shadow-sm shadow-black/20 bg-white -mt-[3px] peer-checked:ml-3.5 peer-checked:bg-current text-[0px] peer-disabled:bg-gray-100": variant === "legacy"
+			"bg-gray-500 peer-disabled:opacity-50 m-2 peer-checked:m-1 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-600": variant === "default",
+			"w-5 shadow-sm shadow-black/20 bg-white -mt-[3px] peer-checked:ml-3.5 peer-checked:bg-current text-[0px] peer-disabled:bg-gray-100 dark:bg-gray-300 dark:peer-disabled:bg-gray-800": variant === "legacy"
 		},
 
 	];

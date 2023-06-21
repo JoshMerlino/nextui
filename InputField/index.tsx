@@ -36,7 +36,6 @@ interface Props {
 }
 
 export function InputField({ color = "primary", className, size = "medium", label, hint, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
-	"use client";
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);

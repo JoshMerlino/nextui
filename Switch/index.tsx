@@ -57,7 +57,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 	const thumb: ClassValue[] = [
 
 		// Base class
-		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent overflow-hidden flex items-center justify-center peer-disabled:cursor-not-allowed ",
+		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-500",
 
 		// Colors
 		{
@@ -70,9 +70,12 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 
 		// Variant
 		{
-			"bg-gray-500 peer-disabled:opacity-50 m-2 peer-checked:m-1 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-600": variant === "default",
+			"peer-disabled:opacity-50 m-2 peer-checked:m-1 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-600": variant === "default",
 			"w-5 shadow-sm shadow-black/20 bg-white -mt-[3px] peer-checked:ml-3.5 peer-checked:bg-current text-[0px] peer-disabled:bg-gray-100 dark:bg-gray-300 dark:peer-disabled:bg-gray-800": variant === "legacy"
 		},
+
+		// Ripple jawn
+		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/switch:after:scale-100 duration-100 after:transition-transform after:z-10",
 
 	];
 

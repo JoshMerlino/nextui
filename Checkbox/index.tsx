@@ -33,7 +33,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 		// Color
 		{
 			"checked:!border-primary checked:after:bg-primary/10": color === "primary",
-			"checked:!border-neutral checked:after:bg-gray/10": color === "neutral",
+			"checked:!border-gray-800 dark:checked:!border-gray-200 checked:after:bg-gray/10": color === "neutral",
 			"checked:!border-error checked:after:bg-error/10": color === "error",
 			"checked:!border-warning checked:after:bg-warning/10": color === "warning",
 			"checked:!border-success checked:after:bg-success/10": color === "success",
@@ -46,6 +46,23 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 
 	];
 
+	// Icon class color
+	const icon: ClassValue[] = [
+
+		// Base class
+		"m-0.5 scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none",
+
+		// Color
+		{
+			"text-primary-text": color === "primary",
+			"text-gray-200 dark:text-gray-800": color === "neutral",
+			"text-error-text": color === "error",
+			"text-warning-text": color === "warning",
+			"text-success-text": color === "success",
+		}
+
+	];
+
 	return (
 		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto">
 			<div className="relative flex">
@@ -53,7 +70,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 					className={ cn(checkbox) }
 					type="checkbox"
 					{ ...props } />
-				<div className="m-0.5 text-white scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none">
+				<div className={cn(icon)}>
 					{ props.indeterminate ? <MdRemove /> : <MdCheck /> }
 				</div>
 			</div>

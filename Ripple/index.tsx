@@ -3,7 +3,6 @@
 import { ClassValue } from "clsx";
 import { useEffect, useRef } from "react";
 import { cn } from "../util";
-import "./index.css";
 
 interface Props {
 

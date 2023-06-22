@@ -3,9 +3,24 @@ import { PropsWithChildren, ReactNode } from "react";
 import { cn } from "../util";
 
 interface Props {
+
+	/**
+	 * The tooltip content
+	 */
 	tooltip: ReactNode;
+
+	/**
+	 * The anchor position of the tooltip
+	 * (this is the side of the tooltip that is attached to the target)
+	 * @default "top"
+	 */
 	anchor?: "top" | "bottom" | "left" | "right";
+
+	/**
+	 * Custom classnames to apply to the tooltip
+	 */
 	className?: ClassValue;
+	
 }
 
 export function Tooltip({ tooltip, anchor = "top", children, className }: PropsWithChildren<Props>) {

@@ -2,6 +2,7 @@
 
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { cn } from "../util";
+import { Card } from "@nextui/Card";
 
 interface Props {
 
@@ -13,7 +14,6 @@ interface Props {
 
 	/**
 	 * The current state of the modal
-	 * @default false
 	 */
 	state: [ boolean, (open: boolean) => void ];
 
@@ -110,10 +110,10 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	}, [ ref, isOpen, state, setState, bindEscKey ]);
 
 	return (
-		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent") } ref={ ref } { ...props }>
-			<div className={ cn("flex flex-col gap-4 p-4 overflow-hidden text-gray-600 bg-white rounded-lg shadow-2xl dark:shadow-black/20 dark:bg-gray-800 dark:text-gray-400 drop-shadow-xl transition-transform", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
+		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent") } ref={ ref } { ...props }>
+			<Card className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
 				{children}
-			</div>
+			</Card>
 		</dialog>
 	);
 }

@@ -61,7 +61,7 @@ export function Popover({ children, anchor = "top", closeOnBlur = true, bindEscK
 	useEffect(function() {
 		if (!ref.current) return;
 		if (state) ref.current.show();
-		else setTimeout(() => ref.current?.close(), 250);
+		else setTimeout(() => ref.current?.close(), 100);
 	}, [ ref, state ]);
 
 	const popoverClass: ClassValue[] = [
@@ -95,7 +95,7 @@ export function Popover({ children, anchor = "top", closeOnBlur = true, bindEscK
 	];
 
 	return (
-		<div className={ cn("group/popover relative isolate z-[10] !bg-red-500/10 overflow-visible") } {...props}>
+		<div className={ cn("group/popover relative isolate z-[10] overflow-visible") } {...props}>
 			{children}
 			<dialog className={cn(popoverClass)} ref={ref}>{popover}</dialog>
 		</div>

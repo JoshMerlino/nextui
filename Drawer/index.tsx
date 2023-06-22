@@ -1,5 +1,3 @@
-import "./index.css";
-
 import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
 import { cn } from "../util";
@@ -7,6 +5,7 @@ import { cn } from "../util";
 export { DrawerExpandableGroup } from "./ExpandableGroup";
 export { DrawerItem } from "./Item";
 export { DrawerScrim } from "./Scrim";
+export { DrawerTitle } from "./Title";
 
 interface Props {
 
@@ -24,7 +23,7 @@ export function Drawer({ children, className, state: [ open ], ...props }: Props
 	const classes: ClassValue[] = [
 
 		// Base class
-		"bg-white dark:bg-gray-800 ease-in-out w-[300px] h-full z-[10] shadow-md transition-[opacity] flex flex-col py-4 rounded-r-2xl overflow-y-auto shrink-0 group/drawer",
+		"bg-white dark:bg-gray-800 ease-in-out w-[300px] h-full z-[10] shadow-md transition-[opacity] flex flex-col p-3 rounded-r-2xl overflow-y-auto shrink-0 group/drawer",
 		
 		// Custom class
 		"xl:!rounded-none absolute xl:sticky top-0 z-[60] transition-[transform,opacity] xl:opacity-100 xl:translate-x-0", open ? "opacity-100 -translate-x-0" : "opacity-0 -translate-x-[300px]",
@@ -36,7 +35,7 @@ export function Drawer({ children, className, state: [ open ], ...props }: Props
 
 	return (
 		<aside className={ cn(classes) } { ...props }>
-			<ul>
+			<ul className="[&>hr]:border-gray-200 [&>hr]:dark:border-gray-700/50 [&>hr]:mx-4">
 				{children}
 			</ul>
 		</aside>

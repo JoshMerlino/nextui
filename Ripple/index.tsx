@@ -99,7 +99,7 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 		ref.current.addEventListener("mouseleave", clear);
 
 		// Cleanup on unmount
-		() => {
+		return () => {
 			ref.current?.removeEventListener("mousedown", createRipple);
 			ref.current?.removeEventListener("mouseleave", clear);
 		};

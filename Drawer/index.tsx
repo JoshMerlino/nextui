@@ -35,7 +35,7 @@ export function Drawer({ children, className, state: [ open ], ...props }: Props
 
 	return (
 		<aside className={ cn(classes) } { ...props }>
-			<ul className="[&>hr]:border-gray-200 [&>hr]:dark:border-gray-700/50 [&>hr]:mx-4">
+			<ul className="[&>hr]:border-gray-200 [&>hr]:dark:border-gray-700/50 [&>hr]:mx-4 [&>hr]:my-2">
 				{children}
 			</ul>
 		</aside>

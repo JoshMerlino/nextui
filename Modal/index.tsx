@@ -1,8 +1,8 @@
 "use client";
 
+import { Card } from "@nextui/Card";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { cn } from "../util";
-import { Card } from "@nextui/Card";
 
 interface Props {
 
@@ -47,7 +47,7 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	useEffect(function() {
 		if (!ref.current) return;
 		if (state) ref.current.showModal();
-		else setTimeout(() => ref.current?.close(), 250);
+		else setTimeout(() => ref.current?.close(), 150);
 	}, [ ref, state ]);
 	
 	// Close on blur

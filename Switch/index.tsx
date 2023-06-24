@@ -91,7 +91,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/switch:after:scale-100 duration-100 after:transition-transform after:-z-[1]",
 
 		// Checkmark
-		"[&>svg]:scale-0 peer-checked:[&>svg]:scale-100"
+		"[&>svg]:scale-0 peer-checked:[&>svg]:scale-100 [&>svg]:transition-transform duration-100"
 
 	];
 
@@ -103,7 +103,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 					type="checkbox"
 					{...props} />
 				<label className={cn(thumb)} htmlFor={props.id}>
-					<MdCheck className={cn("transition-transform")} />
+					<MdCheck />
 				</label>
 			</div>
 			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}

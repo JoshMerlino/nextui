@@ -58,7 +58,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 	const thumb: ClassValue[] = [
 
 		// Base class
-		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-500 peer-checked:bg-white",
+		"aspect-square w-4 absolute inset-0 rounded-full transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-500 peer-checked:bg-white z-[2]",
 
 		// Variant
 		{
@@ -88,7 +88,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		},
 
 		// Ripple jawn
-		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/switch:after:scale-100 duration-100 after:transition-transform after:-z-[1]",
+		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/switch:after:scale-100 duration-100 after:transition-transform after:z-[1]",
 
 		// Checkmark
 		"[&>svg]:scale-0 peer-checked:[&>svg]:scale-100 [&>svg]:transition-transform duration-100"

@@ -68,15 +68,15 @@ export function InputField({ color = "primary", className, size = "medium", labe
 	const input = [
 
 		// Base classnames
-		"peer text-gray-700 dark:text-gray-200 font-roboto font-normal disabled:border-dashed transition-colors placeholder-shown:border placeholder-shown:border-gray-500/20 border px-3 py-2.5 focus:px-[11px] focus:!border-2 rounded-lg border-gray-400/40 dark:border-gray-400/25 backdrop-blur-2xl !bg-transparent group-[.hascontents]:invalid:!border-error group-[.invalid]:!border-error placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base focus:outline-none ",
+		"peer text-gray-700 dark:text-gray-200 font-roboto font-normal disabled:border-dashed transition-colors placeholder-shown:border placeholder-shown:border-gray-500/20 border px-3 py-2.5 focus:px-[11px] focus:!border-2 rounded-lg border-gray-400/40 dark:border-gray-400/25 backdrop-blur-2xl !bg-transparent group-[.hascontents]:invalid:!border-error group-[.invalid]:!border-error placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base focus:outline-none",
 
 		// Color
 		{
-			"focus:border-gray-800 dark:focus:border-gray-200": color === "neutral",
-			"focus:border-primary dark:focus:border-primary": color === "primary",
-			"focus:border-error dark:focus:border-error": color === "error",
-			"focus:border-warning dark:focus:border-warning": color === "warning",
-			"focus:border-success dark:focus:border-success": color === "success",
+			"focus:border-gray-800 caret-gray-800 dark:caret-gray-200 dark:focus:border-gray-200": color === "neutral",
+			"focus:border-primary dark:focus:border-primary caret-primary": color === "primary",
+			"focus:border-error dark:focus:border-error caret-error": color === "error",
+			"focus:border-warning dark:focus:border-warning caret-warning": color === "warning",
+			"focus:border-success dark:focus:border-success caret-success": color === "success",
 		},
 		
 		// Mobile check

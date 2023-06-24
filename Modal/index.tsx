@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@nextui/Card";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
+import { Card } from "../Card";
 import { cn } from "../util";
 
 interface Props {

@@ -64,7 +64,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		{
 			"peer-disabled:opacity-50 m-2 peer-checked:m-1 group-active/switch:peer-checked:m-0.5 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 group-active/switch:peer-checked:ml-[22px] peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-400 peer-disabled:opacity-25 peer-checked:peer-disabled:opacity-50 group-active/switch:peer-checked:w-7": variant === "default",
 			
-			"w-5 bg-gray-100 shadow-sm shadow-black/20 -mt-[3px] peer-checked:ml-3.5 peer-checked:bg-current peer-disabled:grayscale-[0.5] text-[0px]": variant === "legacy"
+			"w-5 bg-gray-100 shadow-sm shadow-black/20 -mt-[3px] peer-checked:ml-3.5 peer-disabled:bg-gray-400 peer-disabled:peer-checked:bg-current peer-checked:bg-current peer-disabled:grayscale-[0.5] text-[0px]": variant === "legacy"
 		},
 
 		// Colors

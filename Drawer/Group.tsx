@@ -20,7 +20,7 @@ interface Props extends Partial<ItemProps> {
 
 }
 
-export function DrawerExpandableGroup({ children, defaultExpanded, title, ...props }: Props & HTMLAttributes<HTMLElement>) {
+export function DrawerGroup({ children, defaultExpanded, title, ...props }: Props & HTMLAttributes<HTMLElement>) {
 
 	// Initialize expanded state
 	const [ isExpanded, setExpanded ] = useState(defaultExpanded === true);

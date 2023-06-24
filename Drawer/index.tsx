@@ -2,7 +2,7 @@ import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
 import { cn } from "../util";
 
-export { DrawerExpandableGroup } from "./ExpandableGroup";
+export { DrawerGroup as DrawerExpandableGroup } from "./Group";
 export { DrawerItem } from "./Item";
 export { DrawerScrim } from "./Scrim";
 export { DrawerTitle } from "./Title";

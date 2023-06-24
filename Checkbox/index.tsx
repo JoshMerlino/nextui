@@ -28,7 +28,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 	const checkbox: ClassValue[] = [
 
 		// Base class
-		"appearance-none border-2 border-gray-500 w-5 aspect-square rounded checked:border-[10px] transition-[border] duration-75 focus:outline-0 peer",
+		"appearance-none border-2 border-gray-500 w-5 h-5 rounded checked:border-[10px] transition-[border] duration-75 focus:outline-0 peer",
 
 		// Color
 		{

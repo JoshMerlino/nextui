@@ -21,7 +21,7 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 	const radioButton: ClassValue[] = [
 
 		// Base class
-		"appearance-none border-2 border-gray-500 w-5 aspect-square rounded-full transition-[border] duration-75 focus:outline-0 peer",
+		"appearance-none border-2 border-gray-500 w-5 h-5 rounded-full transition-[border] duration-75 focus:outline-0 peer",
 
 		// Color
 		{

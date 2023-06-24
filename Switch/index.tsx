@@ -62,7 +62,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 
 		// Variant
 		{
-			"peer-disabled:opacity-50 m-2 peer-checked:m-1 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-400 peer-disabled:opacity-25 peer-checked:peer-disabled:opacity-50": variant === "default",
+			"peer-disabled:opacity-50 m-2 peer-checked:m-1 group-active/switch:peer-checked:m-0.5 peer-checked:w-6 pointer-events-none peer-checked:bg-white peer-checked:ml-6 group-active/switch:peer-checked:ml-[22px] peer-disabled:peer-checked:!text-inherit peer-disabled:text-[0px] dark:bg-gray-400 peer-disabled:opacity-25 peer-checked:peer-disabled:opacity-50 group-active/switch:peer-checked:w-7": variant === "default",
 			
 			"w-5 bg-gray-100 shadow-sm shadow-black/20 -mt-[3px] peer-checked:ml-3.5 peer-checked:bg-current peer-disabled:grayscale-[0.5] text-[0px]": variant === "legacy"
 		},
@@ -80,7 +80,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 			"peer-checked:bg-primary-text": color === "primary",
 			"peer-checked:bg-error-text": color === "error",
 			"peer-checked:bg-warning-text": color === "warning",
-			"peer-checked:bg-success-text": color === "success",
+			"peer-checked:bg-success-text": color === "success"
 		},
 
 		{
@@ -88,7 +88,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		},
 
 		// Ripple jawn
-		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/switch:after:scale-100 duration-100 after:transition-transform after:z-[1]",
+		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/checkbox:after:scale-100 duration-100 after:transition-transform after:z-[1]",
 
 		// Checkmark
 		"[&>svg]:scale-0 peer-checked:[&>svg]:scale-100 [&>svg]:transition-transform duration-100"

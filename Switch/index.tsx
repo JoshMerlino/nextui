@@ -79,8 +79,8 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		variant === "default" && !props.disabled && {
 			"peer-checked:bg-primary-text": color === "primary",
 			"peer-checked:bg-error-text": color === "error",
-			"peer-checked:bg-warning-text": color === "error",
-			"peer-checked:bg-success-text": color === "error",
+			"peer-checked:bg-warning-text": color === "warning",
+			"peer-checked:bg-success-text": color === "success",
 		},
 
 		{

@@ -90,6 +90,12 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 				// Disabled
 				"text-gray-500 dark:text-gray-400 !bg-gray-500/40 cursor-not-allowed !shadow-sm": props.disabled,
 			});
+			ripple.push({
+				"bg-primary-text": color === "primary",
+				"bg-error-text": color === "error",
+				"bg-success-text": color === "success",
+				"bg-warning-text": color === "warning",
+			});
 			break;
 		
 		// Outlined

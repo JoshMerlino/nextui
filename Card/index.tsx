@@ -3,8 +3,6 @@ import { HTMLAttributes } from "react";
 import { cn } from "../util";
 
 export { CardActions } from "./Actions";
-export { CardContent } from "./Content";
-export { CardHeader } from "./Header";
 
 interface Props {
 
@@ -30,6 +28,12 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 			"border bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50": variant === "outlined",
 			"bg-gray-200 dark:bg-gray-800/50": variant === "flat"
 		},
+
+		// Header subclass
+		"[&>h1]:text-2xl [&>h1]:font-medium [&>h1]:text-gray-900 [&>h1]:dark:text-gray-100 [&>h1]:whitespace-nowrap [&>h1]:pt-2 [&>h1]:px-2",
+
+		// Content subclass
+		"[&>p]:flex [&>p]:flex-col [&>p]:px-2 [&>p]:gap-2 [&>p]:pb-2",
 		
 		// User Overrides
 		className

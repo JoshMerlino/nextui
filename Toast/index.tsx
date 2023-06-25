@@ -28,7 +28,7 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 	const notification: ClassValue[] = [
 
 		// Base styles
-		"bg-gray-950 p-3 rounded-md shadow-lg flex gap-3 my-auto items-center drop-shadow-2xl shadow-black/20 w-full sm:w-min grow overflow-hidden"
+		"bg-gray-950 p-3 rounded-md shadow-lg flex gap-3 my-auto items-center drop-shadow-2xl shadow-black/20 w-full grow overflow-hidden text-white my-2"
 
 	];
 
@@ -59,7 +59,7 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 			)}
 
 			{/* Content */}
-			<div className="flex items-start gap-1 sm:gap-4 px-1 whitespace-nowrap [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-700 [&_p]:dark:text-gray-300 [&_p]:whitespace-normal [&_p]:grow flex-col sm:items-center sm:flex-row">{children}</div>
+			<div className="flex gap-1 sm:gap-4 px-1 whitespace-nowrap [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap">{children}</div>
 
 		</div>
 	);

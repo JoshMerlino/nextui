@@ -28,11 +28,12 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 
 	// Add event listeners
 	useEffect(function() {
-		if (!ref.current) return;
+		const ripple = ref.current;
+		if (!ripple) return;
 
 		function clear() {
-			if (!ref.current) return;
-			ref.current.querySelectorAll<HTMLDivElement>(".ripple")
+			if (!ripple) return;
+			ripple.querySelectorAll<HTMLDivElement>(".ripple")
 				.forEach(ripple => {
 					ripple.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION / 2 }ms ease-out`;
 					ripple.style.opacity = "0";
@@ -45,13 +46,13 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 		 * @param event The event that triggered the ripple
 		 */
 		function createRipple(event: MouseEvent) {
-			if (!ref.current) return;
+			if (!ripple) return;
 
 			// Fade out any existing ripples
 			clear();
 
 			// Get the element size and mouse position
-			const { width, height, top, left } = ref.current.getBoundingClientRect();
+			const { width, height, top, left } = ripple.getBoundingClientRect();
 			const { clientX, clientY } = event;
 
 			// Get offset
@@ -63,29 +64,29 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 			const size = (Math.max(width, height) + distance * 1.875) * 1.1;
 
 			// Add the ripple to the DOM
-			const ripple = document.createElement("div");
-			ripple.className = cn("absolute bg-white rounded-full aspect-square ripple", className);
-			ripple.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION / 2 }ms ease-out`;
-			ripple.style.width = `${ size }px`;
-			ripple.style.top = `${ offsetY - size / 2 }px`;
-			ripple.style.left = `${ offsetX - size / 2 }px`;
-			ripple.style.opacity = ".5";
-			ref.current.appendChild(ripple);
+			const rippleElement = document.createElement("div");
+			rippleElement.className = cn("absolute bg-white rounded-full aspect-square ripple", className);
+			rippleElement.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION / 2 }ms ease-out`;
+			rippleElement.style.width = `${ size }px`;
+			rippleElement.style.top = `${ offsetY - size / 2 }px`;
+			rippleElement.style.left = `${ offsetX - size / 2 }px`;
+			rippleElement.style.opacity = ".5";
+			ripple.appendChild(rippleElement);
 			
 			// Set initial scale and opacity
-			ripple.style.transform = "scale(0)";
+			rippleElement.style.transform = "scale(0)";
 			
 			// Animate the ripple
 			requestAnimationFrame(function() {
-				ripple.style.opacity = "1";
+				rippleElement.style.opacity = "1";
 				requestAnimationFrame(function() {
 					
-					ripple.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION * 2 }ms ease-out`;
-					ripple.style.transform = "scale(1)";
+					rippleElement.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION * 2 }ms ease-out`;
+					rippleElement.style.transform = "scale(1)";
 
 					document.body.addEventListener("mouseup", function() {
-						ripple.style.opacity = "0";
-						ripple.addEventListener("transitionend", () => ripple.addEventListener("transitionend", () => ripple.remove(), { once: true }), { once: true });
+						rippleElement.style.opacity = "0";
+						rippleElement.addEventListener("transitionend", () => rippleElement.addEventListener("transitionend", () => rippleElement.remove(), { once: true }), { once: true });
 					}, { once: true });
 					
 				});
@@ -95,16 +96,16 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 		}
 
 		// Add event listeners
-		ref.current.addEventListener("mousedown", createRipple);
-		ref.current.addEventListener("mouseleave", clear);
+		ripple.addEventListener("mousedown", createRipple);
+		ripple.addEventListener("mouseleave", clear);
 
 		// Cleanup on unmount
 		return () => {
-			ref.current?.removeEventListener("mousedown", createRipple);
-			ref.current?.removeEventListener("mouseleave", clear);
+			ripple?.removeEventListener("mousedown", createRipple);
+			ripple?.removeEventListener("mouseleave", clear);
 		};
 
 	}, [ className, emitFromCenter, ref ]);
 
-	return <div className={ cn("absolute inset-0 z-50 opacity-30") } ref={ ref } />;
+	return <div className="absolute inset-0 z-50 opacity-30" ref={ ref } />;
 }

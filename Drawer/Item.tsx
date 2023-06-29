@@ -33,7 +33,7 @@ export interface ItemProps {
 	 * Size of the item
 	 * @default "large"
 	 */
-	size: "medium" | "large";
+	size: "dense" | "large";
 
 }
 
@@ -43,7 +43,7 @@ export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition =
 	const classes: ClassValue[] = [
 
 		// Base styles
-		"relative flex items-center overflow-hidden pl-4 pr-6 transition-colors rounded-full gap-2",
+		"relative flex items-center overflow-hidden pl-4 pr-6 transition-colors rounded-full gap-2 text-sm font-medium",
 
 		// Size
 		size === "large" ? "h-14 py-4" : "h-10 py-2",
@@ -55,7 +55,7 @@ export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition =
 
 	return (
 		<li className={ cn(classes) } { ...props }>
-			<Ripple className={ active ? "bg-primary" : "bg-gray-400 dark:bg-gray-600" } />
+			{!disableRipple && <Ripple className={ active ? "bg-primary" : "bg-gray-400 dark:bg-gray-600" } /> }
 			{ (!!Icon && iconPosition === "before") && <Icon className="text-2xl shrink-0" /> }
 			<span className="flex flex-col font-medium">{ children }</span>
 			{ (!!Icon && iconPosition === "after") && <Icon className="ml-auto text-2xl shrink-0" /> }

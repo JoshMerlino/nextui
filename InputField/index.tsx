@@ -21,7 +21,7 @@ interface Props {
 	 * Size of the button (this can be overridden by className)
 	 * @default "medium"
 	 */
-	size?: "medium" | "large";
+	size?: "dense" | "large";
 
 	/**
 	 * Floating label tex
@@ -58,7 +58,7 @@ export function InputField({ color = "primary", className, size = "medium", labe
 
 		// Size
 		{
-			"h-20": size === "medium",
+			"h-20": size === "dense",
 			"h-24": size === "large",
 		},
 

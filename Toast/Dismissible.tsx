@@ -2,7 +2,21 @@
 
 import { PropsWithChildren, useEffect, useRef } from "react";
 
-export function Dismissible({ children, duration }: PropsWithChildren<{ duration?: number }>) {
+export interface DismissibleOptions {
+
+	/*
+	 * The duration of the toast
+	 */
+	duration: number;
+
+	/*
+	 * The callback to call when the toast is dismissed
+	 */
+	onDismiss(): void;
+
+}
+
+export function Dismissible({ children, duration, onDismiss }: PropsWithChildren<Partial<DismissibleOptions>>) {
 
 	// Create a ref
 	const ref = useRef<HTMLDivElement>(null);
@@ -22,7 +36,7 @@ export function Dismissible({ children, duration }: PropsWithChildren<{ duration
 
 		// Set default height
 		parent.style.height = `${ element.getBoundingClientRect().height * 4 / 3 + 4 }px`;
-		
+
 		// On transition end
 		parent.addEventListener("transitionend", () => {
 			parent.classList.remove("opacity-0");
@@ -67,10 +81,6 @@ export function Dismissible({ children, duration }: PropsWithChildren<{ duration
 
 		}
 
-		function onPointerDown() {
-			held = true;
-		}
-
 		function onPointerUp() {
 			held = false;
 
@@ -110,18 +120,20 @@ export function Dismissible({ children, duration }: PropsWithChildren<{ duration
 			// Set the height to 0
 			requestAnimationFrame(() => {
 				parent.style.height = "0px";
-				parent.addEventListener("transitionend", () => parent.remove(), { once: true });
+				parent.addEventListener("transitionend", () => {
+
+					if (onDismiss) onDismiss();
+					
+					parent.remove();
+
+				}, { once: true });
 			});
 
 		}
 
-		function onPointerEnter() {
-			reset = setInterval(resetTimeout);
-		}
-
-		function onPointerLeave() {
-			clearInterval(reset);
-		}
+		const onPointerEnter = () => reset = setInterval(resetTimeout);
+		const onPointerLeave = () => clearInterval(reset);
+		const onPointerDown = () => held = true;
 
 		// Bind events
 		document.addEventListener("pointermove", onPointerMove);
@@ -145,6 +157,7 @@ export function Dismissible({ children, duration }: PropsWithChildren<{ duration
 			document.removeEventListener("touchend", onPointerUp);
 		};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ duration ]);
 
 	return (

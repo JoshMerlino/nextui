@@ -1,12 +1,7 @@
 "use client";
 
 import { PropsWithChildren, createContext, useContext, useState } from "react";
-import { Dismissible } from "./Dismissible";
-
-interface PushOptions {
-	id: string;
-	duration: number;
-}
+import { Dismissible, DismissibleOptions } from "./Dismissible";
 
 interface IToastContext {
 
@@ -15,13 +10,20 @@ interface IToastContext {
 	 * @param node The node to push
 	 * @param options The options
 	 */
-	push(node: JSX.Element, options?: Partial<PushOptions>): void;
+	push(node: JSX.Element, options?: Partial<DismissibleOptions>): void;
+
+	/*
+	 * Dismiss a toast from the stack
+	 * @param id The id of the toast to dismiss
+	 */
+	dismiss(id: string): void;
 
 }
 
 // Create a context for the toast provider with default values
 const ToastContext = createContext<IToastContext>({
-	push() {},
+	push() { },
+	dismiss() { },
 });
 
 // Create a hook to use the toast provider
@@ -33,35 +35,39 @@ export function useToasts() {
 export function ToastProvider({ children }: PropsWithChildren) {
 
 	// Initialize state
-	const [ state, setState ] = useState<Record<string, { node: JSX.Element; options: Partial<PushOptions> }>>({});
+	const [ state, setState ] = useState<Record<string, { node: JSX.Element; options: Partial<DismissibleOptions> }>>({});
 
 	// temp function to push a node to the stack
-	function push(node: JSX.Element, options: Partial<PushOptions> = {}) {
+	function push(node: JSX.Element, options: Partial<DismissibleOptions> = {}) {
 
-		options.id = options.id || Math.random().toString(36).substring(2, 9);
+		// Generate an id
+		const id = Math.random().toString(36).substring(2, 9);
 
 		// Add the node to the state
-		setState(state => ({
-			[options.id as string]: {
-				node,
-				options,
-			},
-			...state,
-		}));
+		setState(state => ({ [id]: {
+			node,
+			options,
+		}, ...state }));
 
 	}
 
-	return <ToastContext.Provider value={{ push }}>
+	// Remove a toast from the stack
+	function dismiss(id: string) {
+		setState(state => {
+			delete state[id];
+			return state;
+		});
+	}
+
+	return <ToastContext.Provider value={{ push, dismiss }}>
 		
 		<div className="fixed inset-0 z-30 pointer-events-none">
 			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse [&>*]:pointer-events-auto overflow-visible">
 				
 				{/* Toasts */}
-				{Object.values(state).map(({ node, options }, key) => (
-					<div key={key}>
-						<Dismissible duration={options.duration}>{node}</Dismissible>
-					</div>
-				))}
+				{Object.keys(state).map(key => <div key={key}>
+					<Dismissible {...state[key].options} onDismiss={ () => dismiss(key) }>{state[key].node}</Dismissible>
+				</div>)}
 
 			</div>
 		</div>

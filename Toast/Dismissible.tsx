@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useEffect, useRef } from "react";
 
-export function Dismissible({ children, ...props }: PropsWithChildren) {
+export function Dismissible({ children, duration }: PropsWithChildren<{ duration?: number }>) {
 
 	// Create a ref
 	const ref = useRef<HTMLDivElement>(null);
@@ -12,89 +12,144 @@ export function Dismissible({ children, ...props }: PropsWithChildren) {
 		if (!ref.current) return;
 		const element = ref.current;
 
+		// Store last touch
+		let lastTouch: Touch | null = null;
+		const parent = element.parentElement as HTMLDivElement;
+
 		let held = false;
 		let motion = 0;
+		const MGK = Math.min(window.innerWidth / 2, 200);
 
-		const mousedown = () => {
-			held = true;
-			element.classList.remove("transition-[transform,opacity]");
-		};
+		// Set default height
+		parent.style.height = `${ element.getBoundingClientRect().height * 4 / 3 + 4 }px`;
+		
+		// On transition end
+		parent.addEventListener("transitionend", () => {
+			parent.classList.remove("opacity-0");
+			parent.classList.remove("scale-75");
+			parent.classList.add("opacity-100");
+			parent.classList.add("scale-100");
+		}, { once: true });
 
-		function mousemove(event: MouseEvent) {
+		let reset: NodeJS.Timer;
+		let timeout = duration ? setTimeout(() => dismiss(), duration) : undefined;
 
-			// If the mouse is out of the window in any direction, return
-			if (event.clientX < 0 || event.clientY < 0 || event.clientX > window.innerWidth || event.clientY > window.innerHeight) return mouseup();
+		// Reset timeout
+		function resetTimeout() {
+			if (timeout) {
+				clearTimeout(timeout);
+				timeout = setTimeout(() => dismiss(), duration);
+			}
+		}
 
-			// If the mouse is not held, return
+		// Everytime the pointer is moved, or touch is moved
+		function onPointerMove(event: PointerEvent | TouchEvent) {
+
+			// Make sure the mouse is held down
 			if (!held) return;
 
-			// Modify the motion
-			motion += event.movementX;
+			// Prevent default
+			event.preventDefault();
+			resetTimeout();
 
-			// Translate the element & adjust the opacity
+			// Get motion X
+			const derivative = !("changedTouches" in event) ? event.movementX : lastTouch ? event.changedTouches[0].clientX - lastTouch.clientX : 0;
+			motion += derivative / window.devicePixelRatio;
+
+			lastTouch = "changedTouches" in event ? event.changedTouches[0] : null;
+
+			// Remove translation transition
+			element.classList.remove("transition-[transform,opacity]");
+
+			// Apply translation and opacity
 			element.style.transform = `translateX(${ motion }px)`;
-			element.style.opacity = `${ 1 - Math.abs(motion) / (window.innerWidth / 2) }`;
+			element.style.opacity = `${ 1 - Math.abs(motion / MGK) }`;
 
 		}
 
-		function mouseup() {
+		function onPointerDown() {
+			held = true;
+		}
+
+		function onPointerUp() {
 			held = false;
 
-			// Get the motion
-			if (Math.abs(motion) > Math.min(window.innerWidth / 2, 300)) {
+			// If the motion is enough, dismiss the element
+			if (Math.abs(motion) > MGK) return dismiss();
 
-				// Set starting height
-				const parent = element.parentElement;
-				if (!parent) return;
+			// Spring back to original position
+			element.classList.add("transition-[transform,opacity]");
 
-				parent.style.height = `${ parent.clientHeight }px`;
-				parent.classList.add("transition-[height]");
-				
-				// Fade out element
-				element.classList.add("transition-opacity");
-				element.style.opacity = "0";
-
-				// Wait for the transition to end
-				element.addEventListener("transitionend", function() {
-					element.remove();
-					parent.style.height = "0";
-				}, { once: true });
-
-			} else {
-
-				element.classList.add("transition-[transform,opacity]");
-
-				// Reset the element
-				element.style.transform = "translateX(0)";
-				element.style.opacity = "1";
-				motion = 0;
-
-				// Wait for the transition to end
-				element.addEventListener("transitionend", () => element.classList.remove("transition-[transform,opacity]"), { once: true });
-
-			}
+			// Reset motion
+			motion = 0;
+			element.style.opacity = "1";
+			element.style.transform = `translateX(${ motion }px)`;
 
 		}
 
-		// Add event listeners
-		element.addEventListener("mousedown", mousedown);
-		document.addEventListener("mouseup", mouseup);
-		document.addEventListener("mouseleave", mouseup);
-		document.addEventListener("mousemove", mousemove);
-		
+		async function dismiss() {
+
+			// If opacity is full
+			if (element.style.opacity === "1" || element.style.opacity === "") {
+				element.classList.add("transition-[height,opacity]");
+				parent.classList.remove("opacity-100");
+				parent.classList.remove("scale-100");
+				parent.classList.remove("origin-top");
+				parent.classList.add("opacity-0");
+				parent.classList.add("scale-75");
+
+				// Await transition end
+				await new Promise(resolve => parent.addEventListener("transitionend", resolve, { once: true }));
+				
+			}
+
+			// Get the height of the element
+			const { height } = parent.getBoundingClientRect();
+			parent.style.height = `${ height }px`;
+
+			// Set the height to 0
+			requestAnimationFrame(() => {
+				parent.style.height = "0px";
+				parent.addEventListener("transitionend", () => parent.remove(), { once: true });
+			});
+
+		}
+
+		function onPointerEnter() {
+			reset = setInterval(resetTimeout);
+		}
+
+		function onPointerLeave() {
+			clearInterval(reset);
+		}
+
+		// Bind events
+		document.addEventListener("pointermove", onPointerMove);
+		document.addEventListener("touchmove", onPointerMove);
+		element.addEventListener("pointerdown", onPointerDown);
+		element.addEventListener("pointerenter", onPointerEnter);
+		element.addEventListener("pointerleave", onPointerLeave);
+		element.addEventListener("touchstart", onPointerDown);
+		document.addEventListener("pointerup", onPointerUp);
+		document.addEventListener("touchend", onPointerUp);
+
 		// Cleanup
-		return () => {
-			element.removeEventListener("mousedown", mousedown);
-			document.removeEventListener("mouseup", mouseup);
-			document.removeEventListener("mouseleave", mouseup);
-			document.removeEventListener("mousemove", mousemove);
+		return function() {
+			document.removeEventListener("pointermove", onPointerMove);
+			document.removeEventListener("touchmove", onPointerMove);
+			element.removeEventListener("pointerdown", onPointerDown);
+			element.removeEventListener("touchstart", onPointerDown);
+			element.removeEventListener("pointerenter", onPointerEnter);
+			element.removeEventListener("pointerleave", onPointerLeave);
+			document.removeEventListener("pointerup", onPointerUp);
+			document.removeEventListener("touchend", onPointerUp);
 		};
 
-	}, []);
+	}, [ duration ]);
 
 	return (
-		<div className="relative [&_*]:select-none">
-			<div ref={ref}>{children}</div>
+		<div className="relative [&_*]:select-none transition-[height,opacity,transform] flex items-center opacity-0 scale-75" style={{ height: 0 }}>
+			<div ref={ref} className="grow">{children}</div>
 		</div>
 	);
 }

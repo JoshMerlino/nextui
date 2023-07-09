@@ -2,6 +2,8 @@ import { ClassValue } from "clsx";
 import { HTMLAttributes } from "react";
 import { IconType } from "react-icons";
 import { cn } from "../util";
+	
+export { ToastProvider, useToasts } from "./Provider";
 
 interface Props {
 
@@ -35,7 +37,7 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 	const iconClass: ClassValue[] = [
 
 		// Base styles
-		"relative flex items-center justify-center w-10 h-10 rounded-full after:bg-current after:inset-0 after:content[''] after:absolute overflow-hidden after:opacity-5 before:bg-current before:inset-1 before:content[''] before:absolute before:opacity-5 before:rounded-full shrink-0 ml-1 mb-auto",
+		"relative flex items-center justify-center w-10 h-10 rounded-full after:bg-current after:inset-0 after:content[''] after:absolute overflow-hidden after:opacity-5 before:bg-current before:inset-1 before:content[''] before:absolute before:opacity-5 before:rounded-full shrink-0 ml-1 mb-auto my-0.5",
 
 		// Color
 		{
@@ -59,7 +61,7 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 			)}
 
 			{/* Content */}
-			<div className="flex gap-1 sm:gap-4 px-1 whitespace-nowrap [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap">{children}</div>
+			<div className="flex gap-1 sm:gap-4 px-1 whitespace-nowrap [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap [&>div]:grow [&>div]:flex [&>div]:flex-col [&>div]:gap-0.5">{children}</div>
 
 		</div>
 	);

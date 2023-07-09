@@ -91,7 +91,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	const labelStyles = [
 
 		// Base classnames
-		"text-gray-600 dark:text-gray-400 font-roboto font-normal px-1 absolute left-2 -translate-y-1/2 py-0.5 peer-focus:top-5 pointer-events-none peer-focus:text-xs peer-focus:px-2 peer-placeholder-shown:text-xs peer-placeholder-shown:px-2 peer-placeholder-shown:top-0.5 z-[1] transition-all bg-inherit group-[.hascontents]:text-xs group-[.hascontents]:px-2 group-[.hascontents]:top-5 group-[.hascontents]:peer-invalid:text-error group-[.invalid]:text-error whitespace-nowrap",
+		"text-gray-600 dark:text-gray-400 font-roboto font-normal px-1 absolute left-2 -translate-y-1/2 py-0.5 peer-focus:top-5 pointer-events-none peer-focus:text-xs peer-focus:px-2 peer-placeholder-shown:text-xs peer-placeholder-shown:px-2 peer-placeholder-shown:top-5 z-[1] transition-all bg-inherit group-[.hascontents]:text-xs group-[.hascontents]:px-2 group-[.hascontents]:top-5 group-[.hascontents]:peer-invalid:text-error group-[.invalid]:text-error whitespace-nowrap",
 
 		// Height adjustment
 		size === "large" ? "top-12 mx-2 text-base" : "top-10 text-sm",
@@ -113,8 +113,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 			{/* Input */}
 			<input
 				className={ cn(input, className) }
-				{ ...props } />
-
+				{...props} />
+			
 			{/* Label */}
 			{ label && <label
 				className={ cn(labelStyles) }

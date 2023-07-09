@@ -68,7 +68,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	const input = [
 
 		// Base classnames
-		"peer text-gray-700 dark:text-gray-200 font-roboto font-normal disabled:border-dashed transition-colors placeholder-shown:border placeholder-shown:border-gray-500/20 border px-3 py-2.5 focus:px-[11px] focus:!border-2 rounded-lg border-gray-400/40 dark:border-gray-400/25 backdrop-blur-2xl !bg-transparent group-[.hascontents]:invalid:!border-error group-[.invalid]:!border-error placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base focus:outline-none",
+		"peer text-gray-700 dark:text-gray-200 font-roboto font-normal disabled:border-dashed transition-colors placeholder-shown:border placeholder-shown:border-gray-500/20 border px-3 py-2.5 focus:px-[11px] focus:!border-2 rounded-lg border-gray-400/40 dark:border-gray-400/25 backdrop-blur-2xl !bg-transparent group-[.hascontents]:invalid:!border-error group-[.invalid]:!border-error placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base focus:outline-none text-sm",
 
 		// Color
 		{
@@ -78,9 +78,6 @@ export function InputField({ color = "primary", className, size = "dense", label
 			"focus:border-warning dark:focus:border-warning caret-warning": color === "warning",
 			"focus:border-success dark:focus:border-success caret-success": color === "success",
 		},
-		
-		// Mobile check
-		("ontouchstart" in document.documentElement) ? "md:text-sm" : "text-sm",
 
 		// Size
 		size === "large" ? "h-14 text-base px-5 focus:px-[19px]" : "h-10"

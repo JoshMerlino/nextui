@@ -24,7 +24,7 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 
 		// Variant
 		{
-			"shadow-md bg-gray-100 dark:bg-gray-800": variant === "raised",
+			"shadow-md bg-white dark:bg-gray-800": variant === "raised",
 			"border bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50": variant === "outlined",
 			"bg-gray-200 dark:bg-gray-800/50": variant === "flat"
 		},
@@ -40,7 +40,5 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 
 	];
 
-	return (
-		<div className={cn(classlist)} {...props}>{children}</div>
-	);
+	return <div className={cn(classlist)} {...props}>{children}</div>;
 }

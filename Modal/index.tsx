@@ -52,13 +52,14 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	
 	// Close on blur
 	useEffect(function() {
-		if (!ref.current) return;
+		const element = ref.current;
+		if (!element) return;
 
 		function onClick(event: MouseEvent) {
-			if (!ref.current || !ref.current.open) return;
+			if (!element || !element.open) return;
 
 			// Get dialog bounds
-			const { top, left, width, height } = ref.current.getBoundingClientRect();
+			const { top, left, width, height } = element.getBoundingClientRect();
 
 			// If click is inside of dialog
 			if (event.clientX >= left && event.clientX <= left + width && event.clientY >= top && event.clientY <= top + height) return;
@@ -78,8 +79,8 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 
 		}
 
-		ref.current.addEventListener("click", onClick);
-		return () => ref.current?.removeEventListener("click", onClick);
+		element.addEventListener("click", onClick);
+		return () => element.removeEventListener("click", onClick);
 		
 	}, [ ref, closeOnBlur, isOpen, state, setState ]);
 	

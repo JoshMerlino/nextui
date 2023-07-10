@@ -56,8 +56,8 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 			const { clientX, clientY } = event;
 
 			// Get offset
-			const offsetX = emitFromCenter ? width / 2 : clientX - left;
-			const offsetY = emitFromCenter ? height / 2 : clientY - top;
+			const offsetX = emitFromCenter ? ripple.clientWidth / 2 : clientX - left;
+			const offsetY = emitFromCenter ? ripple.clientHeight / 2 : clientY - top;
 			
 			// Get the distance from the center of the element
 			const distance = Math.sqrt(Math.pow(offsetX - width / 2, 2) + Math.pow(offsetY - height / 2, 2));

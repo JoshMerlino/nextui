@@ -30,7 +30,9 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 	const notification: ClassValue[] = [
 
 		// Base styles
-		"bg-gray-950 p-3 rounded-md shadow-lg flex gap-3 my-auto items-center drop-shadow-2xl shadow-black/20 w-full grow overflow-hidden text-white my-2"
+		"bg-gray-950 p-3 rounded-md shadow-lg flex gap-3 my-auto items-center drop-shadow-2xl shadow-black/20 w-full grow overflow-hidden text-white my-2",
+
+		className
 
 	];
 

@@ -46,19 +46,27 @@ export function InputField({ color = "primary", className, size = "dense", label
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const [ dropdownOpen, setDropdownOpen ] = useState(false);
-
+	const [ dropdownVisible, setDropdownVisible ] = useState(false);
+	
 	// Hook into the inputs state and set the dropdown state accordingly
 	useEffect(function() {
 		if (!props.id || props.type !== "select") return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
-
+		
+		function close() {
+			setDropdownVisible(false);
+			if (!dialogRef.current) return;
+			dialogRef.current.addEventListener("transitionend", () => setDropdownOpen(false), { once: true });
+		}
+		
 		// Focus event handler
 		function focus() {
 			if (!dialogRef.current) return;
-			setTimeout(() => setDropdownOpen(true));
-			dialogRef.current.show();
+			setTimeout(() => setDropdownVisible(true));
+			setDropdownOpen(true);
 		}
 
+		// Document click event handler
 		function documentClick(event: MouseEvent) {
 			if (!dropdownOpen) return;
 			if (!dialogRef.current || !wrapperRef.current) return;
@@ -66,22 +74,34 @@ export function InputField({ color = "primary", className, size = "dense", label
 			// Make sure the click was outside the dropdown using rect
 			const inputRect = wrapperRef.current.getBoundingClientRect();
 			if (event.clientX >= inputRect.left && event.clientX <= inputRect.right && event.clientY >= inputRect.top && event.clientY <= inputRect.bottom) return;
-
+			
 			const dialogRect = dialogRef.current.getBoundingClientRect();
 			if (event.clientX >= dialogRect.left && event.clientX <= dialogRect.right && event.clientY >= dialogRect.top && event.clientY <= dialogRect.bottom) return;
 			
-			console.log("clicked outside");
-			setDropdownOpen(false);
+			close();
+			
+		}
+		
+		// Blur event handler
+		function blur(event: FocusEvent) {
+
+			// Close if the user focuses on another input
+			if (event.relatedTarget && (event.relatedTarget as HTMLElement).tagName === "INPUT") close();
+
+			// What about reverse tabbing?
+			else if (event.relatedTarget && (event.relatedTarget as HTMLElement).tagName === "BUTTON") close();
 
 		}
 
 		// Add event listeners
 		input.addEventListener("focus", focus);
+		input.addEventListener("blur", blur);
 		document.addEventListener("click", documentClick);
 
 		// Remove event listeners
 		return () => {
 			input.removeEventListener("focus", focus);
+			input.removeEventListener("blur", blur);
 			document.removeEventListener("click", documentClick);
 		};
 
@@ -133,11 +153,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"focus-within:border-error focus-within:ring-error dark:focus-within:border-error": color === "error",
 		"focus-within:border-warning focus-within:ring-warning dark:focus-within:border-warning": color === "warning",
 		"focus-within:border-success focus-within:ring-success dark:focus-within:border-success": color === "success",
-		"border-gray-800 ring-gray-800 dark:border-gray-200 dark:ring-gray-200": dropdownOpen && color === "neutral",
-		"border-primary ring-primary dark:border-primary dark:ring-primary": dropdownOpen && color === "primary",
-		"border-error ring-error dark:border-error dark:ring-error": dropdownOpen && color === "error",
-		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownOpen && color === "warning",
-		"border-success ring-success dark:border-success dark:ring-success": dropdownOpen && color === "success",
+		"border-gray-800 ring-gray-800 dark:border-gray-200 dark:ring-gray-200": dropdownVisible && color === "neutral",
+		"border-primary ring-primary dark:border-primary dark:ring-primary": dropdownVisible && color === "primary",
+		"border-error ring-error dark:border-error dark:ring-error": dropdownVisible && color === "error",
+		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownVisible && color === "warning",
+		"border-success ring-success dark:border-success dark:ring-success": dropdownVisible && color === "success",
 		
 	};
 
@@ -155,11 +175,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"peer-focus-within:text-error group-focus-within/wrapper:text-error": color === "error",
 		"peer-focus-within:text-warning group-focus-within/wrapper:text-warning": color === "warning",
 		"peer-focus-within:text-success group-focus-within/wrapper:text-success": color === "success",
-		"text-gray-800 dark:text-gray-200": dropdownOpen && color === "neutral",
-		"text-primary dark:text-primary": dropdownOpen && color === "primary",
-		"text-error dark:text-error": dropdownOpen && color === "error",
-		"text-warning dark:text-warning": dropdownOpen && color === "warning",
-		"text-success dark:text-success": dropdownOpen && color === "success",
+		"text-gray-800 dark:text-gray-200": dropdownVisible && color === "neutral",
+		"text-primary dark:text-primary": dropdownVisible && color === "primary",
+		"text-error dark:text-error": dropdownVisible && color === "error",
+		"text-warning dark:text-warning": dropdownVisible && color === "warning",
+		"text-success dark:text-success": dropdownVisible && color === "success",
 	};
 
 	const button = {
@@ -202,11 +222,15 @@ export function InputField({ color = "primary", className, size = "dense", label
 			
 			{/* Select dropdown */}
 			{props.type === "select" && (
-				<dialog ref={dialogRef} className="z-[10] m-0 w-full p-0 pt-[1px] bg-transparent pointer-events-none open:pointer-events-auto focus-within:outline-0">
-					<Card className={cn("transition-[transform,opacity] duration-75", dropdownOpen ? "scale-100 opacity-100" : "scale-75 opacity-0")}>
-						<h1>Card</h1>
-						<p>Content</p>
-					</Card>
+				<dialog ref={dialogRef} open={dropdownOpen} className="z-[10] m-0 w-full p-0 pt-[1px] bg-transparent pointer-events-none open:pointer-events-auto focus-within:outline-0">
+					<label htmlFor={props.id}>
+						<Card className={cn("transition-[transform,opacity] select-none duration-75 py-2 px-0 origin-top", dropdownVisible ? "scale-100 opacity-100" : "scale-75 opacity-0")}>
+							
+							{/* Dropdown options */}
+							lol
+						
+						</Card>
+					</label>
 				</dialog>
 			)}
 

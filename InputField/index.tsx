@@ -30,10 +30,15 @@ interface Props {
 	 * Floating label tex
 	 */
 	label?: string;
+
+	/**
+	 * Options for select inputs
+	 */
+	options?: string[];
 	
 }
 
-export function InputField({ color = "primary", className, size = "dense", label, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
+export function InputField({ color = "primary", className, size = "dense", label, options, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
 	
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -182,15 +187,34 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"text-success dark:text-success": dropdownVisible && color === "success",
 	};
 
+	// Button classnames
 	const button = {
 		"relative flex items-center justify-center -mr-2 text-xl shrink-0 rounded-full w-7 h-7 aspect-square focus-within:outline-0 text-gray-800 dark:text-gray-200 overflow-hidden": true,
 		"-mr-1 w-9 h-9 text-2xl": size === "large"
+	};
+
+	// Dropdown classnames
+	const dropdownCard = {
+		"transition-[transform,opacity] select-none duration-75 p-0 origin-top": true,
+		"scale-100 opacity-100": dropdownVisible,
+		"scale-75 opacity-0 pointer-events-none": !dropdownVisible
+	};
+
+	const dropdownItem = {
+		"relative flex items-center px-4 overflow-hidden text-sm h-9 hover:bg-gray-200/50 dark:hover:bg-gray-700/50": true,
+		"h-12 text-base font-medium": size === "large",
 	};
 
 	function setValue(value: string) {
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
 
+		setDropdownOpen(false);
+		setTimeout(() => {
+			input.blur();
+			setDropdownVisible(false);
+		}, 1);
+		
 		// Set value
 		input.value = value;
 		input.dispatchEvent(new Event("change"));
@@ -213,24 +237,29 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 				{/* Select dropdown arrow */}
 				{props.type === "select" && (
-					<button className={cn(button, "select-none")} tabIndex={-1}>
-						<MdArrowDropDown />
-					</button>
+					<div className={cn(button)}>
+						<MdArrowDropDown className="pointer-events-none select-none" />
+					</div>
 				)}
 
 			</label>
 			
 			{/* Select dropdown */}
 			{props.type === "select" && (
-				<dialog ref={dialogRef} open={dropdownOpen} className="z-[10] m-0 w-full p-0 pt-[1px] bg-transparent pointer-events-none open:pointer-events-auto focus-within:outline-0">
-					<label htmlFor={props.id}>
-						<Card className={cn("transition-[transform,opacity] select-none duration-75 py-2 px-0 origin-top", dropdownVisible ? "scale-100 opacity-100" : "scale-75 opacity-0")}>
+				<dialog ref={dialogRef} open={dropdownOpen} className={cn("m-0 w-full p-0 pt-[1px] bg-transparent focus-within:outline-0", (dropdownOpen && dropdownVisible) ? "z-[10]" : "pointer-events-none")}>
+					<Card className={cn(dropdownCard)}>
+						<label htmlFor={props.id} className="flex flex-col py-2">
 							
 							{/* Dropdown options */}
-							lol
+							{options?.map((option, key) => (
+								<div key={key} className={cn(dropdownItem)} onClick={ () => setValue(option) }>
+									<Ripple className="bg-black/dark:bg-white/50 dark:bg-white/50" />
+									{option}
+								</div>
+							)) }
 						
-						</Card>
-					</label>
+						</label>
+					</Card>
 				</dialog>
 			)}
 

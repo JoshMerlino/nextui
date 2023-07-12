@@ -42,75 +42,19 @@ export function InputField({ color = "primary", className, size = "dense", label
 	
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
+
+	// Make dropdowns readonly
+	if (props.type === "select") props.readOnly = true;
 	
 	// Check if input has contents
 	const [ hasContents, setHasContents ] = useState(false);
 	const [ passwordVisible, setPasswordVisible ] = useState(false);
 	
 	// Select dropdown states
-	const dialogRef = useRef<HTMLDialogElement>(null);
-	const wrapperRef = useRef<HTMLDivElement>(null);
+	const dropdownRef = useRef<HTMLDialogElement>(null);
 	const [ dropdownOpen, setDropdownOpen ] = useState(false);
 	const [ dropdownVisible, setDropdownVisible ] = useState(false);
-	
-	// Hook into the inputs state and set the dropdown state accordingly
-	useEffect(function() {
-		if (!props.id || props.type !== "select") return;
-		const input = document.getElementById(props.id) as HTMLInputElement;
-		
-		function close() {
-			setDropdownVisible(false);
-			if (!dialogRef.current) return;
-			dialogRef.current.addEventListener("transitionend", () => setDropdownOpen(false), { once: true });
-		}
-		
-		// Focus event handler
-		function focus() {
-			if (!dialogRef.current) return;
-			setTimeout(() => setDropdownVisible(true));
-			setDropdownOpen(true);
-		}
-
-		// Document click event handler
-		function documentClick(event: MouseEvent) {
-			if (!dropdownOpen) return;
-			if (!dialogRef.current || !wrapperRef.current) return;
-			
-			// Make sure the click was outside the dropdown using rect
-			const inputRect = wrapperRef.current.getBoundingClientRect();
-			if (event.clientX >= inputRect.left && event.clientX <= inputRect.right && event.clientY >= inputRect.top && event.clientY <= inputRect.bottom) return;
-			
-			const dialogRect = dialogRef.current.getBoundingClientRect();
-			if (event.clientX >= dialogRect.left && event.clientX <= dialogRect.right && event.clientY >= dialogRect.top && event.clientY <= dialogRect.bottom) return;
-			
-			close();
-			
-		}
-		
-		// Blur event handler
-		function blur(event: FocusEvent) {
-
-			// Close if the user focuses on another input
-			if (event.relatedTarget && (event.relatedTarget as HTMLElement).tagName === "INPUT") close();
-
-			// What about reverse tabbing?
-			else if (event.relatedTarget && (event.relatedTarget as HTMLElement).tagName === "BUTTON") close();
-
-		}
-
-		// Add event listeners
-		input.addEventListener("focus", focus);
-		input.addEventListener("blur", blur);
-		document.addEventListener("click", documentClick);
-
-		// Remove event listeners
-		return () => {
-			input.removeEventListener("focus", focus);
-			input.removeEventListener("blur", blur);
-			document.removeEventListener("click", documentClick);
-		};
-
-	}, [ dropdownOpen, props.id, props.type ]);
+	const [ activeKey, setActiveKey ] = useState(-1);
 
 	// Hook into input changes 
 	useEffect(function() {
@@ -140,6 +84,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	const input = {
 		"peer text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-sm focus:outline-none grow": true,
 		"pointer-events-none": props.disabled,
+		"select-none": props.type === "select",
 		"text-base": size === "large",
 		"caret-gray-800 dark:caret-gray-200": color === "neutral",
 		"caret-primary": color === "primary",
@@ -204,25 +149,107 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"relative flex items-center px-4 overflow-hidden text-sm h-9 hover:bg-gray-200/50 dark:hover:bg-gray-700/50": true,
 		"h-12 text-base font-medium": size === "large",
 	};
+	
+	// Helper functions for select dropdown
+	function open() {
 
-	function setValue(value: string) {
+		if (!props.id) return;
+		const input = document.getElementById(props.id) as HTMLInputElement;
+		input.focus();
+
+		// Make sure its a dropdown
+		if (props.type !== "select") return;
+		if (props.disabled) return;
+
+		setDropdownOpen(true);
+		requestAnimationFrame(() => setDropdownVisible(true));
+	}
+	
+	// Close dropdown
+	function close() {
+		setDropdownVisible(false);
+		requestAnimationFrame(() => dropdownRef.current?.addEventListener("transitionend", () => setDropdownOpen(false), { once: true }));
+	}
+	
+	// Set input value
+	function setValue(value: string, key?: number) {
+		if (key !== undefined && key > -1) setActiveKey(key);
+
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
 
-		setDropdownOpen(false);
-		setTimeout(() => {
-			input.blur();
-			setDropdownVisible(false);
-		}, 1);
-		
-		// Set value
+		// Set value and dispatch change event
 		input.value = value;
-		input.dispatchEvent(new Event("change"));
+		input.dispatchEvent(new Event("change", { bubbles: true }));
 
+		// Close dropdown
+		close();
+		
 	}
 
+	// Bind event listeners
+	useEffect(function() {
+		if (!props.id) return;
+		const input = document.getElementById(props.id) as HTMLInputElement;
+
+		function keydown(event: KeyboardEvent) {
+			if (!options) return;
+			switch (event.key) {
+				case "Enter":
+					if (!dropdownVisible) open();
+					else setValue(options[activeKey], activeKey);
+					break;
+				case "Escape":
+					close();
+					break;
+				case "ArrowDown": {
+					event.preventDefault();
+					let key = (activeKey + 1) % options.length;
+					if (key < 0) key = 0;
+					if (dropdownVisible || dropdownOpen) setActiveKey(key);
+					else setValue(options[key], key);
+					break;
+				}
+				case "ArrowUp": {
+					event.preventDefault();
+					let key = (activeKey - 1 + options.length) % options.length;
+					if (key < 0) key = (options.length - 1);
+					if (dropdownVisible || dropdownOpen) setActiveKey(key);
+					else setValue(options[key], key);
+					break;
+				}
+			}
+		}
+
+		const focus = () => requestAnimationFrame(open);
+		function labelMousedown(event: MouseEvent) {
+			event.preventDefault();
+			open();
+		}
+
+		// On focus open, and on blur close
+		input.addEventListener("focus", focus);
+		input.addEventListener("blur", close);
+		input.addEventListener("mousedown", open);
+		input.addEventListener("keydown", keydown);
+		input.parentElement?.addEventListener("mousedown", labelMousedown);
+		input.parentElement?.addEventListener("click", labelMousedown);
+		
+		return function() {
+			input.removeEventListener("focus", focus);
+			input.removeEventListener("blur", close);
+			input.removeEventListener("mousedown", open);
+			input.removeEventListener("keydown", keydown);
+			input.parentElement?.removeEventListener("mousedown", labelMousedown);
+			input.parentElement?.removeEventListener("click", labelMousedown);
+
+		};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeKey, dropdownVisible, options, props.id ]);
+
 	return (
-		<div className={ cn("relative group input-group items-center bg-inherit") } ref={wrapperRef}>
+		<div className={ cn("relative group input-group items-center bg-inherit") }>
 			<label className={cn(wrapper)} htmlFor={props.id}>
 				<input className={ cn(input, className) } {...props} />
 				{label && <p className={cn(labelStyles)}>{label}</p>}
@@ -237,8 +264,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 				{/* Select dropdown arrow */}
 				{props.type === "select" && (
-					<div className={cn(button)}>
-						<MdArrowDropDown className="pointer-events-none select-none" />
+					<div className={cn(button, "pointer-events-none select-none")}>
+						<MdArrowDropDown/>
 					</div>
 				)}
 
@@ -246,19 +273,25 @@ export function InputField({ color = "primary", className, size = "dense", label
 			
 			{/* Select dropdown */}
 			{props.type === "select" && (
-				<dialog ref={dialogRef} open={dropdownOpen} className={cn("m-0 w-full p-0 pt-[1px] bg-transparent focus-within:outline-0", (dropdownOpen && dropdownVisible) ? "z-[10]" : "pointer-events-none")}>
+				<dialog
+					ref={dropdownRef}
+					open={dropdownOpen || dropdownVisible}
+					onMouseDown={e => e.preventDefault()}
+					className={cn("m-0 w-full p-0 pt-[1px] bg-transparent focus-within:outline-0", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none")}>
 					<Card className={cn(dropdownCard)}>
-						<label htmlFor={props.id} className="flex flex-col py-2">
+						<ul className="flex flex-col py-2">
 							
 							{/* Dropdown options */}
 							{options?.map((option, key) => (
-								<div key={key} className={cn(dropdownItem)} onClick={ () => setValue(option) }>
+								<li key={key}
+									className={cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50")}
+									onClick={() => setValue(option, key)}>
 									<Ripple className="bg-black/dark:bg-white/50 dark:bg-white/50" />
 									{option}
-								</div>
-							)) }
+								</li>
+							))}
 						
-						</label>
+						</ul>
 					</Card>
 				</dialog>
 			)}

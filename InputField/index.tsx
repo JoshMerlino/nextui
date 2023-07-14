@@ -264,11 +264,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 		// If the dialog is off the screen, move it
 		if (rect.bottom - 16 > window.innerHeight) {
-
-			// Translate so its 16px from the bottom of the screen
 			const translate = window.innerHeight - rect.bottom - 16;
 			dialog.style.transform = `translateY(${ translate }px)`;
-
+		} else if (rect.top < 16) {
+			const translate = 16 - rect.top;
+			dialog.style.transform = `translateY(${ translate }px)`;
 		}
 
 	}, [ dropdownRef, dropdownVisible ]);

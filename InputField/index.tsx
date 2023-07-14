@@ -266,9 +266,6 @@ export function InputField({ color = "primary", className, size = "dense", label
 		if (rect.bottom - 16 > window.innerHeight) {
 			const translate = window.innerHeight - rect.bottom - 16;
 			dialog.style.transform = `translateY(${ translate }px)`;
-		} else if (rect.top < 16) {
-			const translate = 16 - rect.top;
-			dialog.style.transform = `translateY(${ translate }px)`;
 		}
 
 	}, [ dropdownRef, dropdownVisible ]);

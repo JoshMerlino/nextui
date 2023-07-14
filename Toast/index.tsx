@@ -25,7 +25,7 @@ interface Props {
 
 }
 
-export function Toast({ children, className, iconColor = "primary", icon: Icon, ...props }: HTMLAttributes<HTMLDivElement> & Partial<Props>) {
+export function Toast({ children, className, iconColor = "primary", icon: Icon }: HTMLAttributes<HTMLDivElement> & Partial<Props>) {
 
 	const notification: ClassValue[] = [
 
@@ -53,11 +53,11 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon, 
 	];
 
 	return (
-		<div className={cn(notification)}>
+		<div className={ cn(notification) }>
 
 			{/* Icon */}
 			{Icon && (
-				<div className={cn(iconClass)}>
+				<div className={ cn(iconClass) }>
 					<Icon className="text-xl text-inherit" />
 				</div>
 			)}

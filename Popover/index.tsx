@@ -33,22 +33,10 @@ interface Props {
 	 * @default false
 	 */
 	inset?: boolean;
-
-	/**
-	 * Close on click away
-	 * @default true
-	 */
-	closeOnBlur?: boolean;
-
-	/**
-	 * Close on escape key
-	 * @default true
-	 */
-	bindEscKey?: boolean;
 	
 }
 
-export function Popover({ children, anchor = "top", closeOnBlur = true, bindEscKey = true, popover, inset, state: [ state, setState ], ...props }: PropsWithChildren<Props> & HTMLAttributes<HTMLElement>) {
+export function Popover({ children, anchor = "top", popover, inset, state: [ state ], ...props }: PropsWithChildren<Props> & HTMLAttributes<HTMLElement>) {
 
 	// Get a reference to the dialog element
 	const ref = useRef<HTMLDialogElement>(null);
@@ -95,9 +83,9 @@ export function Popover({ children, anchor = "top", closeOnBlur = true, bindEscK
 	];
 
 	return (
-		<div className={ cn("group/popover relative isolate z-[10] overflow-visible") } {...props}>
+		<div className={ cn("group/popover relative isolate z-[10] overflow-visible") } { ...props }>
 			{children}
-			<dialog className={cn(popoverClass)} ref={ref}>{popover}</dialog>
+			<dialog className={ cn(popoverClass) } ref={ ref }>{popover}</dialog>
 		</div>
 	);
 

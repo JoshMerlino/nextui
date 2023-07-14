@@ -85,7 +85,10 @@ export function Dismissible({ children, duration, onDismiss }: PropsWithChildren
 			held = false;
 
 			// If the motion is enough, dismiss the element
-			if (Math.abs(motion) > MGK) return dismiss();
+			if (Math.abs(motion) > MGK) {
+				dismiss();
+				return;
+			}
 
 			// Spring back to original position
 			element.classList.add("transition-[transform,opacity]");
@@ -162,7 +165,7 @@ export function Dismissible({ children, duration, onDismiss }: PropsWithChildren
 
 	return (
 		<div className="relative [&_*]:select-none transition-[height,opacity,transform] flex items-center opacity-0 scale-75" style={{ height: 0 }}>
-			<div ref={ref} className="grow">{children}</div>
+			<div className="grow" ref={ ref }>{children}</div>
 		</div>
 	);
 }

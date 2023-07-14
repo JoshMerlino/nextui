@@ -36,10 +36,10 @@ export function Spinner({ className, color = "neutral", size = "large" }: Props)
 
 	return (
 		<svg
-			className={ cn("spinner max-w-[48px] aspect-square", {
+			className={ cn("spinner aspect-square", {
 				"w-6": size === "small",
 				"w-9": size === "medium",
-				"w-12": size === "large",
+				"w-auto max-w-[48px]": size === "large",
 			}, className) }
 			viewBox="0 0 50 50">
 			<circle

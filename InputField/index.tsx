@@ -1,7 +1,7 @@
 "use client";
 
 import { ClassValue } from "clsx";
-import { InputHTMLAttributes, useEffect, useRef, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes, useEffect, useRef, useState } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
 import { Ripple } from "../Ripple";
@@ -61,6 +61,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
 
+		if (props.defaultValue && typeof props.defaultValue === "string" && activeKey === -1) {
+			setHasContents(true);
+			setActiveKey(options?.indexOf(props.defaultValue) ?? -1);
+		}
+
 		// Change event handler
 		function change(event: Event) {
 			const target = event.target as HTMLInputElement;
@@ -71,7 +76,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 		input.addEventListener("change", change);
 		() => input.removeEventListener("change", change);
 
-	}, [ props.id, props.type ]);
+	}, [ props.id, props.type, props.defaultValue, options, activeKey ]);
 	
 	// Hook into password visibility
 	useEffect(function() {
@@ -181,6 +186,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 		// Set value and dispatch change event
 		input.value = value;
 		input.dispatchEvent(new Event("change", { bubbles: true }));
+		if (props.onChange) props.onChange({ target: input } as ChangeEvent<HTMLInputElement>);
 
 		// Close dropdown
 		close();
@@ -286,7 +292,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50") }
 									key={ key }
 									onClick={ () => setValue(option, key) }>
-									<Ripple className="bg-black/dark:bg-white/50 dark:bg-white/50" />
+									<Ripple className="bg-black/50 dark:bg-white/50" />
 									{option}
 								</li>
 							))}

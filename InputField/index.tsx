@@ -253,6 +253,25 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ activeKey, dropdownVisible, options, props.id ]);
+	
+	// Make sure the dialog isnt off the screen
+	useEffect(function() {
+		if (!dropdownRef.current) return;
+		const dialog = dropdownRef.current;
+
+		// Get the bounding rect of the dialog
+		const rect = dialog.getBoundingClientRect();
+
+		// If the dialog is off the screen, move it
+		if (rect.bottom - 16 > window.innerHeight) {
+
+			// Translate so its 16px from the bottom of the screen
+			const translate = window.innerHeight - rect.bottom - 16;
+			dialog.style.transform = `translateY(${ translate }px)`;
+
+		}
+
+	}, [ dropdownRef, dropdownVisible ]);
 
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit") }>

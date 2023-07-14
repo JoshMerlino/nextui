@@ -34,11 +34,27 @@ interface Props {
 	/**
 	 * Options for select inputs
 	 */
-	options?: string[];
+	options?: Array<string | Option>;
 	
 }
 
-export function InputField({ color = "primary", className, size = "dense", label, options, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
+interface Option {
+
+	/**
+	 * The value of the option
+	 */
+	value: string;
+
+	/**
+	 * The label of the option
+	 */
+	disabled?: boolean;
+
+}
+
+export function InputField({ color = "primary", className, size = "dense", label, options: ox, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
+
+	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -63,7 +79,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 		if (props.defaultValue && typeof props.defaultValue === "string" && activeKey === -1) {
 			setHasContents(true);
-			setActiveKey(options?.indexOf(props.defaultValue) ?? -1);
+			setActiveKey(options?.filter(a => !a.disabled).map(a => a.value).indexOf(props.defaultValue) ?? -1);
 		}
 
 		// Change event handler
@@ -113,7 +129,6 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"border-error ring-error dark:border-error dark:ring-error": dropdownVisible && color === "error",
 		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownVisible && color === "warning",
 		"border-success ring-success dark:border-success dark:ring-success": dropdownVisible && color === "success",
-		
 	};
 
 	// Label classnames
@@ -203,7 +218,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 			switch (event.key) {
 				case "Enter":
 					if (!dropdownVisible) open();
-					else setValue(options[activeKey], activeKey);
+					else setValue(options[activeKey].value, activeKey);
 					break;
 				case "Escape":
 					close();
@@ -212,16 +227,18 @@ export function InputField({ color = "primary", className, size = "dense", label
 					event.preventDefault();
 					let key = (activeKey + 1) % options.length;
 					if (key < 0) key = 0;
+					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key], key);
+					else setValue(options[key].value, key);
 					break;
 				}
 				case "ArrowUp": {
 					event.preventDefault();
 					let key = (activeKey - 1 + options.length) % options.length;
-					if (key < 0) key = (options.length - 1);
+					if (key < 0) key = options.length - 1;
+					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key], key);
+					else setValue(options[key].value, key);
 					break;
 				}
 			}
@@ -263,8 +280,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 		const rect = dialog.getBoundingClientRect();
 
 		// If the dialog is off the screen, move it
-		if (rect.bottom - 16 > window.innerHeight) {
-			const translate = window.innerHeight - rect.bottom - 16;
+		if (rect.bottom - 32 > window.innerHeight) {
+			const translate = window.innerHeight - rect.bottom - 32;
 			dialog.style.transform = `translateY(${ translate }px)`;
 		}
 
@@ -305,11 +322,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 							
 							{/* Dropdown options */}
 							{options?.map((option, key) => (
-								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50") }
+								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50", option.disabled && "pointer-events-none opacity-50") }
 									key={ key }
-									onClick={ () => setValue(option, key) }>
-									<Ripple className="bg-black/50 dark:bg-white/50" />
-									{option}
+									onClick={ () => !option.disabled && setValue(option.value, key) }>
+									{!option.disabled && <Ripple className="bg-black/50 dark:bg-white/50" />}
+									{option.value}
 								</li>
 							))}
 						

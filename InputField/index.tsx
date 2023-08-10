@@ -116,7 +116,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	
 	// Input classnames
 	const wrapper = {
-		"peer border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-3 items-center bg-inherit transition-all select-none cursor-text h-10 group/wrapper": true,
+		"peer border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-3 items-center bg-inherit transition-all select-none cursor-text h-10 group/wrapper rounded-lg": true,
 		"cursor-not-allowed": props.disabled,
 		"h-14 px-3.5": size === "large",
 		"focus-within:border-gray-800 focus-within:ring-gray-800 dark:focus-within:border-gray-200 focus-within:ring-gray-200": color === "neutral",
@@ -133,9 +133,9 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 	// Label classnames
 	const labelStyles = {
-		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color] pointer-events-none": true,
-		"peer-focus-within:top-0 peer-focus-within:text-xs peer-focus-within:-mx-1.5 peer-focus-within:px-1.5 bg-inherit": true,
-		"peer-placeholder-shown:top-0 peer-placeholder-shown:text-xs peer-placeholder-shown:-mx-1.5 peer-placeholder-shown:px-1.5 bg-inherit": true,
+		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color] bg-inherit rounded-md": true,
+		"peer-focus-within:top-0 peer-focus-within:text-xs peer-focus-within:-mx-1.5 peer-focus-within:px-1.5": true,
+		"peer-placeholder-shown:top-0 peer-placeholder-shown:text-xs peer-placeholder-shown:-mx-1.5 peer-placeholder-shown:px-1.5": true,
 		"top-0 text-xs -mx-1.5 px-1.5": hasContents,
 		"text-base": size === "large",
 		"text-sm": size === "large" && hasContents,
@@ -287,8 +287,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 	}, [ dropdownRef, dropdownVisible ]);
 
 	return (
-		<div className={ cn("relative group input-group items-center bg-inherit") }>
-			<label className={ cn(wrapper) } htmlFor={ props.id }>
+		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") }>
+			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
 				<input className={ cn(input, className) } { ...props } />
 				{label && <p className={ cn(labelStyles) }>{label}</p>}
 				

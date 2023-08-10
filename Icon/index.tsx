@@ -1,8 +1,8 @@
 "use client";
-import { Ripple } from "@nextui/Ripple";
-import { cn } from "@util/cn";
 import { HTMLAttributes } from "react";
 import { IconType } from "react-icons";
+import { Ripple } from "../Ripple";
+import { cn } from "../util";
 
 export function Icon({ icon: Icon, className, ...props }: { icon: IconType; } & HTMLAttributes<HTMLButtonElement>) {
 	return (

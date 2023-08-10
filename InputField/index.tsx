@@ -12,29 +12,29 @@ interface Props {
 	/**
 	 * Additional class names to apply to the spinner.
 	 */
-	className?: ClassValue;
+	className: ClassValue;
 
 	/**
 	 * Color of the button
 	 * @default "neutral"
 	 */
-	color?: "primary" | "neutral" | "error" | "warning" | "success";
+	color: "primary" | "neutral" | "error" | "warning" | "success";
 
 	/**
 	 * Size of the button (this can be overridden by className)
-	 * @default "medium"
+	 * @default "dense"
 	 */
-	size?: "dense" | "large";
+	size: "dense" | "large";
 
 	/**
 	 * Floating label tex
 	 */
-	label?: string;
+	label: string;
 
 	/**
 	 * Options for select inputs
 	 */
-	options?: Array<string | Option>;
+	options: Array<string | Option>;
 	
 }
 
@@ -52,7 +52,7 @@ interface Option {
 
 }
 
-export function InputField({ color = "primary", className, size = "dense", label, options: ox, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props): JSX.Element {
+export function InputField({ color = "primary", className, size = "dense", label, options: ox, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>): JSX.Element {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	
@@ -265,7 +265,6 @@ export function InputField({ color = "primary", className, size = "dense", label
 			input.removeEventListener("keydown", keydown);
 			input.parentElement?.removeEventListener("mousedown", labelMousedown);
 			input.parentElement?.removeEventListener("click", labelMousedown);
-
 		};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

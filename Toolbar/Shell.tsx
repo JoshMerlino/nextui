@@ -34,13 +34,8 @@ export function ToolbarShell({ children, className, before, toolbar, state: [ ra
 		// See if the element is scrolled
 		function onScroll() {
 			if (!ref.current) return;
-
-			// If the element is scrolled, raise the toolbar
 			if (ref.current.scrollTop > 0) setRaised(true);
-
-			// If the element is not scrolled, lower the toolbar
 			else if (raised) setRaised(false);
-			
 		}
 
 		// Add the event listener

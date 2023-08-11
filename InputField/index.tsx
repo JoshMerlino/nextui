@@ -210,7 +210,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 	// Bind event listeners
 	useEffect(function() {
-		if (!props.id) return;
+		if (!props.id || props.type !== "select") return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
 
 		function keydown(event: KeyboardEvent) {
@@ -268,7 +268,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 		};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ activeKey, dropdownVisible, options, props.id ]);
+	}, [ activeKey, dropdownVisible, options, props.id, props.type ]);
 	
 	// Make sure the dialog isnt off the screen
 	useEffect(function() {

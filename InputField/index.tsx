@@ -35,6 +35,12 @@ interface Props {
 	 * Options for select inputs
 	 */
 	options: Array<string | Option>;
+
+	/**
+	 * Whether the input is invalid
+	 * @default false
+	 */
+	invalid: boolean;
 	
 }
 
@@ -52,7 +58,7 @@ interface Option {
 
 }
 
-export function InputField({ color = "primary", className, size = "dense", label, options: ox, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>): JSX.Element {
+export function InputField({ color = "primary", className, size = "dense", label, options: ox, invalid = false, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>): JSX.Element {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	
@@ -109,14 +115,15 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"text-base": size === "large",
 		"caret-gray-800 dark:caret-gray-200": color === "neutral",
 		"caret-primary": color === "primary",
-		"caret-error": color === "error",
+		"caret-error": color === "error" || invalid,
 		"caret-warning": color === "warning",
 		"caret-success": color === "success",
+		"invalid:caret-error": hasContents,
 	};
 	
 	// Input classnames
 	const wrapper = {
-		"peer border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-3 items-center bg-inherit transition-all select-none cursor-text h-10 group/wrapper rounded-lg": true,
+		"border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-3 items-center bg-inherit transition-all select-none cursor-text h-10 group/wrapper rounded-lg": true,
 		"cursor-not-allowed": props.disabled,
 		"h-14 px-3.5": size === "large",
 		"focus-within:border-gray-800 focus-within:ring-gray-800 dark:focus-within:border-gray-200 focus-within:ring-gray-200": color === "neutral",
@@ -129,6 +136,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"border-error ring-error dark:border-error dark:ring-error": dropdownVisible && color === "error",
 		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownVisible && color === "warning",
 		"border-success ring-success dark:border-success dark:ring-success": dropdownVisible && color === "success",
+		"[&:has(:invalid)]:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:dark:border-error": hasContents,
+		"!border-error focus-within:!ring-error dark:!border-error": invalid,
 	};
 
 	// Label classnames
@@ -150,6 +159,8 @@ export function InputField({ color = "primary", className, size = "dense", label
 		"text-error dark:text-error": dropdownVisible && color === "error",
 		"text-warning dark:text-warning": dropdownVisible && color === "warning",
 		"text-success dark:text-success": dropdownVisible && color === "success",
+		"peer-invalid:text-error peer-invalid:dark:text-error": hasContents,
+		"!text-error dark:!text-error": invalid,
 	};
 
 	// Button classnames

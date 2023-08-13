@@ -305,7 +305,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 				
 				{/* Toggle password visibility */}
 				{props.type === "password" && (
-					<button className={ cn(button, "hover:opacity-50 group-focus-within/wrapper:opacity-100 opacity-0 focus-within:bg-black/10 dark:focus-within:bg-white/20") } onClick={ () => setPasswordVisible(a => !a) }>
+					<button type="button" className={ cn(button, "hover:opacity-50 group-focus-within/wrapper:opacity-100 opacity-0 focus-within:bg-black/10 dark:focus-within:bg-white/20") } onClick={ () => setPasswordVisible(a => !a) }>
 						<Ripple className="bg-black dark:bg-white" emitFromCenter />
 						{ passwordVisible ? <MdVisibilityOff /> : <MdVisibility /> }
 					</button>

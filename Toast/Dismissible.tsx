@@ -135,7 +135,7 @@ export function Dismissible({ children, duration, onDismiss }: PropsWithChildren
 		}
 
 		const onPointerEnter = () => reset = setInterval(resetTimeout);
-		const onPointerLeave = () => clearInterval(reset);
+		const onPointerLeave = () => clearInterval(reset as unknown as number);
 		const onPointerDown = () => held = true;
 
 		// Bind events

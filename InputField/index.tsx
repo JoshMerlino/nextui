@@ -79,10 +79,10 @@ export function InputField({ color = "primary", className, size = "dense", label
 	const [ activeKey, setActiveKey ] = useState(-1);
 
 	// Hook into input changes 
-	useEffect(function() {
+	useEffect(function effect() {
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
-
+		
 		if (props.defaultValue && typeof props.defaultValue === "string" && activeKey === -1) {
 			setHasContents(true);
 			setActiveKey(options?.filter(a => !a.disabled).map(a => a.value).indexOf(props.defaultValue) ?? -1);
@@ -93,6 +93,11 @@ export function InputField({ color = "primary", className, size = "dense", label
 			const target = event.target as HTMLInputElement;
 			setHasContents(!!target.value);
 		}
+
+		if (!input) {
+			requestAnimationFrame(effect);
+			return;
+		}
 		
 		// Add event listeners
 		input.addEventListener("change", change);
@@ -101,9 +106,13 @@ export function InputField({ color = "primary", className, size = "dense", label
 	}, [ props.id, props.type, props.defaultValue, options, activeKey ]);
 	
 	// Hook into password visibility
-	useEffect(function() {
+	useEffect(function effect() {
 		if (!props.id || props.type !== "password") return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
+		if (!input) {
+			requestAnimationFrame(effect);
+			return;
+		}
 		input.type = passwordVisible ? "text" : "password";
 	}, [ props.id, passwordVisible, props.type ]);
 
@@ -186,6 +195,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
+		
 		input.focus();
 
 		// Make sure its a dropdown
@@ -208,7 +218,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
-
+		
 		// Set value and dispatch change event
 		input.value = value;
 		input.dispatchEvent(new Event("change", { bubbles: true }));
@@ -223,7 +233,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	useEffect(function() {
 		if (!props.id || props.type !== "select") return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
-
+		
 		function keydown(event: KeyboardEvent) {
 			if (!options) return;
 			switch (event.key) {
@@ -305,7 +315,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 				
 				{/* Toggle password visibility */}
 				{props.type === "password" && (
-					<button type="button" className={ cn(button, "hover:opacity-50 group-focus-within/wrapper:opacity-100 opacity-0 focus-within:bg-black/10 dark:focus-within:bg-white/20") } onClick={ () => setPasswordVisible(a => !a) }>
+					<button className={ cn(button, "hover:opacity-50 group-focus-within/wrapper:opacity-100 opacity-0 focus-within:bg-black/10 dark:focus-within:bg-white/20") } onClick={ () => setPasswordVisible(a => !a) } type="button">
 						<Ripple className="bg-black dark:bg-white" emitFromCenter />
 						{ passwordVisible ? <MdVisibilityOff /> : <MdVisibility /> }
 					</button>

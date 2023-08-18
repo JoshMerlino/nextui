@@ -111,7 +111,7 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	}, [ ref, isOpen, state, setState, bindEscKey ]);
 
 	return (
-		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent") } ref={ ref } { ...props }>
+		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color]", isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent") } ref={ ref } { ...props }>
 			<Card className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
 				{children}
 			</Card>

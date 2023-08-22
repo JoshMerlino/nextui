@@ -34,11 +34,14 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 
 		// Content subclass
 		"[&>p]:px-2 [&>p]:pb-2",
+
+		// Ruler subclass
+		"[&>hr]:border-gray-200 [&>hr]:dark:border-gray-700 [&>hr]:m-2",
 		
 		// User Overrides
 		className
 
 	];
 
-	return <div className={cn(classlist)} {...props}>{children}</div>;
+	return <div className={ cn(classlist) } { ...props }>{children}</div>;
 }

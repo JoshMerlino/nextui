@@ -76,7 +76,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 					className={ cn(checkbox) }
 					type="checkbox"
 					{ ...props } />
-				<div className={cn(icon)}>
+				<div className={ cn(icon) }>
 					{ props.indeterminate ? <MdRemove /> : <MdCheck /> }
 				</div>
 			</div>

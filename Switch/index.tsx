@@ -101,8 +101,8 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 				<input
 					className={ cn(track) }
 					type="checkbox"
-					{...props} />
-				<label className={cn(thumb)} htmlFor={props.id}>
+					{ ...props } />
+				<label className={ cn(thumb) } htmlFor={ props.id }>
 					<MdCheck />
 				</label>
 			</div>

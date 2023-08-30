@@ -63,7 +63,7 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon }
 			)}
 
 			{/* Content */}
-			<div className="flex gap-1 sm:gap-4 px-1 [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap [&>div]:grow [&>div]:flex [&>div]:flex-col [&>div]:gap-0.5">{children}</div>
+			<div className="flex gap-1 sm:gap-4 px-1 [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap [&>div]:grow [&>div]:flex [&>div]:flex-col [&>div]:gap-1">{children}</div>
 
 		</div>
 	);

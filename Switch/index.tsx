@@ -1,6 +1,5 @@
 import { ClassValue } from "clsx";
-import { InputHTMLAttributes } from "react";
-import { MdCheck } from "react-icons/md";
+import { InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "../util";
 
 interface Props {
@@ -12,20 +11,20 @@ interface Props {
 	color: "primary" | "neutral" | "error" | "warning" | "success";
 
 	/**
-	 * Whether the checkbox is indeterminate
-	 * @default false
-	 */
-	indeterminate: boolean;
-
-	/**
 	 * Variant of the checkbox
 	 * @default "default"
 	 */
 	variant: "default" | "legacy";
 
+	/**
+	 * Icon to display on the thumb
+	 * @see https://react-icons.github.io/react-icons/
+	 */
+	icon?: ReactNode;
+
 }
 
-export function Switch({ color = "neutral", className, variant = "default", children, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
+export function Switch({ color = "neutral", className, variant = "default", children, icon, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -91,7 +90,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 		!props.disabled && "after:content[''] after:bg-gray-500 peer-checked:after:bg-current after:opacity-20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 peer-focus:after:scale-100 group-active/checkbox:after:scale-100 duration-100 after:transition-transform after:z-[1]",
 
 		// Checkmark
-		"[&>svg]:scale-0 peer-checked:[&>svg]:scale-100 [&>svg]:transition-transform duration-100"
+		!icon && "[&>svg]:scale-0 peer-checked:[&>svg]:scale-100 [&>svg]:transition-transform duration-100"
 
 	];
 
@@ -103,7 +102,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 					type="checkbox"
 					{ ...props } />
 				<label className={ cn(thumb) } htmlFor={ props.id }>
-					<MdCheck />
+					{icon}
 				</label>
 			</div>
 			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}

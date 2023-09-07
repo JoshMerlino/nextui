@@ -81,7 +81,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 		"top-4 left-4": true,
 		"peer-focus-within:top-0 group-focus-within/wrapper:top-0 peer-focus-within:-translate-y-1/2 group-focus-within/wrapper:-translate-y-1/2 peer-focus-within:text-xs group-focus-within/wrapper:text-xs peer-focus-within:-mx-1.5 group-focus-within/wrapper:-mx-1.5 peer-focus-within:px-1.5 group-focus-within/wrapper:px-1.5": true,
 
-		"top-0 -translate-y-1/2 text-xs !bg-red-500": hasContents,
+		"top-0 -translate-y-1/2 text-xs": hasContents,
 	};
 
 	return (

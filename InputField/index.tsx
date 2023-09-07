@@ -151,10 +151,10 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 	// Label classnames
 	const labelStyles = {
-		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color] bg-inherit rounded-md": true,
+		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color,padding] bg-inherit rounded-md -mx-1.5 px-1.5": true,
 		"peer-focus-within:top-0 peer-focus-within:text-xs peer-focus-within:-mx-1.5 peer-focus-within:px-1.5": true,
 		"peer-placeholder-shown:top-0 peer-placeholder-shown:text-xs peer-placeholder-shown:-mx-1.5 peer-placeholder-shown:px-1.5": true,
-		"top-0 text-xs -mx-1.5 px-1.5": hasContents,
+		"top-0 text-xs": hasContents,
 		"text-base": size === "large",
 		"text-sm": size === "large" && hasContents,
 		"peer-placeholder-shown:text-sm peer-focus-within:text-sm": size === "large",

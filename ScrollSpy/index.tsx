@@ -5,12 +5,25 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
-export function ScrollSpy({ contents, htmlFor }: { contents: { title: string; href: string; children?: { title: string; href: string; }[]; }[]; htmlFor: string }) {
+interface ScrollSpyProps {
+	title: string;
+	href: string;
+	children?: {
+		title: string;
+		href: string;
+		children?: {
+			title: string;
+			href: string;
+		}[] | undefined;
+	}[] | undefined;
+}
+
+export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; htmlFor: string }) {
 
 	const [ activeHref, setActiveHref ] = useState<string | null>(null);
 
 	// Get all links
-	const hrefs = contents.flatMap(({ href, children }) => children ? [ href, ...children.map(({ href }) => href) ] : [ href ]);
+	const hrefs = contents.flatMap(({ href, children }) => children ? [ href, ...children.flatMap(({ href, children }) => children ? [ href, ...children.map(({ href }) => href) ] : [ href ]) ] : [ href ]);
 	
 	// Intersection observer to set active link
 	useEffect(() => {
@@ -39,7 +52,7 @@ export function ScrollSpy({ contents, htmlFor }: { contents: { title: string; hr
 
 	function onClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
 		const href = event.currentTarget.getAttribute("href");
-		setActiveHref(href);
+		setActiveHref(href?.substring(1) ?? null);
 
 		// Scroll to element
 		if (href && href.startsWith("#")) {
@@ -52,16 +65,27 @@ export function ScrollSpy({ contents, htmlFor }: { contents: { title: string; hr
 	return (
 		<ul className="text-gray-700 text-sm flex flex-col gap-2">
 			{contents.map(({ title, href, children }, key) => (
-				<li className="mt-1" key={ key }>
-					<Link className={ cn("transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{title}</Link>
+				<li className={ cn(!children?.some(child => child.children) && "mt-2") } key={ key }>
+					<Link className={ cn("transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`) || children?.some(a => a.children?.some(a => a.href === `#${ activeHref }`))) && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{title}</Link>
 					{children && (
-						<ul className="my-1">
-							{children.map(({ title, href }, key) => (
-								<li className="ml-4 " key={ key }>
-									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
+						<ul className={ cn("flex flex-col", children.some(child => child.children) && "gap-2") }>
+							{children.map(({ title, href, children }, key) => (
+								<li className="mt-1" key={ key }>
+									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 										<MdKeyboardArrowRight className="mr-2 text-gray-400 overflow-visible group-hover:text-gray-600 dark:text-gray-600 dark:group-hover:text-gray-500" />
 										{title}
 									</Link>
+									{children && (
+										<ul>
+											{children.map(({ title, href }, key) => (
+												<li className="ml-6" key={ key }>
+													<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 pl-4 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
+														{title}
+													</Link>
+												</li>
+											))}
+										</ul>
+									)}
 								</li>
 							))}
 						</ul>

@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/nextui/util";
 import { ClassValue } from "clsx";
-import { TextareaHTMLAttributes, useRef, useState } from "react";
+import { TextareaHTMLAttributes, useEffect, useRef, useState } from "react";
 
 interface Props {
 
@@ -83,6 +83,10 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 
 		"top-0 -translate-y-1/2 text-xs": hasContents,
 	};
+
+	useEffect(function() {
+		if (props.placeholder) setHasContents(true);
+	}, [ props.placeholder, hasContents ]);
 
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") }>

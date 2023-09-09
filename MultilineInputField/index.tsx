@@ -88,6 +88,11 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 		if (props.placeholder) setHasContents(true);
 	}, [ props.placeholder, hasContents ]);
 
+	// Resize on content change
+	useEffect(function() {
+		resize({ target: document.getElementById(props.id as string) as HTMLTextAreaElement } as React.ChangeEvent<HTMLTextAreaElement>);
+	}, [ props.id, props.value ]);
+
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") }>
 			<label className={ cn(wrapper) } htmlFor={ props.id } ref={ ref }>

@@ -40,6 +40,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 	// Keep the height of the textarea in sync with its contents
 	function resize(event: React.ChangeEvent<HTMLTextAreaElement>) {
 		const target = event.target as HTMLTextAreaElement;
+		if (!target) return;
 		target.style.height = "auto";
 		target.style.height = target.scrollHeight + "px";
 	}

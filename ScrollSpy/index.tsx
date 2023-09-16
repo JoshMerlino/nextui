@@ -71,7 +71,7 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 						<ul className={ cn("flex flex-col", children.some(child => child.children) && "gap-2") }>
 							{children.map(({ title, href, children }, key) => (
 								<li className="mt-1" key={ key }>
-									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
+									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", key === 0 && "mt-1", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-500 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 										<MdKeyboardArrowRight className="mr-2 text-gray-400 overflow-visible group-hover:text-gray-600 dark:text-gray-600 dark:group-hover:text-gray-500" />
 										{title}
 									</Link>

@@ -38,7 +38,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 	props.id = props.id || Math.floor(Math.random() * 10000000000).toString(36);
 
 	// Keep the height of the textarea in sync with its contents
-	function resize(event: React.ChangeEvent<HTMLTextAreaElement>) {
+	function resize(event: { target: HTMLTextAreaElement }) {
 		const target = event.target as HTMLTextAreaElement;
 		if (!target) return;
 		target.style.height = "auto";
@@ -47,7 +47,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 
 	// Input classnames
 	const input = {
-		"peer focus-within:outline-0 text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base w-full h-full resize-none py-4": true,
+		"peer focus-within:outline-0 text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base w-full min-h-full resize-none py-4": true,
 		"pointer-events-none": props.disabled,
 		"caret-gray-800 dark:caret-gray-200": color === "neutral",
 		"caret-primary": color === "primary",
@@ -59,7 +59,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 
 	// Wrapper classnames
 	const wrapper = {
-		"border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-4 items-center bg-inherit transition-all select-none cursor-text group/wrapper rounded-lg": true,
+		"border border-gray-400/40 dark:border-gray-400/25 ring-1 ring-transparent rounded-lg relative [&:has(:disabled)]:border-dashed flex gap-2 px-4 items-center bg-inherit transition-all select-none cursor-text group/wrapper rounded-lg h-full": true,
 		"focus-within:border-gray-800 focus-within:ring-gray-800 dark:focus-within:border-gray-200 focus-within:ring-gray-200": color === "neutral",
 		"focus-within:border-primary focus-within:ring-primary dark:focus-within:border-primary": color === "primary",
 		"focus-within:border-error focus-within:ring-error dark:focus-within:border-error": color === "error",
@@ -95,7 +95,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 	}, [ props.id, props.value ]);
 
 	return (
-		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") }>
+		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg h-full") }>
 			<label className={ cn(wrapper) } htmlFor={ props.id } ref={ ref }>
 				{label && <p className={ cn(labelStyles) }>{label}</p>}
 				<textarea
@@ -105,6 +105,18 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 						resize(event);
 						props.onChange && props.onChange(event);
 						setHasContents(event.target.value.length > 0);
+					} }
+					onKeyDownCapture={ event => {
+						const target = event.target as HTMLTextAreaElement;
+						resize({ target });
+						props.onKeyDownCapture && props.onKeyDownCapture(event);
+						setHasContents(target.value.length > 0);
+					} }
+					onKeyUpCapture={ event => {
+						const target = event.target as HTMLTextAreaElement;
+						resize({ target });
+						props.onKeyUpCapture && props.onKeyUpCapture(event);
+						setHasContents(target.value.length > 0);
 					} } />
 			</label>
 		</div>

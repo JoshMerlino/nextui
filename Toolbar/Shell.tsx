@@ -21,9 +21,14 @@ interface Props {
 	 */
 	before?: ReactNode;
 
+	/**
+	 * The content to render after the toolbar.
+	 */
+	after?: ReactNode;
+
 }
 
-export function ToolbarShell({ children, className, before, toolbar, state: [ raised, setRaised ] }: Props & HTMLAttributes<HTMLElement>) {
+export function ToolbarShell({ children, className, before, after, toolbar, state: [ raised, setRaised ], id }: Props & HTMLAttributes<HTMLElement>) {
 
 	// Get a ref to the content
 	const ref = useRef<HTMLDivElement>(null);
@@ -45,10 +50,11 @@ export function ToolbarShell({ children, className, before, toolbar, state: [ ra
 	}, [ raised, setRaised ]);
 
 	return (
-		<div className="absolute inset-0 flex flex-col overflow-auto bg-inherit isolate" ref={ ref }>
+		<div className="absolute inset-0 flex flex-col bg-inherit isolate overflow-y-auto overflow-x-hidden min-h-full" id={ id } ref={ ref }>
 			{ before }
 			<div className="sticky top-0 z-[10]">{toolbar}</div>
-			<div className={ cn("grow overflow-visible bg-inherit overflow-y-auto overflow-x-hidden", className) }>{children}</div>
+			<div className={ cn("grow overflow-visible bg-inherit flex flex-col", className) }>{children}</div>
+			{after}
 		</div>
 	);
 }

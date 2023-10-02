@@ -26,12 +26,19 @@ interface Props {
 	 */
 	after?: ReactNode;
 
+	/**
+	 * The content to render as a backdrop.
+	 */
+	backdrop?: ReactNode;
+
 }
 
-export function ToolbarShell({ children, className, before, after, toolbar, state: [ raised, setRaised ], id }: Props & HTMLAttributes<HTMLElement>) {
+export function ToolbarShell({ children, className, before, after, toolbar, state: [ raised, setRaised ], id, backdrop }: Props & HTMLAttributes<HTMLElement>) {
 
 	// Get a ref to the content
 	const ref = useRef<HTMLDivElement>(null);
+	const backdropRef = useRef<HTMLDivElement>(null);
+	const toolbarRef = useRef<HTMLDivElement>(null);
 
 	useEffect(function() {
 		if (!ref.current) return;
@@ -48,11 +55,32 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 		() => ref.current?.removeEventListener("scroll", onScroll);
 
 	}, [ raised, setRaised ]);
+	
+	useEffect(function() {
+		const toolbar = toolbarRef.current;
+		if (!toolbar || !backdrop || !backdropRef.current) return;
+		
+		const height = backdropRef.current.clientHeight - toolbar.clientHeight;
+		backdropRef.current.style.top = `-${ height }px`;
+
+	}, [ backdrop, backdropRef, toolbarRef ]);
 
 	return (
 		<div className="absolute inset-0 flex flex-col bg-inherit isolate overflow-y-auto overflow-x-hidden min-h-full" id={ id } ref={ ref }>
-			{ before }
-			<div className="sticky top-0 z-[10]">{toolbar}</div>
+			{backdrop ? (
+				<div className="sticky z-[10]" ref={ backdropRef }>
+					{backdrop}
+					<div className="relative">
+						{ before }
+					</div>
+					<div className="sticky top-0" ref={ toolbarRef }>{toolbar}</div>
+				</div>
+			) : (
+				<>
+					{ before }
+					<div className="sticky top-0 z-[10]">{toolbar}</div>
+				</>
+			)}
 			<div className={ cn("grow overflow-visible bg-inherit flex flex-col", className) }>{children}</div>
 			{after}
 		</div>

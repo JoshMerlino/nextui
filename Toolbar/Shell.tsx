@@ -57,11 +57,18 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 	}, [ raised, setRaised ]);
 	
 	useEffect(function() {
-		const toolbar = toolbarRef.current;
-		if (!toolbar || !backdrop || !backdropRef.current) return;
 		
-		const height = backdropRef.current.clientHeight - toolbar.clientHeight;
-		backdropRef.current.style.top = `-${ height }px`;
+		function resize() {
+			const toolbar = toolbarRef.current;
+			if (!toolbar || !backdrop || !backdropRef.current) return;
+		
+			const height = backdropRef.current.clientHeight - toolbar.clientHeight;
+			backdropRef.current.style.top = `-${ height }px`;
+		}
+
+		resize();
+		window.addEventListener("resize", resize);
+		return () => window.removeEventListener("resize", resize);
 
 	}, [ backdrop, backdropRef, toolbarRef ]);
 
@@ -81,7 +88,7 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 					<div className="sticky top-0 z-[10]">{toolbar}</div>
 				</>
 			)}
-			<div className={ cn("grow overflow-visible bg-inherit flex flex-col", className) }>{children}</div>
+			<div className={ cn("grow overflow-visible bg-inherit flex flex-col relative", className) }>{children}</div>
 			{after}
 		</div>
 	);

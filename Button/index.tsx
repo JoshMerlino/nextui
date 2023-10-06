@@ -113,6 +113,7 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		// Flat
 		case "flat":
 			ripple.push({
+				"bg-opacity-50": true,
 				"bg-gray-500": color === "neutral",
 				"bg-primary": color === "primary",
 				"bg-error": color === "error",

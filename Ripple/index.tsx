@@ -107,5 +107,5 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 
 	}, [ className, emitFromCenter, ref ]);
 
-	return <div className="absolute inset-0 z-50 opacity-30" ref={ ref } />;
+	return <div className="absolute inset-0 z-50 opacity-30 ripple" ref={ ref } />;
 }

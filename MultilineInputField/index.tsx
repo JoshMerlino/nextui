@@ -1,7 +1,7 @@
 "use client";
-import { cn } from "@/nextui/util";
 import { ClassValue } from "clsx";
 import { TextareaHTMLAttributes, useEffect, useRef, useState } from "react";
+import { cn } from "../util";
 
 interface Props {
 

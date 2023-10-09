@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@/nextui/util";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { cn } from "../util";
 
 interface ScrollSpyProps {
 	title: string;

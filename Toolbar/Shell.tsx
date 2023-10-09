@@ -83,10 +83,10 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 					<div className="sticky top-0 z-30" ref={ toolbarRef }>{toolbar}</div>
 				</div>
 			) : (
-				<>
+				<div>
 					{ before }
 					<div className="sticky top-0 z-50">{toolbar}</div>
-				</>
+				</div>
 			)}
 			<div className={ cn("grow overflow-visible bg-inherit flex flex-col relative", className) }>{children}</div>
 			{after}

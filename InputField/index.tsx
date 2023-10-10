@@ -118,7 +118,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 	// Input classnames
 	const input = {
-		"peer text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-sm focus:outline-none grow h-full": true,
+		"peer text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-sm focus:outline-none grow h-full appearance-none": true,
 		"pointer-events-none": props.disabled,
 		"select-none": props.type === "select",
 		"text-base": size === "large",

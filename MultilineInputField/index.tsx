@@ -47,7 +47,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 
 	// Input classnames
 	const input = {
-		"peer focus-within:outline-0 text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base w-full min-h-full resize-none py-4": true,
+		"peer focus:outline-0 text-gray-700 dark:text-gray-200 font-roboto bg-transparent font-normal placeholder:text-gray-600 dark:placeholder:text-gray-400 text-base w-full min-h-full resize-none py-4 appearance-none": true,
 		"pointer-events-none": props.disabled,
 		"caret-gray-800 dark:caret-gray-200": color === "neutral",
 		"caret-primary": color === "primary",

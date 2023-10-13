@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { cn } from "../util";
 
 interface ScrollSpyProps {
-	title: string;
+	title: ReactNode;
 	href: string;
 	children?: {
-		title: string;
+		title: ReactNode;
 		href: string;
 		children?: {
-			title: string;
+			title: ReactNode;
 			href: string;
 		}[] | undefined;
 	}[] | undefined;

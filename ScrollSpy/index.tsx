@@ -78,7 +78,7 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 									{children && (
 										<ul>
 											{children.map(({ title, href }, key) => (
-												<li className="ml-6" key={ key }>
+												<li className="ml-4" key={ key }>
 													<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-2 pl-4 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 														{title}
 													</Link>

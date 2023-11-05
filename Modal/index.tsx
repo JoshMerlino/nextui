@@ -4,6 +4,15 @@ import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { Card } from "../Card";
 import { cn } from "../util";
 
+export function useDialogContent(open: boolean) {
+	const [ render, setRender ] = useState(false);
+	useEffect(function() {
+		if (open) setRender(true);
+		else setTimeout(() => setRender(false), 150);
+	}, [ open ]);
+	return render;
+}
+
 interface Props {
 
 	/**

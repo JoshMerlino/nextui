@@ -196,7 +196,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
 		
-		input.focus();
+		input?.focus();
 
 		// Make sure its a dropdown
 		if (props.type !== "select") return;

@@ -118,11 +118,13 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 		return () => window.removeEventListener("keydown", onKeydown);
 
 	}, [ ref, isOpen, state, setState, bindEscKey ]);
+	
+	const contentVisable = useDialogContent(isOpen);
 
 	return (
 		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center flex", isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none") } ref={ ref } { ...props }>
 			<Card className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
-				{children}
+				{contentVisable && children}
 			</Card>
 		</dialog>
 	);

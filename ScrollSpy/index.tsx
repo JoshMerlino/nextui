@@ -52,14 +52,18 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 
 	function onClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
 		const href = event.currentTarget.getAttribute("href");
-		setActiveHref(href?.substring(1) ?? null);
-
+		
 		// Scroll to element
 		if (href && href.startsWith("#")) {
 			event.preventDefault();
-			const element = document.querySelector(href);
-			if (element) element.scrollIntoView({ behavior: "smooth" });
+			const element = document.querySelector(href) as HTMLDivElement;
+			const shell = document.getElementById(htmlFor) as HTMLDivElement;
+			if (!element || !shell) return;
+			const { top } = element.getBoundingClientRect();
+			shell.scrollTo({ top: shell.scrollTop + top - 80 });
 		}
+		
+		setActiveHref(href?.substring(1) ?? null);
 	}
 
 	return (

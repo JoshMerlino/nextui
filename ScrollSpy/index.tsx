@@ -51,6 +51,7 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 	}, [ contents, htmlFor, hrefs ]);
 
 	function onClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+		setActiveHref(null);
 		const href = event.currentTarget.getAttribute("href");
 		
 		// Scroll to element
@@ -61,9 +62,9 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 			if (!element || !shell) return;
 			const { top } = element.getBoundingClientRect();
 			shell.scrollTo({ top: shell.scrollTop + top - 80 });
+			setActiveHref(href.substring(1));
 		}
-		
-		setActiveHref(href?.substring(1) ?? null);
+
 	}
 
 	return (

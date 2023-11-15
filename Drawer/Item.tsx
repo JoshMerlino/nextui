@@ -43,22 +43,22 @@ export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition =
 	const classes: ClassValue[] = [
 
 		// Base styles
-		"relative flex items-center overflow-hidden pl-4 pr-6 transition-colors rounded-full gap-2 text-sm font-medium",
+		"relative flex items-center overflow-hidden transition-colors gap-4 text-sm font-medium border-l-4 border-transparent px-4",
 
 		// Size
-		size === "large" ? "h-14 py-4" : "h-10 py-2",
+		size === "large" ? "h-[52px] py-4" : "h-[42px] py-2 text-xs",
 
 		// If active
-		active ? "bg-primary/5 hover:bg-primary/10 text-primary-800 dark:text-primary hover:active:bg-primary/20" : "hover:bg-gray-100 text-gray-700 hover:active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:active:bg-gray-700/80",
+		active ? "bg-primary/10 hover:bg-primary/20 text-primary-600 dark:text-primary-400 active:bg-primary/20 border-primary-600 dark:border-primary-400" : "hover:bg-gray-100 group-focus/link:bg-gray-100 group-focus/link:border-current text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:active:bg-gray-700/50 dark:group-focus/link:bg-gray-700/50",
 
 	];
 
 	return (
 		<li className={ cn(classes) } { ...props }>
-			{!disableRipple && <Ripple className={ active ? "bg-primary/40" : "bg-gray-400/40 dark:bg-gray-600/40" } /> }
-			{ (!!Icon && iconPosition === "before") && <Icon className="text-2xl shrink-0" /> }
+			{!disableRipple && <Ripple className={ active ? "bg-primary/20" : "bg-gray-400/40 dark:bg-gray-600/40" } /> }
+			{ (!!Icon && iconPosition === "before") && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : "text-xl") } /> }
 			<span className="flex flex-col font-medium">{ children }</span>
-			{ (!!Icon && iconPosition === "after") && <Icon className="ml-auto text-2xl shrink-0" /> }
+			{ (!!Icon && iconPosition === "after") && <Icon className={ cn("ml-auto shrink-0", size === "large" ? "text-2xl" : "text-xl") } /> }
 		</li>
 	);
 }

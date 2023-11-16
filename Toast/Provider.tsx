@@ -2,6 +2,7 @@
 
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 import { IconType } from "react-icons";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { MdErrorOutline } from "react-icons/md";
 import { Color, Toast } from ".";
 import { Dismissible, DismissibleOptions } from "./Dismissible";
@@ -40,6 +41,25 @@ interface ToastBuilders {
 	error(message: string): void;
 	error(message: string, options: Partial<DismissibleOptions>): void;
 	error(options: Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">): void;
+
+	/*
+	 * Display a success toast
+	 * @param message The message to display
+	 * @param options The options to pass to the toast
+	 */
+	success(message: string): void;
+	success(message: string, options: Partial<DismissibleOptions>): void;
+	success(options: Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">): void;
+
+	/*
+	 * Display a warning toast
+	 * @param message The message to display
+	 * @param options The options to pass to the toast
+	 */
+	warning(message: string): void;
+	warning(message: string, options: Partial<DismissibleOptions>): void;
+	warning(options: Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">): void;
+
 }
 
 // Create a context for the toast provider with default values
@@ -47,6 +67,8 @@ const ToastContext = createContext<IToastContext & ToastBuilders>({
 	push() { },
 	dismiss() { },
 	error() { },
+	success() { },
+	warning() { },
 });
 
 // Create a hook to use the toast provider
@@ -109,7 +131,27 @@ export function ToastProvider({ children }: PropsWithChildren) {
 		pushByOptions(opts);
 	}
 
-	return <ToastContext.Provider value={{ push, dismiss, error }}>
+	function success(message: string | Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">, options?: Partial<DismissibleOptions>) {
+		const defaults = {
+			duration: 5000,
+			icon: IoMdCheckmarkCircleOutline,
+			iconColor: "success",
+		};
+		const opts = (typeof message === "string" ? { ...defaults, ...options, message } : { ...defaults, ...message }) as ToastOpts;
+		pushByOptions(opts);
+	}
+
+	function warning(message: string | Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">, options?: Partial<DismissibleOptions>) {
+		const defaults = {
+			duration: 10000,
+			icon: MdErrorOutline,
+			iconColor: "warning",
+		};
+		const opts = (typeof message === "string" ? { ...defaults, ...options, message } : { ...defaults, ...message }) as ToastOpts;
+		pushByOptions(opts);
+	}
+
+	return <ToastContext.Provider value={{ push, dismiss, error, success, warning }}>
 		
 		<div className="fixed inset-0 z-30 pointer-events-none">
 			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse [&>*]:pointer-events-auto overflow-visible">

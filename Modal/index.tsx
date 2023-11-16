@@ -38,9 +38,15 @@ interface Props {
 	 */
 	bindEscKey?: boolean;
 
+	/**
+	 * If the children should always be mounted in the modal or only when the modal is open
+	 * @default false
+	 */
+	renderContents?: boolean;
+
 }
 
-export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, ...props }: Props & HTMLAttributes<HTMLDialogElement>) {
+export function Modal({ children, renderContents = false, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, ...props }: Props & HTMLAttributes<HTMLDialogElement>) {
 
 	// Is bouncing state
 	const [ isBouncing, setIsBouncing ] = useState(false);
@@ -124,7 +130,7 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	return (
 		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center flex", isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none") } ref={ ref } { ...props }>
 			<Card className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
-				{contentVisable && children}
+				{(contentVisable || renderContents) && children}
 			</Card>
 		</dialog>
 	);

@@ -1,6 +1,9 @@
 "use client";
 
 import { PropsWithChildren, createContext, useContext, useState } from "react";
+import { IconType } from "react-icons";
+import { MdErrorOutline } from "react-icons/md";
+import { Color, Toast } from ".";
 import { Dismissible, DismissibleOptions } from "./Dismissible";
 
 interface IToastContext {
@@ -20,10 +23,30 @@ interface IToastContext {
 
 }
 
+interface ToastInitOptions {
+	title: string;
+	message: string;
+	icon: IconType;
+	iconColor: "primary" | "neutral" | "error" | "success" | "warning";
+}
+
+interface ToastBuilders {
+
+	/*
+	 * Display an error toast
+	 * @param message The message to display
+	 * @param options The options to pass to the toast
+	 */
+	error(message: string): void;
+	error(message: string, options: Partial<DismissibleOptions>): void;
+	error(options: Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">): void;
+}
+
 // Create a context for the toast provider with default values
-const ToastContext = createContext<IToastContext>({
+const ToastContext = createContext<IToastContext & ToastBuilders>({
 	push() { },
 	dismiss() { },
+	error() { },
 });
 
 // Create a hook to use the toast provider
@@ -59,7 +82,34 @@ export function ToastProvider({ children }: PropsWithChildren) {
 		});
 	}
 
-	return <ToastContext.Provider value={{ push, dismiss }}>
+	type ToastOpts = Partial<DismissibleOptions> & Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message" | "iconColor" | "icon">;
+
+	function pushByOptions(opts: ToastOpts) {
+		push((
+			<Toast icon={ opts.icon } iconColor={ opts.iconColor as Color }>
+				{opts.title ? (
+					<div>
+						<h1>{opts.title}</h1>
+						<p>{opts.message}</p>
+					</div>
+				) : (
+					<span>{opts.message}</span>
+				)}
+			</Toast>), opts
+		);
+	}
+
+	function error(message: string | Partial<DismissibleOptions & ToastInitOptions> & Pick<ToastInitOptions, "message">, options?: Partial<DismissibleOptions>) {
+		const defaults = {
+			duration: 10000,
+			icon: MdErrorOutline,
+			iconColor: "error",
+		};
+		const opts = (typeof message === "string" ? { ...defaults, ...options, message } : { ...defaults, ...message }) as ToastOpts;
+		pushByOptions(opts);
+	}
+
+	return <ToastContext.Provider value={{ push, dismiss, error }}>
 		
 		<div className="fixed inset-0 z-30 pointer-events-none">
 			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse [&>*]:pointer-events-auto overflow-visible">

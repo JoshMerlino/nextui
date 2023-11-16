@@ -5,6 +5,8 @@ import { cn } from "../util";
 	
 export { ToastProvider, useToasts } from "./Provider";
 
+export type Color = "primary" | "neutral" | "error" | "warning" | "success";
+
 interface Props {
 
 	/**
@@ -21,7 +23,7 @@ interface Props {
 	 * The color of the icon
 	 * @default "primary"
 	 */
-	iconColor: "primary" | "neutral" | "error" | "warning" | "success";
+	iconColor: Color;
 
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { ClassValue } from "clsx";
+import { useEvent } from "nextui/hooks";
 import { ChangeEvent, InputHTMLAttributes, useEffect, useRef, useState } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
@@ -61,6 +62,8 @@ interface Option {
 export function InputField({ color = "primary", className, size = "dense", label, options: ox, invalid = false, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>): JSX.Element {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
+
+	const ref = useRef<HTMLDivElement>(null);
 	
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -303,12 +306,18 @@ export function InputField({ color = "primary", className, size = "dense", label
 		if (rect.bottom - 32 > window.innerHeight) {
 			const translate = window.innerHeight - rect.bottom - 32;
 			dialog.style.transform = `translateY(${ translate }px)`;
+		} else {
+			dialog.style.transform = "";
 		}
 
 	}, [ dropdownRef, dropdownVisible ]);
+	
+	useEvent("click", function documentClick(event: MouseEvent) {
+		if (!ref.current?.contains(event.target as Node)) close();
+	});
 
 	return (
-		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") }>
+		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
 				<input className={ cn(input, className) } { ...props } />
 				{label && <p className={ cn(labelStyles) }>{label}</p>}
@@ -333,7 +342,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 			{/* Select dropdown */}
 			{props.type === "select" && (
 				<dialog
-					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] bg-transparent focus-within:outline-0 -mx-[1px]", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
+					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] bg-transparent focus-within:outline-0 -mx-[1px] top-full", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
 					onMouseDown={ e => e.preventDefault() }
 					open={ dropdownOpen || dropdownVisible }
 					ref={ dropdownRef }>

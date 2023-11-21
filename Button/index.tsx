@@ -12,7 +12,7 @@ interface Props {
 	 * Size of the button
 	 * @default "medium"
 	 */
-	size: "small" | "medium" | "large";
+	size: "small" | "medium" | "large" | "md:large";
 
 	/**
 	 * Color of the button
@@ -66,6 +66,7 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 		{
 			"px-4 h-9 py-1 text-sm": true,
 			"px-3 h-7 py-0.5 text-xs": size === "small",
+			"md:px-6 md:h-11 md:py-2 md:text-base": size === "md:large",
 			"px-6 h-11 py-2 text-base": size === "large",
 		}
 
@@ -145,14 +146,14 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 			
 			{/* Icon */}
 			{ (!!Icon && iconPosition === "before" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
+			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
 			
 			{/* Children */}
 			{children}
 
 			{/* Icon */}
-			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
+			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={ cn("shrink-0", size === "md:large" ? "md:text-2xl" : size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
+			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
 			
 		</button>
 	);

@@ -45,7 +45,7 @@ export default function ExpandableGroup({
 		<div className="flex flex-col bg-inherit isolate">
 			<div className="overflow-y-hidden relative bg-inherit mask transition-[padding]" style={{ paddingBottom: isExpanded ? shadowSize : 0 }}>
 				<style>{`.mask{
-				-webkit-mask-image: -webkit-linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
+				-webkit-mask-image: -webkit-linear-gradient(to top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				mask-image: linear-gradient(to top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				}`}</style>
 				<AdjustableHeight deps={ [ height ] }>

@@ -2,7 +2,8 @@
 
 import { AdjustableHeight } from "nextui/AdjustableHeight";
 import { useEvent } from "nextui/hooks";
-import { PropsWithChildren, useRef, useState } from "react";
+import { cn } from "nextui/util";
+import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import { ToggleButton } from "./ToggleButton";
 
 export default function ExpandableGroup({
@@ -18,14 +19,28 @@ export default function ExpandableGroup({
 	shadowSize?: number,
 }>) {
 	const [ height, setHeight ] = useState<number | undefined>(defaultHeight);
+	const [ buttonHidden, setButtonHidden ] = useState(false);
 	const isExpanded = height !== defaultHeight;
 	const ref = useRef<HTMLDivElement>(null);
 
-	function getNaturalHeight() {
+	const getNaturalHeight = useCallback(function() {
 		if (!ref.current) return defaultHeight;
 		const height = Array.from(ref.current.children).reduce((height, child) => height + child.getBoundingClientRect().height, 0);
 		return height;
-	}
+	}, [ defaultHeight ]);
+
+	const getContainerHeight = useCallback(function() {
+		if (!ref.current) return defaultHeight;
+		const { height } = ref.current.getBoundingClientRect();
+		return height;
+	}, [ defaultHeight ]);
+	
+	useEffect(function() {
+		if (!ref.current) return;
+		const naturalHeight = getNaturalHeight();
+		const containerHeight = getContainerHeight();
+		setButtonHidden(naturalHeight < containerHeight);
+	}, [ getNaturalHeight, getContainerHeight ]);
 
 	function toggle() {
 		if (!ref.current) return;
@@ -43,16 +58,16 @@ export default function ExpandableGroup({
 
 	return (
 		<div className="flex flex-col bg-inherit isolate">
-			<div className="overflow-y-hidden relative bg-inherit mask transition-[padding]" style={{ paddingBottom: isExpanded ? shadowSize : 0 }}>
+			<div className="overflow-y-hidden relative bg-inherit mask transition-[padding]" style={{ paddingBottom: (isExpanded || buttonHidden) ? shadowSize : 0 }}>
 				<style>{`.mask{
 				-webkit-mask-image: -webkit-linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				mask-image: linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				}`}</style>
 				<AdjustableHeight deps={ [ height ] }>
-					<div className="-mb-4 pb-4" ref={ ref } style={{ height }}>{children}</div>
+					<div className="-mb-4 pb-4" ref={ ref } style={{ maxHeight: height }}>{children}</div>
 				</AdjustableHeight>
 			</div>
-			<div className="flex justify-center transition-[margin,padding] z-10" style={{ marginTop: isExpanded ? -shadowSize : 0, paddingTop: isExpanded ? gap : 0 }}>
+			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10") } style={{ marginTop: isExpanded ? -shadowSize : 0, paddingTop: isExpanded ? gap : 0, opacity: buttonHidden ? 0 : 1 }}>
 				<Button
 					isExpanded={ isExpanded }
 					onClick={ toggle } />

@@ -58,7 +58,7 @@ export default function ExpandableGroup({
 
 	return (
 		<div className="flex flex-col bg-inherit isolate">
-			<div className="overflow-y-hidden relative bg-inherit mask transition-[padding]" style={{ paddingBottom: (isExpanded || buttonHidden) ? shadowSize : 0 }}>
+			<div className={ cn("overflow-y-hidden relative bg-inherit transition-[padding]", !buttonHidden && "mask") } style={{ paddingBottom: (isExpanded && !buttonHidden) ? shadowSize : 0 }}>
 				<style>{`.mask{
 				-webkit-mask-image: -webkit-linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				mask-image: linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);

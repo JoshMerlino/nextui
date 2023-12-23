@@ -67,7 +67,11 @@ export default function ExpandableGroup({
 					<div className="-mb-4 pb-4" ref={ ref } style={{ maxHeight: height }}>{children}</div>
 				</AdjustableHeight>
 			</div>
-			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10") } style={{ marginTop: isExpanded ? -shadowSize : 0, paddingTop: isExpanded ? gap : 0, opacity: buttonHidden ? 0 : 1 }}>
+			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10") } style={{
+				marginTop: (isExpanded || buttonHidden) ? -shadowSize : 0,
+				paddingTop: (isExpanded || buttonHidden) ? gap : 0,
+				opacity: buttonHidden ? 0 : 1
+			}}>
 				<Button
 					isExpanded={ isExpanded }
 					onClick={ toggle } />

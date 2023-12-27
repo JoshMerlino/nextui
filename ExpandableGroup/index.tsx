@@ -1,8 +1,8 @@
 "use client";
 
-import { AdjustableHeight } from "nextui/AdjustableHeight";
 import { useEvent } from "nextui/hooks";
 import { cn } from "nextui/util";
+import { AdjustableHeight } from "nextui/util/AdjustableHeight";
 import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import { ToggleButton } from "./ToggleButton";
 

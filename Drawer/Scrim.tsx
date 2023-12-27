@@ -1,6 +1,6 @@
 "use client";
 
-import { HTMLAttributes, ReactNode, useCallback, useEffect, useRef } from "react";
+import { HTMLAttributes, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../util";
 
 interface Props {
@@ -21,7 +21,11 @@ interface Props {
 export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], ...props }: Props & HTMLAttributes<HTMLElement>) {
 	
 	const ref = useRef<HTMLDivElement>(null);
+	const [ touchSupported, setTouchSupported ] = useState(false);
 	const down = useRef(0);
+	
+	// Detect touch support, this can happen at any time
+	useEffect(() => setTouchSupported(typeof window !== "undefined" && "ontouchstart" in window), []);
 
 	// When touch starts, record the X position
 	const onTouchStart = useCallback(function(event: TouchEvent) {
@@ -137,7 +141,10 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 	return (
 		<div className="absolute inset-0 flex isolate bg-inherit">
 			{drawer}
-			<div className="h-full w-4 absolute z-10 flex items-center justify-center xl:hidden" ref={ ref } style={{ touchAction: "none" }}>
+			<div
+				className={ cn("h-full w-4 absolute z-10 flex items-center justify-center xl:hidden", !touchSupported && "pointer-events-none hidden") }
+				ref={ ref }
+				style={{ touchAction: "none" }}>
 				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px]" />
 			</div>
 			<div className={ cn("grow relative bg-inherit", className) }>{children}</div>

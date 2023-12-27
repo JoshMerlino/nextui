@@ -74,7 +74,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$handle.style.transform = `translateX(${ deltaX }px)`;
 		$drawer.style.transition = "none";
 		$handle.style.transition = "none";
-		$drawer.style.opacity = `${ percentage }`;
+		$drawer.style.opacity = `${ Math.min(percentage * 5, 1) }`;
 		$scrim.style.opacity = `${ Math.min(percentage * 5, 1) }`;
 		$scrim.style.transition = "none";
 		$drawer.style.setProperty("--tw-translate-x", `${ -width + deltaX }px`);

@@ -94,7 +94,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 		// Sync blur and opacity
 		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ 24 * percentage }px)`);
-		$scrim.style.opacity = `${ percentage }`;
+		$scrim.style.opacity = `${ Math.min(percentage * 5, 1) }`;
 
 	}, [ setOpen ]);
 

@@ -62,6 +62,11 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 	
 	// Have drawer track touch events
 	const onTouchMove = useCallback(function(event: TouchEvent) {
+		
+		// Prevent navigation
+		event.preventDefault();
+		event.stopPropagation();
+
 		const $handle = ref.current;
 		const $drawer = $handle?.parentElement?.querySelector(".group\\/drawer") as HTMLDivElement | null;
 		const $scrim = $handle?.parentElement?.querySelector(".group\\/scrim") as HTMLDivElement | null;

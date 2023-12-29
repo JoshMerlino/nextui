@@ -16,14 +16,25 @@ interface Props {
 	 */
 	drawer: ReactNode;
 
+	/**
+	 * The amount to darken the backdrop when the drawer is open
+	 */
+	darken?: number;
+
+	/**
+	 * The amount to blur the backdrop when the drawer is open
+	 */
+	blur?: number;
+
 }
 
-export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], ...props }: Props & HTMLAttributes<HTMLElement>) {
+export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], darken = 0.25, blur = 8, ...props }: Props & HTMLAttributes<HTMLElement>) {
 	
 	const [ touchSupported, setTouchSupported ] = useState(false);
 	
-	const ref = useRef<HTMLDivElement>(null);
 	const touchOffset = useRef(0);
+	const isDragging = useRef(false);
+	const ref = useRef<HTMLDivElement>(null);
 	
 	// Detect touch support, this can happen at any time
 	useEffect(() => setTouchSupported(typeof window !== "undefined" && "ontouchstart" in window), []);
@@ -34,6 +45,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		const touch = event.touches[0];
 		const target = event.target as HTMLDivElement | null;
 		touchOffset.current = touch.clientX - (target?.getBoundingClientRect().left ?? 0);
+		isDragging.current = true;
 	}, []);
 
 	// When touch ends, determine if the drawer should open or close
@@ -49,20 +61,25 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		const width = $drawer.getBoundingClientRect().width;
 		const distance = touch.clientX - touchOffset.current;
 
-		$handle.style.transform = open ? `translateX(${ width }px)` : "translateX(0)";
+		$handle.style.transform = `translateX(${ open ? width : 0 }px)`;
 		$handle.style.transition = "transform 200ms ease-in-out";
+		
 		$drawer.style.transition = "opacity 200ms ease-in-out, transform 200ms ease-in-out";
 		$drawer.style.opacity = open ? "1" : "0";
-		$scrim.style.transition = "opacity 200ms ease-in-out, backdrop-filter 200ms ease-in-out";
-		$scrim.style.opacity = open ? "1" : "0";
 		$drawer.style.setProperty("--tw-translate-x", open ? "0" : "-100%");
-		$scrim.style.setProperty("--tw-backdrop-blur", open ? "blur(24px)" : "blur(0)");
+		
+		$scrim.style.transition = "opacity 200ms ease-in-out, backdrop-filter 200ms ease-in-out";
+		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ open ? 1 - darken : 1 })`);
+		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ open ? blur : 0 }px)`);
 
 		// Determine if the drawer should open or close
 		if (distance > width / 2) setOpen(true);
 		else if (distance < -width / 2) setOpen(false);
 
-	}, [ open, setOpen ]);
+		// Reset isDragging
+		isDragging.current = false;
+
+	}, [ blur, darken, open, setOpen ]);
 	
 	// Have drawer track touch events
 	const onTouchMove = useCallback(function(event: TouchEvent) {
@@ -72,19 +89,25 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		const $drawer = $handle?.parentElement?.querySelector(".group\\/drawer") as HTMLDivElement | null;
 		const $scrim = $handle?.parentElement?.querySelector(".group\\/scrim") as HTMLDivElement | null;
 		if (!$drawer || !$handle || !$scrim) return;
+
+		// Determine the width, and the distance the handle has moved
 		const { width } = $drawer.getBoundingClientRect();
 		const deltaX = Math.min(Math.max(event.touches[0].clientX - touchOffset.current, 0), width);
 		const percentage = deltaX / width;
-		setOpen(deltaX > width / 2);
-		$handle.style.transform = `translateX(${ deltaX }px)`;
-		$drawer.style.transition = "none";
+		
 		$handle.style.transition = "none";
+		$handle.style.transform = `translateX(${ deltaX }px)`;
+		
+		$drawer.style.transition = "none";
 		$drawer.style.opacity = `${ Math.min(percentage * 5, 1) }`;
-		$scrim.style.opacity = `${ Math.min(percentage * 5, 1) }`;
-		$scrim.style.transition = "none";
 		$drawer.style.setProperty("--tw-translate-x", `${ -width + deltaX }px`);
-		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ 24 * percentage }px)`);
-	}, [ setOpen ]);
+		
+		$scrim.style.transition = "none";
+		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ 1 - darken * percentage })`);
+		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ blur * percentage }px)`);
+		
+		setOpen(deltaX > width / 2);
+	}, [ blur, darken, setOpen ]);
 	
 	// Add event listeners to handle
 	useEffect(function() {
@@ -111,13 +134,20 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$drawer.style.transition = "opacity 200ms ease-in-out, transform 200ms ease-in-out";
 		$drawer.style.setProperty("--tw-translate-x", open ? "0" : "-100%");
 
-		$scrim.style.opacity = open ? "1" : "0";
-		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ open ? 24 : 0 }px)`);
+		// Set scrim properties if not dragging
+		if (!isDragging.current) {
+			$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ open ? 1 - darken : 1 })`);
+			$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ open ? blur : 0 }px)`);
+		}
 
+		// Move handle
 		$handle.style.transition = "transform 200ms ease-in-out";
 		$handle.style.transform = open ? `translateX(${ $drawer.getBoundingClientRect().width }px)` : "translateX(0)";
 		
-	}, [ open ]);
+	}, [ blur, darken, open ]);
+	
+	// On first render, remove hidden class from scrim
+	useEffect(() => ref.current?.parentElement?.querySelector(".group\\/scrim")?.classList.remove("hidden"), [ open ]);
 
 	return (
 		<div className="absolute inset-0 flex isolate bg-inherit overflow-hidden">
@@ -130,7 +160,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px] backdrop-blur-2xl shrink-0 max-w-1.5 mr-auto" />
 			</div>
 			<div className={ cn("grow relative bg-inherit", className) }>{children}</div>
-			<div className={ cn("absolute inset-0 bg-black/25 backdrop-blur-xl transition-[opacity,backdrop-filter] xl:hidden group/scrim", open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0") } onClick={ () => setOpen(false) } { ...props } />
+			<div className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden group/scrim backdrop-blur-0", open ? "pointer-events-auto" : "pointer-events-none") } onClick={ () => setOpen(false) } { ...props } />
 		</div>
 	);
 }

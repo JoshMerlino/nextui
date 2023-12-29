@@ -109,13 +109,14 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 	}, [ onTouchEnd, onTouchMove, onTouchStart ]);
 
 	return (
-		<div className="absolute inset-0 flex isolate bg-inherit">
+		<div className="absolute inset-0 flex isolate bg-inherit overflow-hidden">
 			{drawer}
 			<div
-				className={ cn("h-full w-4 absolute z-10 flex items-center justify-center xl:hidden", !touchSupported && "pointer-events-none hidden") }
+				className={ cn("h-full w-4 absolute z-10 flex items-center justify-center xl:hidden", !touchSupported && "pointer-events-none hidden", open && "w-full") }
+				onClick={ () => open && setOpen(false) }
 				ref={ ref }
 				style={{ touchAction: "none" }}>
-				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px] backdrop-blur-2xl" />
+				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px] backdrop-blur-2xl shrink-0 max-w-1.5 mr-auto" />
 			</div>
 			<div className={ cn("grow relative bg-inherit", className) }>{children}</div>
 			<div className={ cn("absolute inset-0 bg-black/25 backdrop-blur-xl transition-[opacity,backdrop-filter] xl:hidden group/scrim", open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0") } onClick={ () => setOpen(false) } { ...props } />

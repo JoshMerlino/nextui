@@ -64,9 +64,9 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$handle.style.transform = `translateX(${ open ? width : 0 }px)`;
 		$handle.style.transition = "transform 200ms ease-in-out";
 		
-		$drawer.style.transition = "opacity 200ms ease-in-out, transform 200ms ease-in-out";
-		$drawer.style.opacity = open ? "1" : "0";
+		$drawer.style.transition = "transform 200ms ease-in-out";
 		$drawer.style.setProperty("--tw-translate-x", open ? "0" : "-100%");
+		if (!open) $drawer.addEventListener("transitionend", () => $drawer.style.opacity = "0", { once: true });
 		
 		$scrim.style.transition = "opacity 200ms ease-in-out, backdrop-filter 200ms ease-in-out";
 		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ open ? 1 - darken : 1 })`);
@@ -99,7 +99,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$handle.style.transform = `translateX(${ deltaX }px)`;
 		
 		$drawer.style.transition = "none";
-		$drawer.style.opacity = `${ Math.min(percentage * 5, 1) }`;
+		$drawer.style.opacity = deltaX > 0 ? "1" : "0";
 		$drawer.style.setProperty("--tw-translate-x", `${ -width + deltaX }px`);
 		
 		$scrim.style.transition = "none";
@@ -130,9 +130,10 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		const $scrim = $handle?.parentElement?.querySelector(".group\\/scrim") as HTMLDivElement | null;
 		if (!$drawer || !$handle || !$scrim) return;
 
-		$drawer.style.opacity = open ? "1" : "0";
-		$drawer.style.transition = "opacity 200ms ease-in-out, transform 200ms ease-in-out";
+		$drawer.style.transition = "transform 200ms ease-in-out";
 		$drawer.style.setProperty("--tw-translate-x", open ? "0" : "-100%");
+		if (open) $drawer.style.opacity = "1";
+		else $drawer.addEventListener("transitionend", () => $drawer.style.opacity = "0", { once: true });
 
 		// Set scrim properties if not dragging
 		if (!isDragging.current) {

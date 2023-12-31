@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useState } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 export * from "./PaginationContent";
 export * from "./PaginationNav";
@@ -14,7 +14,7 @@ const PaginationContext = createContext<{
 	total: [number, Dispatch<SetStateAction<number>>];
 	loading: [boolean, Dispatch<SetStateAction<boolean>>];
 	data: any[];
-	refetch(): Promise<void>;
+	refetch(passive?: boolean): Promise<void>;
 		}>({} as any);
 
 export const usePagination = () => useContext(PaginationContext);
@@ -39,14 +39,14 @@ export function Pagination({ fetch, children, cursor: defaultCursor = DEFAULT_CU
 	const [ total, setTotal ] = useState(defaultTotal || initialData.length);
 	const router = useRouter();
 
-	const refetch = useCallback(async function refetch() {
-		setLoading(true);
+	const refetch = useCallback(async function refetch(passive = false) {
+		if (!passive) setLoading(true);
 		fetch(cursor, perPage)
 			.then(({ data, total }) => [
 				setData(data),
 				setTotal(total)
 			])
-			.finally(() => setLoading(false));
+			.finally(() => !passive && setLoading(false));
 	}, [ cursor, fetch, perPage ]);
 
 	useEffect(function() {

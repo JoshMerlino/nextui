@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useState } from "react";
 
-export * from "./PaginationContent";
 export * from "./PaginationNav";
 export * from "./PaginationPerPage";
 

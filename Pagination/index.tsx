@@ -53,7 +53,7 @@ export function Pagination({ fetch, children, cursor: defaultCursor = DEFAULT_CU
 	}, [ cursor, fetch, perPage ]);
 
 	useEffect(function() {
-		refetch();
+		refetch(true);
 	}, [ cursor, fetch, perPage, refetch, total ]);
 	
 	useEffect(function() {

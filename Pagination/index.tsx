@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useState } from "react";
 
 export * from "./PaginationContent";
 export * from "./PaginationNav";
@@ -17,7 +17,10 @@ const PaginationContext = createContext<{
 	refetch(passive?: boolean): Promise<void>;
 		}>({} as any);
 
-export const usePagination = () => useContext(PaginationContext);
+export function usePagination<T>() {
+	const context = useContext(PaginationContext);
+	return context as typeof context & { data: T[] };
+}
 
 const DEFAULT_PER_PAGE = 10;
 const DEFAULT_CURSOR = 1;

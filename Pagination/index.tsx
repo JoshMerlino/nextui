@@ -49,7 +49,7 @@ export function Pagination({ fetch, children, cursor: defaultCursor = DEFAULT_CU
 				setData(data),
 				setTotal(total)
 			])
-			.finally(() => !passive && setLoading(false));
+			.finally(() => setLoading(false));
 	}, [ cursor, fetch, perPage ]);
 
 	useEffect(function() {

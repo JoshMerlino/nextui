@@ -40,4 +40,4 @@ export function XYWrapper({ children, trackWindow = false, fluidity = 0, allowCl
 		return () => target.removeEventListener("mousemove", mousemove);
 	}, [ mousemove, ref, trackWindow ]);
 	return <div ref={ ref } { ...props }>{children}</div>;
-};
+}

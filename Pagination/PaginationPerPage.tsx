@@ -13,7 +13,9 @@ export function PaginationPerPage({ amounts = [ 10, 25, 50, 100 ]}: Partial<{ am
 					setPerPage(parseInt(e.target.value)),
 					setCursor(Math.min(cursor, Math.ceil(total / parseInt(e.target.value)) * parseInt(e.target.value)))
 				] }
-				options={ amounts.map(a => a + "") }
+				options={ amounts
+					.filter((a, b, c) => total > a || total + perPage > c[b - 1])
+					.map(a => a + "") }
 				style={{ width: "32px" }}
 				type="select"
 				value={ perPage.toString() }

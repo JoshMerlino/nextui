@@ -10,4 +10,4 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 /**
  * Create a style tag with the given CSS.
  */
-export const css = (strings: TemplateStringsArray, ...values: any[]) => <style>{String.raw(strings, ...values)}</style>;
+export const css = (strings: TemplateStringsArray, ...values: Array<string | number>) => <style>{String.raw(strings, ...values)}</style>;

@@ -5,13 +5,7 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { usePagination } from ".";
 
 export function PaginationNav() {
-	const {
-		cursor: [ cursor, setCursor ],
-		loading: [ loading ],
-		perPage: [ perPage ],
-		total: [ total ],
-	} = usePagination();
-
+	const { cursor: [ cursor, setCursor ], loading: [ loading ], perPage: [ perPage ], total: [ total ] } = usePagination();
 	const rangeStart = Math.min(total, Math.max(cursor, 1));
 	const rangeEnd = Math.min(total, Math.max(cursor + perPage - 1, 1));
 	const nextCursor = Math.min(total, Math.max(cursor + perPage, 1));

@@ -1,80 +1,63 @@
-"use client";
+import { ClassValue } from "clsx";
+import { PropsWithChildren } from "react";
+import { PaginationClient } from "./Client";
+import { PaginationContent } from "./PaginationContent";
 
-import { useRouter } from "next/navigation";
-import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useContext, useEffect, useState } from "react";
+export { usePagination } from "./Client";
 
-export * from "./PaginationNav";
-export * from "./PaginationPerPage";
-
-const PaginationContext = createContext<{
+export async function Pagination<T>({
+	fetch,
+	renderRow,
+	className,
+	refetchInterval = -1,
+	name,
+	children,
+	cursor: _cursor,
+	perPage: _perPage,
+	searchParams = {}
+}: PropsWithChildren<{
+	renderRow({ data }: { data: T }): JSX.Element;
+	fetch(cursor: number, perPage: number): Promise<{ data: T[], total: number }>;
+	refetchInterval?: number;
 	name: string;
-	cursor: [number, Dispatch<SetStateAction<number>>];
-	perPage: [number, Dispatch<SetStateAction<number>>];
-	total: [number, Dispatch<SetStateAction<number>>];
-	loading: [boolean, Dispatch<SetStateAction<boolean>>];
-	data: any[];
-	refetch(passive?: boolean): Promise<void>;
-		}>({} as any);
-
-export function usePagination<T>() {
-	const context = useContext(PaginationContext);
-	return context as typeof context & { data: T[] };
-}
-
-const DEFAULT_PER_PAGE = 10;
-const DEFAULT_CURSOR = 1;
-
-export function Pagination({ fetch, children, cursor: defaultCursor = DEFAULT_CURSOR, perPage: defaultPerPage = DEFAULT_PER_PAGE, name, initialData = [], total: defaultTotal }: PropsWithChildren<Partial<{
-	cursor: number;
-	perPage: number;
-	total: number;
-}> & {
-	name: string,
-	initialData?: any[],
-	fetch(cursor: number, perPage: number): Promise<{ data: any[], total: number }>,
+	cursor?: number;
+	perPage?: number;
+	className?: ClassValue;
+	searchParams?: Record<string, string>;
 }>) {
 
-	const [ cursor, setCursor ] = useState(defaultCursor);
-	const [ data, setData ] = useState(initialData);
-	const [ loading, setLoading ] = useState(false);
-	const [ perPage, setPerPage ] = useState(defaultPerPage);
-	const [ total, setTotal ] = useState(defaultTotal || initialData.length);
-	const router = useRouter();
+	// Get the cursor and perPage from the search params or the arguments.
+	const cursor = (function() {
+		if (typeof _cursor === "number") return _cursor;
+		const cursor = Number(searchParams[[ name, "cursor" ].join("_")]);
+		if (isNaN(cursor)) return 1;
+		return cursor;
+	}());
 
-	const refetch = useCallback(async function refetch(passive = false) {
-		if (!passive) setLoading(true);
-		fetch(cursor, perPage)
-			.then(({ data, total }) => [
-				setData(data),
-				setTotal(total)
-			])
-			.finally(() => setLoading(false));
-	}, [ cursor, fetch, perPage ]);
+	const perPage = (function() {
+		if (typeof _perPage === "number") return _perPage;
+		const perPage = Number(searchParams[[ name, "perPage" ].join("_")]);
+		if (isNaN(perPage)) return 10;
+		return perPage;
+	}());
 
-	useEffect(function() {
-		refetch(true);
-	}, [ cursor, fetch, perPage, refetch, total ]);
+	// Fetch the data initial data during SSR.
+	const { data, total } = await fetch(cursor, perPage);
 	
-	useEffect(function() {
-		const url = new URL(window.location.href);
-		if (perPage !== DEFAULT_PER_PAGE) url.searchParams.set([ name, "perpage" ].join("_"), perPage.toString());
-		else url.searchParams.delete([ name, "perpage" ].join("_"));
-		if (cursor !== DEFAULT_CURSOR) url.searchParams.set([ name, "cursor" ].join("_"), cursor.toString());
-		else url.searchParams.delete([ name, "cursor" ].join("_"));
-		router.replace(url.toString(), { scroll: false });
-	}, [ cursor, name, perPage, router ]);
-
 	return (
-		<PaginationContext.Provider value={{
-			name,
-			data,
-			total: [ total, setTotal ],
-			perPage: [ perPage, setPerPage ],
-			cursor: [ cursor, setCursor ],
-			loading: [ loading, setLoading ],
-			refetch
-		}}>
-			{children}
-		</PaginationContext.Provider>
+		<PaginationClient
+			cursor={ cursor }
+			fetch={ fetch }
+			initialData={ data }
+			name={ name }
+			perPage={ perPage }
+			total={ total }>
+			{children || <PaginationContent
+				className={ className }
+				fetch={ fetch }
+				name={ name }
+				refetchInterval={ refetchInterval }
+				renderRow={ renderRow } />}
+		</PaginationClient>
 	);
 }

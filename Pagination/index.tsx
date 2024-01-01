@@ -6,25 +6,26 @@ import { PaginationContent } from "./PaginationContent";
 export { usePagination } from "./Client";
 
 export async function Pagination<T>({
-	fetch,
-	renderRow,
 	className,
-	refetchInterval = -1,
-	name,
 	children,
 	cursor: _cursor,
 	perPage: _perPage,
-	searchParams = {}
+	searchParams = {},
+	...props
 }: PropsWithChildren<{
 	renderRow({ data }: { data: T }): JSX.Element;
 	fetch(cursor: number, perPage: number): Promise<{ data: T[], total: number }>;
 	refetchInterval?: number;
+	refetchOnWindowFocus?: boolean;
 	name: string;
 	cursor?: number;
+	animate?: boolean;
 	perPage?: number;
 	className?: ClassValue;
 	searchParams?: Record<string, string>;
 }>) {
+
+	const { name, fetch } = props;
 
 	// Get the cursor and perPage from the search params or the arguments.
 	const cursor = (function() {
@@ -46,16 +47,14 @@ export async function Pagination<T>({
 	
 	return (
 		<PaginationClient
+			{ ...props }
 			cursor={ cursor }
-			fetch={ fetch }
 			initialData={ data }
-			name={ name }
 			perPage={ perPage }
 			total={ total }>
 			{children || <PaginationContent
 				className={ className }
-				refetchInterval={ refetchInterval }
-				renderRow={ renderRow } />}
+				{ ...props } />}
 		</PaginationClient>
 	);
 }

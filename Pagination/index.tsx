@@ -54,8 +54,6 @@ export async function Pagination<T>({
 			total={ total }>
 			{children || <PaginationContent
 				className={ className }
-				fetch={ fetch }
-				name={ name }
 				refetchInterval={ refetchInterval }
 				renderRow={ renderRow } />}
 		</PaginationClient>

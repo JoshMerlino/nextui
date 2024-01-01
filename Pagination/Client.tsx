@@ -17,7 +17,7 @@ const PaginationContext = createContext<{
 	
 	name: string;
 	data: unknown[];
-	refetch(options: { force?: boolean }): Promise<void>;
+	refetch(options?: { force?: boolean }): Promise<void>;
 
 		} | undefined>(undefined);
 

@@ -17,22 +17,38 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 		...passedProps,
 	};
 
-	const { refetchInterval = -1, renderRow: Row, className, animate } = props;
+	const { refetchInterval = -1, renderRow: Row, className, animate, refetchOnWindowFocus } = props;
 
 	const { data, refetch } = usePagination();
-	const interval = useRef<NodeJS.Timeout>();
+	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-	useEffect(() => {
-		const handleFocus = () => refetch();
+	// Set up the refetch interval
+	const setupRefetchInterval = useCallback(function() {
+		if (intervalRef.current) clearInterval(intervalRef.current);
+		if (refetchInterval > 0 && document.visibilityState === "visible") intervalRef.current = setInterval(refetch, refetchInterval);
+	}, [ refetchInterval, refetch ]);
+	
+	// Handle visibility change
+	const handleVisibilityChange = useCallback(function() {
+		if (document.visibilityState === "visible") return setupRefetchInterval();
+		if (intervalRef.current) clearInterval(intervalRef.current);
+	}, [ setupRefetchInterval ]);
+	
+	// Set up the focus event listener to refetch data when window gains focus
+	const handleFocus = useCallback(() => refetchOnWindowFocus && refetch(), [ refetchOnWindowFocus, refetch ]);
 
-		if (refetchInterval >= 0 && !interval.current) interval.current = setInterval(refetch, refetchInterval);
+	// Set up the refetch interval and the event listeners
+	useEffect(function() {
 		window.addEventListener("focus", handleFocus);
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+		setupRefetchInterval();
+
 		return () => {
 			window.removeEventListener("focus", handleFocus);
-			clearInterval(interval.current);
+			document.removeEventListener("visibilitychange", handleVisibilityChange);
+			if (intervalRef.current) clearInterval(intervalRef.current);
 		};
-		
-	}, [ refetch, refetchInterval ]);
+	}, [ refetch, handleVisibilityChange, setupRefetchInterval, handleFocus ]);
 
 	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
 		if (!animate) return children;

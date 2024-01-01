@@ -6,7 +6,6 @@ import { PaginationContent } from "./PaginationContent";
 export { usePagination } from "./Client";
 
 export async function Pagination<T>({
-	className,
 	children,
 	cursor: _cursor,
 	perPage: _perPage,
@@ -52,9 +51,7 @@ export async function Pagination<T>({
 			data={ data }
 			perPage={ perPage }
 			total={ total }>
-			{children || <PaginationContent
-				className={ className }
-				{ ...props } />}
+			{children || <PaginationContent />}
 		</PaginationClient>
 	);
 }

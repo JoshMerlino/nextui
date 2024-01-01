@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 import { Pagination } from ".";
 import { PaginationNav, PaginationPerPage, usePagination } from "./Client";
 
+type GetProps<T> = T extends React.ComponentType<infer P> | React.Component<infer P> ? P : never
+
 export function PaginationContent({ refetchInterval = -1, renderRow: Row, className }: Pick<GetProps<typeof Pagination>, "renderRow" | "refetchInterval" | "className">) {
 	const { data, refetch } = usePagination();
 	const interval = useRef<NodeJS.Timeout>();

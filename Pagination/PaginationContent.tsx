@@ -8,7 +8,17 @@ import { PaginationNav, PaginationPerPage, usePagination } from "./Client";
 
 type GetProps<T> = T extends React.ComponentType<infer P> | React.Component<infer P> ? P : never
 
-export function PaginationContent({ refetchInterval = -1, renderRow: Row, className, animate }: GetProps<typeof Pagination> & Pick<GetProps<typeof Pagination>, "renderRow" | "className">) {
+export function PaginationContent(passedProps: Partial<GetProps<typeof Pagination>>) {
+
+	const { inheritProps } = usePagination();
+	const props: GetProps<typeof Pagination> = {
+		refetchInterval: 0,
+		...inheritProps,
+		...passedProps,
+	};
+
+	const { refetchInterval = -1, renderRow: Row, className, animate } = props;
+
 	const { data, refetch } = usePagination();
 	const interval = useRef<NodeJS.Timeout>();
 

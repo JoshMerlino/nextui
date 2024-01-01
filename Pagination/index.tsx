@@ -49,7 +49,7 @@ export async function Pagination<T>({
 		<PaginationClient
 			{ ...props }
 			cursor={ cursor }
-			initialData={ data }
+			data={ data }
 			perPage={ perPage }
 			total={ total }>
 			{children || <PaginationContent

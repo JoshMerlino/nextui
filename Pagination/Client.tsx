@@ -3,20 +3,23 @@
 import { useRouter } from "next/navigation";
 import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Pagination } from ".";
 
 export * from "./PaginationNav";
 export * from "./PaginationPerPage";
 
 type Dispatchable<T> = [T, Dispatch<SetStateAction<T>>];
+type GetProps<T> = T extends React.ComponentType<infer P> | React.Component<infer P> ? P : never
 
 const PaginationContext = createContext<{
 	cursor: Dispatchable<number>
 	loading: Dispatchable<boolean>
 	perPage: Dispatchable<number>
 	total: Dispatchable<number>
-	
+
 	name: string;
 	data: unknown[];
+	inheritProps: GetProps<typeof Pagination>
 	refetch(options?: { force?: boolean }): Promise<void>;
 
 		} | undefined>(undefined);
@@ -30,24 +33,25 @@ export function usePagination<T>() {
 const DEFAULT_PER_PAGE = 10;
 const DEFAULT_CURSOR = 1;
 
-export function PaginationClient<T = unknown>({
-	fetch,
-	children,
-	cursor: defaultCursor = DEFAULT_CURSOR,
-	perPage: defaultPerPage = DEFAULT_PER_PAGE,
-	name,
-	initialData = [],
-	total: defaultTotal
-}: PropsWithChildren<Partial<{
-	cursor: number;
-	perPage: number;
-	total: number;
-}> & {
-	name: string,
-	initialData?: T[],
-	fetch(cursor: number, perPage: number): Promise<{ data: T[], total: number }>,
-}>) {
-
+export function PaginationClient<T = unknown>(props: PropsWithChildren<
+	GetProps<typeof Pagination> & {
+		cursor: number;
+		perPage: number;
+		total: number;
+		data: T[];
+	}
+	>) {
+	
+	const {
+		fetch,
+		children,
+		cursor: defaultCursor = DEFAULT_CURSOR,
+		perPage: defaultPerPage = DEFAULT_PER_PAGE,
+		name,
+		data: initialData = [],
+		total: defaultTotal
+	} = props;
+	
 	const [ cursor, setCursor ] = useState(defaultCursor);
 	const [ data, setData ] = useState(initialData);
 	const [ loading, setLoading ] = useState(false);
@@ -66,7 +70,7 @@ export function PaginationClient<T = unknown>({
 		setLoading(true);
 		await fetch(cursor, perPage)
 			.then(({ data, total }) => [
-				setData(data),
+				setData(data as T[]),
 				setTotal(total)
 			])
 			.finally(() => setLoading(false));
@@ -98,6 +102,7 @@ export function PaginationClient<T = unknown>({
 		<PaginationContext.Provider value={{
 			name,
 			data,
+			inheritProps: props,
 			total: [ total, setTotal ],
 			perPage: [ perPage, setPerPage ],
 			cursor: [ cursor, setCursor ],

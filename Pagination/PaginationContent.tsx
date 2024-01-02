@@ -10,22 +10,20 @@ type GetProps<T> = T extends React.ComponentType<infer P> | React.Component<infe
 
 export function PaginationContent(passedProps: Partial<GetProps<typeof Pagination>>) {
 
-	const { inheritProps } = usePagination();
+	const { inheritProps, data, refetch } = usePagination();
 	const props: GetProps<typeof Pagination> = {
-		refetchInterval: 0,
+		refetchInterval: -1,
 		...inheritProps,
 		...passedProps,
 	};
 
 	const { refetchInterval = -1, renderRow: Row, className, animate, refetchOnWindowFocus } = props;
-
-	const { data, refetch } = usePagination();
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Set up the refetch interval
 	const setupRefetchInterval = useCallback(function() {
 		if (intervalRef.current) clearInterval(intervalRef.current);
-		if (refetchInterval > 0 && document.visibilityState === "visible") intervalRef.current = setInterval(refetch, refetchInterval);
+		if (refetchInterval > 0 && document.visibilityState === "visible") intervalRef.current = setInterval(() => refetch({ passive: true }), refetchInterval);
 	}, [ refetchInterval, refetch ]);
 	
 	// Handle visibility change
@@ -48,7 +46,7 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 			document.removeEventListener("visibilitychange", handleVisibilityChange);
 			if (intervalRef.current) clearInterval(intervalRef.current);
 		};
-	}, [ refetch, handleVisibilityChange, setupRefetchInterval, handleFocus ]);
+	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
 
 	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
 		if (!animate) return children;

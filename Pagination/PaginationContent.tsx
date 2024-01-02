@@ -47,11 +47,14 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 			if (intervalRef.current) clearInterval(intervalRef.current);
 		};
 	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
+	
+	// This is a hackish way for deep equality checking in a dependency array.
+	const stringData = JSON.stringify(data);
 
 	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
 		if (!animate) return children;
-		return <AdjustableHeight deps={ [ JSON.stringify(data) ] }>{ children }</AdjustableHeight>;
-	}, [ animate, data ]);
+		return <AdjustableHeight deps={ [ stringData ] }>{ children }</AdjustableHeight>;
+	}, [ animate, stringData ]);
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -61,9 +64,11 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 				</div>
 				<AnimateWrapper>
 					<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>
-						{ data.map((data, key) => <Row
-							data={ data }
-							key={ key } />) }
+						{ data.map((data, key) => (
+							<Row
+								data={ data }
+								key={ (data && typeof data === "object" && "id" in data && (typeof data.id === "string" || typeof data.id === "number")) ? data.id : key } />
+						)) }
 					</ul>
 				</AnimateWrapper>
 			</div>

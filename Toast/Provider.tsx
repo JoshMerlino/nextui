@@ -109,14 +109,14 @@ export function ToastProvider({ children }: PropsWithChildren) {
 	function pushByOptions(opts: ToastOpts) {
 		push((
 			<Toast icon={ opts.icon } iconColor={ opts.iconColor as Color }>
-				{opts.title ? (
+				{ opts.title ? (
 					<div>
-						<h1>{opts.title}</h1>
-						<p>{opts.message}</p>
+						<h1>{ opts.title }</h1>
+						<p>{ opts.message }</p>
 					</div>
 				) : (
-					<span>{opts.message}</span>
-				)}
+					<span>{ opts.message }</span>
+				) }
 			</Toast>), opts
 		);
 	}
@@ -156,16 +156,16 @@ export function ToastProvider({ children }: PropsWithChildren) {
 		<div className="fixed inset-0 z-30 pointer-events-none">
 			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse [&>*]:pointer-events-auto overflow-visible">
 				
-				{/* Toasts */}
-				{Object.keys(state).map(key => <div key={ key }>
-					<Dismissible { ...state[key].options } onDismiss={ () => dismiss(key) }>{state[key].node}</Dismissible>
-				</div>)}
+				{ /* Toasts */ }
+				{ Object.keys(state).map(key => <div key={ key }>
+					<Dismissible { ...state[key].options } onDismiss={ () => dismiss(key) }>{ state[key].node }</Dismissible>
+				</div>) }
 
 			</div>
 		</div>
 
-		{/* Children */}
-		{children}
+		{ /* Children */ }
+		{ children }
 			
 	</ToastContext.Provider>;
 }

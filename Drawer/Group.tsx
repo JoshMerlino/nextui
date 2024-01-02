@@ -31,8 +31,8 @@ export function DrawerGroup({ children, defaultExpanded, title, ...props }: Prop
 	
 	return (
 		<div className="group/expandable">
-			<DrawerItem { ...props } onClick={ toggle }>{title}</DrawerItem>
-			<ul className={ cn("group expandable-content overflow-hidden ml-8 transition-[height] [&>li]:py-2", isExpanded ? "max-h-full" : "max-h-0") }>{children}</ul>
+			<DrawerItem { ...props } onClick={ toggle }>{ title }</DrawerItem>
+			<ul className={ cn("group expandable-content overflow-hidden ml-8 transition-[height] [&>li]:py-2", isExpanded ? "max-h-full" : "max-h-0") }>{ children }</ul>
 		</div>
 	);
 }

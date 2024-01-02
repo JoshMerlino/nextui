@@ -59,19 +59,20 @@ export default function ExpandableGroup({
 	return (
 		<div className="flex flex-col bg-inherit isolate">
 			<div className={ cn("overflow-y-hidden relative bg-inherit transition-[padding]", !buttonHidden && "mask") } style={{ paddingBottom: (isExpanded && !buttonHidden) ? shadowSize : 0 }}>
-				<style>{`.mask{
+				<style>{ `.mask{
 				-webkit-mask-image: -webkit-linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
 				mask-image: linear-gradient(top,black 0%, black calc(100% - ${ shadowSize }px), transparent 100%);
-				}`}</style>
+				}` }</style>
 				<AdjustableHeight deps={ [ height ] }>
-					<div className="-mb-4 pb-4" ref={ ref } style={{ maxHeight: height }}>{children}</div>
+					<div className="-mb-4 pb-4" ref={ ref } style={{ maxHeight: height }}>{ children }</div>
 				</AdjustableHeight>
 			</div>
-			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10") } style={{
-				marginTop: (isExpanded || buttonHidden) ? -shadowSize : 0,
-				paddingTop: (isExpanded || buttonHidden) ? gap : 0,
-				opacity: buttonHidden ? 0 : 1
-			}}>
+			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10") }
+				style={{
+					marginTop: (isExpanded || buttonHidden) ? -shadowSize : 0,
+					paddingTop: (isExpanded || buttonHidden) ? gap : 0,
+					opacity: buttonHidden ? 0 : 1
+				}}>
 				<Button
 					isExpanded={ isExpanded }
 					onClick={ toggle } />

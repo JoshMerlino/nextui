@@ -69,34 +69,34 @@ export function ScrollSpy({ contents, htmlFor }: { contents: ScrollSpyProps[]; h
 
 	return (
 		<ul className="text-gray-700 text-sm flex flex-col gap-2 -mt-2">
-			{contents.map(({ title, href, children }, key) => (
+			{ contents.map(({ title, href, children }, key) => (
 				<li className={ cn((!children?.some(child => child.children) || key === 0) && "mt-2") } key={ key }>
-					<Link className={ cn("transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`) || children?.some(a => a.children?.some(a => a.href === `#${ activeHref }`))) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{title}</Link>
-					{children && (
+					<Link className={ cn("transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`) || children?.some(a => a.children?.some(a => a.href === `#${ activeHref }`))) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{ title }</Link>
+					{ children && (
 						<ul className={ cn("flex flex-col", children.some(child => child.children) && "") }>
-							{children.map(({ title, href, children }, key) => (
+							{ children.map(({ title, href, children }, key) => (
 								<li className="mt-1" key={ key }>
 									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", key === 0 && "mt-1", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 										<MdKeyboardArrowRight className="mr-2 text-gray-400 overflow-visible group-hover:text-gray-600 dark:text-gray-600 dark:group-hover:text-gray-500" />
-										{title}
+										{ title }
 									</Link>
-									{children && (
+									{ children && (
 										<ul className="pt-1">
-											{children.map(({ title, href }, key) => (
+											{ children.map(({ title, href }, key) => (
 												<li className="ml-4" key={ key }>
 													<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1.5 pl-4 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
-														{title}
+														{ title }
 													</Link>
 												</li>
-											))}
+											)) }
 										</ul>
-									)}
+									) }
 								</li>
-							))}
+							)) }
 						</ul>
-					)}
+					) }
 				</li>
-			))}
+			)) }
 		</ul>
 	);
 }

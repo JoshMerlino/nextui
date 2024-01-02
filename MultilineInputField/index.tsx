@@ -97,7 +97,7 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg h-full") }>
 			<label className={ cn(wrapper) } htmlFor={ props.id } ref={ ref }>
-				{label && <p className={ cn(labelStyles) }>{label}</p>}
+				{ label && <p className={ cn(labelStyles) }>{ label }</p> }
 				<textarea
 					className={ cn(input) }
 					{ ...props }

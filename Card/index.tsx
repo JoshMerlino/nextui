@@ -43,5 +43,5 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 
 	];
 
-	return <div className={ cn(classlist) } { ...props }>{children}</div>;
+	return <div className={ cn(classlist) } { ...props }>{ children }</div>;
 }

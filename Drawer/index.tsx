@@ -39,7 +39,7 @@ export function Drawer({ children, className, state: [ open ], ...props }: Props
 	return (
 		<aside className={ cn(classes) } { ...props }>
 			<ul className="h-full py-3 flex flex-col">
-				{children}
+				{ children }
 			</ul>
 		</aside>
 	);

@@ -57,15 +57,15 @@ export function Toast({ children, className, iconColor = "primary", icon: Icon }
 	return (
 		<div className={ cn(notification) }>
 
-			{/* Icon */}
-			{Icon && (
+			{ /* Icon */ }
+			{ Icon && (
 				<div className={ cn(iconClass) }>
 					<Icon className="text-xl text-inherit" />
 				</div>
-			)}
+			) }
 
-			{/* Content */}
-			<div className="flex gap-1 sm:gap-4 px-1 [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap [&>div]:grow [&>div]:flex [&>div]:flex-col [&>div]:gap-1">{children}</div>
+			{ /* Content */ }
+			<div className="flex gap-1 sm:gap-4 px-1 [&_button]:ml-auto [&_button]:shrink-0 grow [&_p]:text-sm [&_p]:text-gray-400 [&_h1]:-mb-1 [&_p]:whitespace-normal [&_p]:grow flex-nowrap items-center sm:flex-wrap [&>div]:grow [&>div]:flex [&>div]:flex-col [&>div]:gap-1">{ children }</div>
 
 		</div>
 	);

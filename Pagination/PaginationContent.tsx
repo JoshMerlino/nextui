@@ -50,7 +50,7 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 
 	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
 		if (!animate) return children;
-		return <AdjustableHeight deps={ [ JSON.stringify(data) ] }>{children}</AdjustableHeight>;
+		return <AdjustableHeight deps={ [ JSON.stringify(data) ] }>{ children }</AdjustableHeight>;
 	}, [ animate, data ]);
 
 	return (
@@ -61,9 +61,9 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 				</div>
 				<AnimateWrapper>
 					<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>
-						{data.map((data, key) => <Row
+						{ data.map((data, key) => <Row
 							data={ data }
-							key={ key } />)}
+							key={ key } />) }
 					</ul>
 				</AnimateWrapper>
 			</div>

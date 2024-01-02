@@ -27,5 +27,5 @@ export function AdjustableHeight({ children, deps = []}: PropsWithChildren<{ dep
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, deps);
 
-	return <div className="transition-[height] bg-inherit" ref={ wrapperRef }>{children}</div>;
+	return <div className="transition-[height] bg-inherit" ref={ wrapperRef }>{ children }</div>;
 }

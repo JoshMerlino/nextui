@@ -39,5 +39,5 @@ export function XYWrapper({ children, trackWindow = false, fluidity = 0, allowCl
 		target.addEventListener("mousemove", mousemove);
 		return () => target.removeEventListener("mousemove", mousemove);
 	}, [ mousemove, ref, trackWindow ]);
-	return <div ref={ ref } { ...props }>{children}</div>;
+	return <div ref={ ref } { ...props }>{ children }</div>;
 }

@@ -51,7 +51,7 @@ export async function Pagination<T>({
 			data={ data }
 			perPage={ perPage }
 			total={ total }>
-			{children || <PaginationContent />}
+			{ children || <PaginationContent /> }
 		</PaginationClient>
 	);
 }

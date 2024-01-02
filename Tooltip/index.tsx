@@ -60,8 +60,8 @@ export function Tooltip({ tooltip, anchor = "top", children, className, element 
 
 	return (
 		<div className={ cn(classes) }>
-			{children}
-			{element ? <div className={ cn(tooltipClasses) }>{element}</div> : <div className={ cn(tooltipClasses, "h-6 px-2 text-xs font-medium text-white rounded-md select-none bg-neutral-500 dark:bg-neutral-700 whitespace-nowrap pointer-events-none") }>{tooltip}</div>}
+			{ children }
+			{ element ? <div className={ cn(tooltipClasses) }>{ element }</div> : <div className={ cn(tooltipClasses, "h-6 px-2 text-xs font-medium text-white rounded-md select-none bg-neutral-500 dark:bg-neutral-700 whitespace-nowrap pointer-events-none") }>{ tooltip }</div> }
 		</div>
 	);
 }

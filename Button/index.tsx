@@ -141,19 +141,19 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 	return (
 		<button { ...props } className={ cn(classes) }>
 
-			{/* Ripple */}
-			{(props.disabled || disableRipple) ? null : <Ripple className={ ripple } />}
+			{ /* Ripple */ }
+			{ (props.disabled || disableRipple) ? null : <Ripple className={ ripple } /> }
 			
-			{/* Icon */}
+			{ /* Icon */ }
 			{ (!!Icon && iconPosition === "before" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
+			{ (loading && iconPosition === "before") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } /> }
 			
-			{/* Children */}
-			{children}
+			{ /* Children */ }
+			{ children }
 
-			{/* Icon */}
+			{ /* Icon */ }
 			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={ cn("shrink-0", size === "md:large" ? "md:text-2xl" : size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } />}
+			{ (loading && iconPosition === "after") && <Spinner className={ cn(size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } /> }
 			
 		</button>
 	);

@@ -16,7 +16,7 @@ export function PaginationNav() {
 		<div className="flex gap-4">
 			<span className="text-sm text-gray-700 dark:text-gray-400">
 				<span className="hidden sm:inline">Showing </span>
-				<span className="font-semibold text-gray-900 dark:text-white">{rangeStart}</span> to <span className="font-semibold text-gray-900 dark:text-white">{rangeEnd}</span> of <span className="font-semibold text-gray-900 dark:text-white">{total}</span>
+				<span className="font-semibold text-gray-900 dark:text-white">{ rangeStart }</span> to <span className="font-semibold text-gray-900 dark:text-white">{ rangeEnd }</span> of <span className="font-semibold text-gray-900 dark:text-white">{ total }</span>
 				<span className="hidden sm:inline"> Entries</span>
 			</span>
 			<div className="flex gap-2 items-center">
@@ -30,7 +30,7 @@ export function PaginationNav() {
 				</button>
 
 				<span className={ "text-sm text-gray-700 dark:text-gray-400" }>
-					Page <span className="font-semibold text-gray-900 dark:text-white">{currentPage}</span>
+					Page <span className="font-semibold text-gray-900 dark:text-white">{ currentPage }</span>
 				</span>
 
 				<button

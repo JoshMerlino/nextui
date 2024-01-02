@@ -102,10 +102,10 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 					type="checkbox"
 					{ ...props } />
 				<label className={ cn(thumb) } htmlFor={ props.id }>
-					{icon}
+					{ icon }
 				</label>
 			</div>
-			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}
+			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }
 		</div>
 	);
 }

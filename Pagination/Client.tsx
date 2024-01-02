@@ -108,7 +108,7 @@ export function PaginationClient<T = unknown>(props: PropsWithChildren<
 			loading: [ loading, setLoading ],
 			refetch
 		}}>
-			{children}
+			{ children }
 		</PaginationContext.Provider>
 	);
 }

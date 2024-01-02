@@ -320,27 +320,27 @@ export function InputField({ color = "primary", className, size = "dense", label
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
 				<input className={ cn(input, className) } { ...props } />
-				{label && <p className={ cn(labelStyles) }>{label}</p>}
+				{ label && <p className={ cn(labelStyles) }>{ label }</p> }
 				
-				{/* Toggle password visibility */}
-				{props.type === "password" && (
+				{ /* Toggle password visibility */ }
+				{ props.type === "password" && (
 					<button className={ cn(button, "hover:opacity-50 group-focus-within/wrapper:opacity-100 opacity-0 focus-within:bg-black/10 dark:focus-within:bg-white/20") } onClick={ () => setPasswordVisible(a => !a) } type="button">
 						<Ripple className="bg-black dark:bg-white" emitFromCenter />
 						{ passwordVisible ? <MdVisibilityOff /> : <MdVisibility /> }
 					</button>
-				)}
+				) }
 
-				{/* Select dropdown arrow */}
-				{props.type === "select" && (
+				{ /* Select dropdown arrow */ }
+				{ props.type === "select" && (
 					<div className={ cn(button, "pointer-events-none select-none") }>
 						<MdArrowDropDown />
 					</div>
-				)}
+				) }
 
 			</label>
 			
-			{/* Select dropdown */}
-			{props.type === "select" && (
+			{ /* Select dropdown */ }
+			{ props.type === "select" && (
 				<dialog
 					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] bg-transparent focus-within:outline-0 -mx-[1px] top-full", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
 					onMouseDown={ e => e.preventDefault() }
@@ -349,20 +349,20 @@ export function InputField({ color = "primary", className, size = "dense", label
 					<Card className={ cn(dropdownCard) }>
 						<ul className="flex flex-col py-2">
 							
-							{/* Dropdown options */}
-							{options?.map((option, key) => (
+							{ /* Dropdown options */ }
+							{ options?.map((option, key) => (
 								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50", option.disabled && "pointer-events-none opacity-50") }
 									key={ key }
 									onClick={ () => !option.disabled && setValue(option.value, key) }>
-									{!option.disabled && <Ripple className="bg-black/50 dark:bg-white/50" />}
-									{option.value}
+									{ !option.disabled && <Ripple className="bg-black/50 dark:bg-white/50" /> }
+									{ option.value }
 								</li>
-							))}
+							)) }
 						
 						</ul>
 					</Card>
 				</dialog>
-			)}
+			) }
 
 		</div>
 	);

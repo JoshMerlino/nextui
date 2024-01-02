@@ -71,7 +71,7 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 					{ ...props } />
 				<label className={ cn(nipple) } htmlFor={ props.id } />
 			</div>
-			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}
+			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }
 		</div>
 	);
 }

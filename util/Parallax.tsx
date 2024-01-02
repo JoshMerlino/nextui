@@ -32,7 +32,7 @@ export function Parallax({ children, className, htmlFor, scale = 1 / 2, blur = f
 	return (
 		<div className={ cn("overflow-hidden flex items-center", className) } { ...props }>
 			<div className="transform-gpu" ref={ ref }>
-				{children}
+				{ children }
 			</div>
 		</div>
 	);

@@ -80,7 +80,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 					{ props.indeterminate ? <MdRemove /> : <MdCheck /> }
 				</div>
 			</div>
-			{children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{children}</label>}
+			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }
 		</div>
 	);
 }

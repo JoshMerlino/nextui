@@ -54,7 +54,8 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
 		if (!animate) return children;
 		return <AdjustableHeight deps={ [ stringData ] }>{ children }</AdjustableHeight>;
-	}, [ animate, stringData ]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- this is intentional to prevent unnecessary re-renders
+	}, [ animate ]);
 
 	return (
 		<div className="flex flex-col gap-4">

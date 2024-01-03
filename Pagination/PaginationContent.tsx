@@ -1,8 +1,7 @@
 "use client";
 
 import { cn } from "nextui/util";
-import { AdjustableHeight } from "nextui/util/AdjustableHeight";
-import { PropsWithChildren, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Pagination } from ".";
 import { PaginationNav, PaginationPerPage, usePagination } from "./Client";
 
@@ -17,7 +16,9 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 		...passedProps,
 	};
 
-	const { refetchInterval = -1, renderRow: Row, className, animate, refetchOnWindowFocus } = props;
+	// eslint-disable-next-line react/prop-types
+	const { refetchInterval = -1, renderRow: Row, className, refetchOnWindowFocus } = props;
+	
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Set up the refetch interval
@@ -49,13 +50,12 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
 	
 	// This is a hackish way for deep equality checking in a dependency array.
-	const stringData = JSON.stringify(data);
+	// const stringData = JSON.stringify(data);
 
-	const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
-		if (!animate) return children;
-		return <AdjustableHeight deps={ [ stringData ] }>{ children }</AdjustableHeight>;
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- this is intentional to prevent unnecessary re-renders
-	}, [ animate ]);
+	// const AnimateWrapper = useCallback(function({ children }: PropsWithChildren) {
+	// 	if (!animate) return children;
+	// 	return <AdjustableHeight deps={ [ stringData ] }>{ children }</AdjustableHeight>;
+	// }, [ animate, stringData ]);
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -63,15 +63,15 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 				<div className="rounded-t-lg bg-gray-200 dark:bg-gray-700/50 px-4 py-2.5 flex justify-end">
 					<PaginationNav />
 				</div>
-				<AnimateWrapper>
-					<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>
-						{ data.map((data, key) => (
-							<Row
-								data={ data }
-								key={ (data && typeof data === "object" && "id" in data && (typeof data.id === "string" || typeof data.id === "number")) ? data.id : key } />
-						)) }
-					</ul>
-				</AnimateWrapper>
+				{ /* <AnimateWrapper> */ }
+				<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>
+					{ data.map((data, key) => (
+						<Row
+							data={ data }
+							key={ (data && typeof data === "object" && "id" in data && (typeof data.id === "string" || typeof data.id === "number")) ? data.id : key } />
+					)) }
+				</ul>
+				{ /* </AnimateWrapper> */ }
 			</div>
 			<div className="flex flex-wrap items-center justify-between sm:-my-4">
 				<PaginationNav />

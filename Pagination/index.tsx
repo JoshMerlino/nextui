@@ -18,7 +18,6 @@ export async function Pagination<T>({
 	refetchOnWindowFocus?: boolean;
 	name: string;
 	cursor?: number;
-	animate?: boolean;
 	perPage?: number;
 	className?: ClassValue;
 	searchParams?: Record<string, string>;

@@ -51,7 +51,7 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-col mb-0 -mx-4 -mt-4 border-b sm:-mx-6 sm:-mt-6 sm:mb-2 border-gray-200/50 dark:border-gray-600/50">
+			<div className={ cn((data.length > 0) && "border-b", "flex flex-col mb-0 -mx-4 -mt-4 sm:-mx-6 sm:-mt-6 sm:mb-2 border-gray-200/50 dark:border-gray-600/50") }>
 				<div className="rounded-t-lg bg-gray-200 dark:bg-gray-700/50 px-4 py-2.5 flex justify-end">
 					<PaginationNav />
 				</div>

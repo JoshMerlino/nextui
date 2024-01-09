@@ -56,20 +56,20 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 	// Record of classnames to apply based on props
 	const classes: ClassValue[] = [
 
-		// Custom class
-		className,
-
+		
 		// Base class
 		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center",
-
+		
 		// Size classes
 		{
 			"px-4 h-9 py-1 text-sm": true,
 			"px-3 h-7 py-0.5 text-xs": size === "small",
 			"md:px-6 md:h-11 md:py-2 md:text-base": size === "md:large",
 			"px-6 h-11 py-2 text-base": size === "large",
-		}
-
+		},
+		
+		// Custom class
+		className
 	];
 
 	// Classes for the ripple effect

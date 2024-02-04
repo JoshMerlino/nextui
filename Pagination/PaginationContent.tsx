@@ -48,6 +48,9 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 			if (intervalRef.current) clearInterval(intervalRef.current);
 		};
 	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
+	
+	// eslint-disable-next-line react/prop-types
+	console.log(props.rowProps);
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -58,6 +61,8 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 				<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>
 					{ data.map((data, key) => (
 						<Row
+							// eslint-disable-next-line react/prop-types
+							{ ...props.rowProps }
 							data={ data }
 							key={ (data && typeof data === "object" && "id" in data && (typeof data.id === "string" || typeof data.id === "number")) ? data.id : key } />
 					)) }

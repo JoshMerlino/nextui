@@ -16,7 +16,7 @@ const PaginationContext = createContext<{
 	loading: Dispatchable<boolean>
 	perPage: Dispatchable<number>
 	total: Dispatchable<number>
-
+	rowProps?: Record<string, unknown>,
 	name: string;
 	data: unknown[];
 	inheritProps: GetProps<typeof Pagination>
@@ -49,7 +49,8 @@ export function PaginationClient<T = unknown>(props: PropsWithChildren<
 		perPage: defaultPerPage = DEFAULT_PER_PAGE,
 		name,
 		data: initialData = [],
-		total: defaultTotal
+		total: defaultTotal,
+		rowProps,
 	} = props;
 	
 	const [ cursor, setCursor ] = useState(defaultCursor);
@@ -101,6 +102,7 @@ export function PaginationClient<T = unknown>(props: PropsWithChildren<
 		<PaginationContext.Provider value={{
 			name,
 			data,
+			rowProps,
 			inheritProps: props,
 			total: [ total, setTotal ],
 			perPage: [ perPage, setPerPage ],

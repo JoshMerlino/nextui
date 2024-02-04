@@ -9,10 +9,12 @@ export async function Pagination<T>({
 	children,
 	cursor: _cursor,
 	perPage: _perPage,
+	rowProps = {},
 	searchParams = {},
 	...props
 }: PropsWithChildren<{
 	renderRow({ data }: { data: T }): JSX.Element;
+	rowProps?: Record<string, unknown>;
 	fetch(cursor: number, perPage: number): Promise<{ data: T[], total: number }>;
 	refetchInterval?: number;
 	refetchOnWindowFocus?: boolean;
@@ -49,6 +51,7 @@ export async function Pagination<T>({
 			cursor={ cursor }
 			data={ data }
 			perPage={ perPage }
+			rowProps={ rowProps }
 			total={ total }>
 			{ children || <PaginationContent /> }
 		</PaginationClient>

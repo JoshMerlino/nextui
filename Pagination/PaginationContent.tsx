@@ -48,9 +48,6 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 			if (intervalRef.current) clearInterval(intervalRef.current);
 		};
 	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
-	
-	// eslint-disable-next-line react/prop-types
-	console.log(props.rowProps);
 
 	return (
 		<div className="flex flex-col gap-4">

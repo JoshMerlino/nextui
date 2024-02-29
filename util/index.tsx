@@ -47,7 +47,6 @@ export function rgba(hex: string, alpha: string | number) {
  * @returns {number} Contrast value
  */
 export function contrast(hex: string) {
-	if (hex.length === 4) hex = hex.replace(/./g, "$&$&");
-	const [ r, g, b ] = hex.match(/\w\w/g)!.map(c => parseInt(c, 16));
+	const { r, g, b } = rgb(hex);
 	return (r * 299 + g * 587 + b * 114) / 1000;
 }

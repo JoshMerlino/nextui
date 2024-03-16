@@ -1,5 +1,5 @@
 import { ClassValue } from "clsx";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, forwardRef } from "react";
 import { cn } from "../util";
 
 export { CardActions } from "./Actions";
@@ -14,7 +14,7 @@ interface Props {
 
 }
 
-export function Card({ children, className, variant = "raised", ...props }: HTMLAttributes<HTMLDivElement> & Props) {
+export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivElement>>(function Card({ children, className, variant = "raised", ...props }: HTMLAttributes<HTMLDivElement> & Props, ref) {
 
 	// Generate classlist
 	const classlist: ClassValue[] = [
@@ -43,5 +43,5 @@ export function Card({ children, className, variant = "raised", ...props }: HTML
 
 	];
 
-	return <div className={ cn(classlist) } { ...props }>{ children }</div>;
-}
+	return <div className={ cn(classlist) } { ...props } ref={ref}>{ children }</div>;
+})

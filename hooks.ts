@@ -19,6 +19,7 @@ export function useResize(handler: () => (void | unknown), additionalDeps?: Depe
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ handler, ...additionalDeps ?? [] ]);
 }
+
 export function useInterval(cb: () => void, delay: number) {
 	useEffect(function() {
 		const interval = setInterval(cb, delay);

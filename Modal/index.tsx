@@ -53,6 +53,7 @@ export function Modal({ children, renderContents = false, closeOnBlur = true, bi
 
 	// Get a reference to the dialog element
 	const ref = useRef<HTMLDialogElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
 	// Hook into open prop
 	const [ isOpen, setIsOpen ] = useState(state === true);
@@ -71,10 +72,10 @@ export function Modal({ children, renderContents = false, closeOnBlur = true, bi
 		if (!element) return;
 
 		function onClick(event: MouseEvent) {
-			if (!element || !element.open) return;
+			if (!element || !element.open || !contentRef.current) return;
 
 			// Get dialog bounds
-			const { top, left, width, height } = element.getBoundingClientRect();
+			const { top, left, width, height } = contentRef.current.getBoundingClientRect();
 
 			// If click is inside of dialog
 			if (event.clientX >= left && event.clientX <= left + width && event.clientY >= top && event.clientY <= top + height) return;
@@ -128,8 +129,17 @@ export function Modal({ children, renderContents = false, closeOnBlur = true, bi
 	const contentVisable = useDialogContent(isOpen);
 
 	return (
-		<dialog className={ cn("p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center flex", isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none") } ref={ ref } { ...props }>
-			<Card className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
+		<dialog 
+		className={ cn([
+			"p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center flex", 
+			isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur-xl" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none",
+			"h-full flex items-center"
+			]) } 
+			ref={ ref } 
+			{ ...props }>
+			<Card 
+			ref={contentRef}
+			className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }>
 				{ (contentVisable || renderContents) && children }
 			</Card>
 		</dialog>

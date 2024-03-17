@@ -24,13 +24,22 @@ interface Props {
 	 * Which content this toolbar is for. When that content begins scrolling, it will elevate the toolbar
 	 */
 	htmlFor?: string;
+
+	/**
+	 * If the toolbar should be elevated on scroll
+	 * @default false
+	 */
+	elevate?: boolean;
 	
 }
 
-export function Toolbar({ children, glassmorphism = true, className, raised = false, htmlFor }: HTMLAttributes<HTMLElement> & Partial<Props>) {
+export function Toolbar({ children, glassmorphism = true, className, raised: defaultRaised = false, htmlFor, elevate = false }: HTMLAttributes<HTMLElement> & Partial<Props>) {
 
 	// If the toolbar should be elevated
-	const [ elevate, setElevate ] = useState(raised);
+	const [ raised, setRaised ] = useState(defaultRaised);
+	
+	// Bind defaultRaised changes
+	useEffect(() => setRaised(defaultRaised), [ defaultRaised ]);
 
 	// When the content scrolls, elevate the toolbar
 	useEffect(function() {
@@ -42,15 +51,15 @@ export function Toolbar({ children, glassmorphism = true, className, raised = fa
 
 		// When the content scrolls, elevate the toolbar
 		function onScroll() {
-			if (!content) return;
-			setElevate(content.scrollTop > 0);
+			if (!content || !elevate) return;
+			setRaised(content.scrollTop > 0);
 		}
 
 		// Add the event listener
 		content.addEventListener("scroll", onScroll);
 		() => content.removeEventListener("scroll", onScroll);
 		
-	}, [ htmlFor ]);
+	}, [ elevate, htmlFor ]);
 
 	// Toolbar styles
 	const classes: ClassValue = [
@@ -62,7 +71,7 @@ export function Toolbar({ children, glassmorphism = true, className, raised = fa
 		glassmorphism ? "backdrop-blur-lg bg-white/50 dark:bg-gray-950/50" : "bg-white dark:bg-gray-800",
 
 		// Raised
-		(raised || elevate) ? "shadow-lg" : "shadow-none",
+		raised ? "shadow-lg" : "shadow-none",
 
 		// User classes
 		className,

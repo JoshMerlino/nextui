@@ -39,6 +39,7 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 	const ref = useRef<HTMLDivElement>(null);
 	const backdropRef = useRef<HTMLDivElement>(null);
 	const toolbarRef = useRef<HTMLDivElement>(null);
+	const beforeWrapperRef = useRef<HTMLDivElement>(null);
 
 	useEffect(function() {
 		if (!ref.current) return;
@@ -46,7 +47,7 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 		// See if the element is scrolled
 		function onScroll() {
 			if (!ref.current) return;
-			if (ref.current.scrollTop > 0) setRaised(true);
+			if (ref.current.scrollTop > (beforeWrapperRef.current?.clientHeight ?? 0)) setRaised(true);
 			else if (raised) setRaised(false);
 		}
 
@@ -73,10 +74,10 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 	}, [ backdrop, backdropRef, toolbarRef ]);
 
 	return (
-		<div className="absolute inset-0 flex flex-col bg-inherit isolate overflow-y-auto overflow-x-hidden min-h-full" id={ id } ref={ ref }>
+		<div className="absolute inset-0 flex flex-col min-h-full overflow-x-hidden overflow-y-auto bg-inherit isolate" id={ id } ref={ ref }>
 			<div className="sticky z-10 isolate" ref={ backdropRef }>
 				{ backdrop }
-				<div className="relative">
+				<div className="relative" ref={ beforeWrapperRef }>
 					{ before }
 				</div>
 				<div className="sticky top-0 z-30" ref={ toolbarRef }>{ toolbar }</div>

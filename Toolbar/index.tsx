@@ -65,7 +65,7 @@ export function Toolbar({ children, glassmorphism = true, className, raised: def
 	const classes: ClassValue = [
 
 		// Base class
-		"min-h-[64px] transition-[box-shadow,background-color,color] flex items-center z-50 max-w-full",
+		"min-h-[64px] transition-[box-shadow,background-color,border-color] flex items-center z-50 max-w-full",
 
 		// Glassmorphism
 		glassmorphism ? "backdrop-blur-lg dark:shadow-black/30" : "bg-gray-50 dark:bg-gray-900",

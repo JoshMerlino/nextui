@@ -10,7 +10,7 @@ export function Icon({ icon: Icon, className, ...props }: { icon: IconType; } & 
 		<button { ...props } 
 		className={ cn([
 			"rounded-full select-none p-0.5 shrink-0 overflow-hidden w-12 aspect-square relative",
-			"onClick" in props && "hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5 focus:border active:border-transparent border-black/10 dark:border-white/10",
+			"onClick" in props && "hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:border active:border-transparent border-black/10 dark:border-white/10",
 			className
 		]) } 
 		tabIndex={ "onClick" in props ? 0 : undefined }

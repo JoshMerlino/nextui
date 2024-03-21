@@ -29,34 +29,12 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 	// Intersection observer to set active link
 	useEffect(() => {
 
-		const tops = hrefs
+		const items = hrefs
 			.map(href => document.querySelector(href))
-			.map(function(container) {
-				if(!container?.id) return container;
-				const element = document.createElement("DIV");
-				element.id = container.id;
-				element.style.position = "absolute";
-				element.style.top = "0";
-				container?.prepend(element);
-				return element;
-			})
-			.filter(Boolean) as HTMLElement[];
-
-		const bottoms = hrefs
-			.map(href => document.querySelector(href))
-			.map(function(container) {
-				if(!container?.id) return container;
-				const element = document.createElement("DIV");
-				element.id = container.id;
-				element.style.position = "absolute";
-				element.style.bottom = "0";
-				container?.appendChild(element);
-				return element;
-			})
 			.filter(Boolean) as HTMLElement[];
 
 		// Create observer
-		const topObserver = new IntersectionObserver(entries => {
+		const observer = new IntersectionObserver(entries => {
 			const entry = entries.find(entry => entry.isIntersecting);
 			if (entry) setActiveHref(entry.target.id);
 		}, {
@@ -64,23 +42,12 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 			threshold: 1,
 			root: document.getElementById(htmlFor)
 		});
-
-		const bottomObserver = new IntersectionObserver(entries => {
-			const entry = entries.find(entry => entry.isIntersecting);
-			if (entry) setActiveHref(entry.target.id);
-		}, {
-			rootMargin: "0px 0px 50% 0px",
-			threshold: 0.1,
-			root: document.getElementById(htmlFor)
-		});
-
-
+		
 		// Observe all links
-		tops.forEach(link => topObserver.observe(link));
-		bottoms.forEach(link => bottomObserver.observe(link));
+		items.forEach(link => observer.observe(link));
 
 		// Disconnect observer
-		return () => topObserver.disconnect();
+		return () => observer.disconnect();
 		
 	}, [ contents, htmlFor, hrefs ]);
 
@@ -101,12 +68,12 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 				h.style.left = element.offsetLeft + "px";
 				h.style.width = element.offsetWidth + "px";
 				h.style.height = element.offsetHeight + "px";
-				h.className = cn("pointer-events-none absolute rounded-md ring-2 ring-primary transition-opacity", highlightClass)
+				h.className = cn("pointer-events-none absolute rounded-md ring-2 ring-primary transition-opacity duration-1000", highlightClass)
 				element.parentElement?.appendChild(h);
 				setTimeout(() => [
 					h.classList.add("opacity-0"),
 					h.addEventListener("transitionend", () => h.remove(), { once: true })
-				], 500);
+				], 1000);
 			}
 
 			const { top } = element.getBoundingClientRect();
@@ -120,12 +87,12 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 		<ul className="text-gray-700 text-sm flex flex-col gap-2 -mt-2">
 			{ contents.map(({ title, href, children }, key) => (
 				<li className={ cn((!children?.some(child => child.children) || key === 0) && "mt-2") } key={ key }>
-					<Link className={ cn("transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`) || children?.some(a => a.children?.some(a => a.href === `#${ activeHref }`))) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{ title }</Link>
+					<Link className={ cn("focus:outline-0 focus:underline transition-colors duration-200 py-1 min-h-[24px] font-medium hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`) || children?.some(a => a.children?.some(a => a.href === `#${ activeHref }`))) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>{ title }</Link>
 					{ children && (
 						<ul className={ cn("flex flex-col", children.some(child => child.children) && "") }>
 							{ children.map(({ title, href, children }, key) => (
 								<li className="mt-1" key={ key }>
-									<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", key === 0 && "mt-1", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
+									<Link className={ cn("focus:outline-0 focus:underline min-h-[24px] group flex items-center transition-colors duration-200 py-1 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", key === 0 && "mt-1", (`#${ activeHref }` === href || children?.some(a => a.href === `#${ activeHref }`)) && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 										<MdKeyboardArrowRight className="mr-2 text-gray-400 overflow-visible group-hover:text-gray-600 dark:text-gray-600 dark:group-hover:text-gray-500" />
 										{ title }
 									</Link>
@@ -133,7 +100,7 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 										<ul className="pt-1">
 											{ children.map(({ title, href }, key) => (
 												<li className="ml-4" key={ key }>
-													<Link className={ cn("min-h-[24px] group flex items-center transition-colors duration-200 py-1.5 pl-4 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
+													<Link className={ cn("focus:outline-0 focus:underline min-h-[24px] group flex items-center transition-colors duration-200 py-1.5 pl-4 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", `#${ activeHref }` === href && "text-primary-600 dark:text-primary-400") } href={ href } onClick={ onClick } scroll={ false }>
 														{ title }
 													</Link>
 												</li>

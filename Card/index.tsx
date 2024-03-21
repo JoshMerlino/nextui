@@ -14,7 +14,7 @@ interface Props {
 
 }
 
-export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivElement>>(function Card({ children, className, variant = "raised", ...props }: HTMLAttributes<HTMLDivElement> & Props, ref) {
+export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivElement>>(function Card({ children, className, variant = "raised", ...props }, ref) {
 
 	// Generate classlist
 	const classlist: ClassValue[] = [

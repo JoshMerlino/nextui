@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { useEvent } from "nextui/hooks";
-import { ChangeEvent, InputHTMLAttributes, useEffect, useRef, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes, forwardRef, useEffect, useRef, useState } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
 import { Ripple } from "../Ripple";
@@ -59,7 +59,7 @@ interface Option {
 
 }
 
-export function InputField({ color = "primary", className, size = "dense", label, options: ox, invalid = false, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>): JSX.Element {
+export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>>(function({ color = "primary", className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 
@@ -319,7 +319,7 @@ export function InputField({ color = "primary", className, size = "dense", label
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
-				<input className={ cn(input, className) } { ...props } />
+				<input className={ cn(input, className) } ref={fref} { ...props } />
 				{ label && <p className={ cn(labelStyles) }>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
@@ -366,4 +366,4 @@ export function InputField({ color = "primary", className, size = "dense", label
 
 		</div>
 	);
-}
+});

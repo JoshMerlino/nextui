@@ -62,7 +62,11 @@ interface Option {
 
 }
 
-export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
+
+
+type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>
+
+export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	const beforeRef = useRef<HTMLDivElement>(null);

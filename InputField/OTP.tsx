@@ -111,6 +111,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 		if (state === "error") return <MdErrorOutline className="text-xl text-error" />;
 		return <MdLockOutline className="text-xl" />;
 	}, [props.color, state]);
+	
 
 	return <InputField
 		{...props}

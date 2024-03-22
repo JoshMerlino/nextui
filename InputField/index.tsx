@@ -2,13 +2,13 @@
 
 import { ClassValue } from "clsx";
 import { useEvent } from "nextui/hooks";
-import { ChangeEvent, InputHTMLAttributes, forwardRef, useEffect, useRef, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes, forwardRef, useEffect, useRef, useState, type ReactNode } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
 import { Ripple } from "../Ripple";
 import { cn } from "../util";
 
-interface Props {
+export interface InputFieldProps {
 
 	/**
 	 * Additional class names to apply to the spinner.
@@ -42,6 +42,9 @@ interface Props {
 	 * @default false
 	 */
 	invalid: boolean;
+
+	before?: ReactNode;
+	after?: ReactNode;
 	
 }
 
@@ -59,9 +62,21 @@ interface Option {
 
 }
 
-export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<Props>>(function({ color = "primary", className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
+export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
+	const beforeRef = useRef<HTMLDivElement>(null);
+	const labelRef = useRef<HTMLParagraphElement>(null);
+
+	useEffect(function() {
+		const label = labelRef.current;
+		const $before = beforeRef.current;
+		if (!label || !$before || !before) return;
+
+		const rect = $before.getBoundingClientRect();
+		label.style.marginLeft = `${ rect.width }px`;
+
+	}, [ before ])
 
 	const ref = useRef<HTMLDivElement>(null);
 	
@@ -319,8 +334,11 @@ export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
+				<div ref={beforeRef} className={cn(!before && "hidden")}>
+				{before}
+				</div>
 				<input className={ cn(input, className) } ref={fref} { ...props } />
-				{ label && <p className={ cn(labelStyles) }>{ label }</p> }
+				{ label && <p className={ cn(labelStyles) } ref={labelRef}>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
 				{ props.type === "password" && (
@@ -336,6 +354,8 @@ export const InputField = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<
 						<MdArrowDropDown />
 					</div>
 				) }
+
+				{after}
 
 			</label>
 			

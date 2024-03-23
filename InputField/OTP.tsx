@@ -10,7 +10,7 @@ type Props = Omit<InputFieldProps, "before" | "after" | "options"> & Partial<{
 	state: "error" | "success" | "loading";
 }>;
 
-export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props>>(function ({ className, state, ...props }, ref) {
+export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props>>(function ({ color, className, state, ...props }, ref) {
 
 	// Filter input
 	const filter = useCallback(function (event: React.KeyboardEvent<HTMLInputElement> |
@@ -106,12 +106,11 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 	}, []);
 
 	const StatusIndicator = useCallback(function StatusIndicator() {
-		if (state === "loading") return <Spinner className="shrink-0 w-5" color={props.color} />;
+		if (state === "loading") return <Spinner className="shrink-0 w-5" color={color} />;
 		if (state === "success") return <MdCheckCircleOutline className="text-xl text-success" />;
 		if (state === "error") return <MdErrorOutline className="text-xl text-error" />;
 		return <MdLockOutline className="text-xl" />;
-	}, [props.color, state]);
-	
+	}, [color, state]);
 
 	return <InputField
 		{...props}
@@ -131,6 +130,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 		)}
 		className={cn("tracking-[2.5px]", className)}
 		onDrop={filter}
+		color={color || state && ["error","success"].includes(state) ? state as "error" | "success" : undefined || color } 
 		onInput={format}
 		onKeyDown={filter}
 		onPaste={filter}

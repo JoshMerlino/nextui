@@ -1,5 +1,5 @@
 import { ClassValue } from "clsx";
-import { InputHTMLAttributes, ReactNode } from "react";
+import { InputHTMLAttributes, ReactNode, forwardRef } from "react";
 import { cn } from "../util";
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 
 }
 
-export function Switch({ color = "neutral", className, variant = "default", children, icon, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
+export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & Partial<Props>>(function Switch({ color = "neutral", className, variant = "default", children, icon, ...props }, ref) {
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -100,6 +100,7 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 				<input
 					className={ cn(track) }
 					type="checkbox"
+					ref={ref}
 					{ ...props } />
 				<label className={ cn(thumb) } htmlFor={ props.id }>
 					{ icon }
@@ -108,4 +109,4 @@ export function Switch({ color = "neutral", className, variant = "default", chil
 			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }
 		</div>
 	);
-}
+});

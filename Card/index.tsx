@@ -30,7 +30,7 @@ export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivEle
 		},
 
 		// Header subclass
-		"[&>h1]:text-2xl [&>h1]:font-medium [&>h1]:text-gray-900 [&>h1]:dark:text-gray-100 [&>h1]:whitespace-nowrap [&>h1]:pt-2 [&>h1]:px-2",
+		"[&>h1]:text-2xl [&>h1]:font-medium [&>h1]:text-gray-900 [&>h1]:dark:text-gray-100 [&>h1]:whitespace-nowrap [&>h1]:pt-2 [&>h1]:px-2 [&>h1]:truncate",
 
 		// Content subclass
 		"[&>p]:px-2 [&>p]:pb-2",

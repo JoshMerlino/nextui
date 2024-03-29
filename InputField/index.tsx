@@ -66,21 +66,11 @@ interface Option {
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>
 
-export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
+export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
-	const beforeRef = useRef<HTMLDivElement>(null);
 	const labelRef = useRef<HTMLParagraphElement>(null);
 
-	useEffect(function() {
-		const label = labelRef.current;
-		const $before = beforeRef.current;
-		if (!label || !$before || !before) return;
-
-		const rect = $before.getBoundingClientRect();
-		label.style.marginLeft = `${ rect.width + 2 }px`;
-
-	}, [ before ])
 
 	const ref = useRef<HTMLDivElement>(null);
 	
@@ -338,9 +328,6 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
-				<div ref={beforeRef} className={cn(!before && "hidden")}>
-				{before}
-				</div>
 				<input className={ cn(input, className) } ref={fref} { ...props } />
 				{ label && <p className={ cn(labelStyles) } ref={labelRef}>{ label }</p> }
 				

@@ -114,7 +114,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 
 	return <InputField
 		{...props}
-		before={(
+		after={(
 			<div className="w-5 aspect-square relative">
 				<AnimatePresence>
 					<motion.div

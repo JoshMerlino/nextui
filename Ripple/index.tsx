@@ -16,9 +16,14 @@ interface Props {
 	 * Custom class overrides
 	 */
 	className?: ClassValue;
+
+	/**
+	 * Weather or not the ripple is disabled
+	 */
+	disabled: boolean;
 }
 
-export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Element {
+export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) {
 
 	// The duration of the ripple animation
 	const DURATION = 500;
@@ -106,6 +111,8 @@ export function Ripple({ emitFromCenter, className }: Partial<Props>): JSX.Eleme
 		};
 
 	}, [ className, emitFromCenter, ref ]);
+
+	if(disabled) return null;
 
 	return <div className="absolute inset-0 z-50 opacity-30 ripple" ref={ ref } />;
 }

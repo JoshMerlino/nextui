@@ -78,7 +78,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		if (!label || !$before || !before) return;
 
 		const rect = $before.getBoundingClientRect();
-		label.style.marginLeft = `${ rect.width }px`;
+		label.style.marginLeft = `${ rect.width + 2 }px`;
 
 	}, [ before ])
 

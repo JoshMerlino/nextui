@@ -74,8 +74,8 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 	}, [ backdrop, backdropRef, toolbarRef ]);
 
 	return (
-		<div className="absolute inset-0 flex flex-col min-h-full overflow-x-hidden overflow-y-auto bg-inherit isolate" id={ id } ref={ ref }>
-			<div className="sticky z-10 isolate" ref={ backdropRef }>
+		<div className="absolute inset-0 flex flex-col min-h-full overflow-y-auto bg-inherit isolate" id={ id } ref={ ref }>
+			<div className="sticky z-10 isolate left-0 right-0" ref={ backdropRef }>
 				{ backdrop }
 				<div className="relative" ref={ beforeWrapperRef }>
 					{ before }
@@ -83,7 +83,9 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 				<div className="sticky top-0 z-30" ref={ toolbarRef }>{ toolbar }</div>
 			</div>
 			<div className={ cn("grow overflow-visible bg-inherit flex flex-col relative", className) }>{ children }</div>
-			{ after }
+			<div className="sticky left-0 right-0 -z-10">
+				{ after }
+			</div>
 		</div>
 	);
 }

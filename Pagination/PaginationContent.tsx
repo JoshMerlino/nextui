@@ -17,7 +17,7 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 	};
 
 	// eslint-disable-next-line react/prop-types
-	const { refetchInterval = -1, renderRow: Row, className, refetchOnWindowFocus } = props;
+	const { refetchInterval = -1, renderRow: Row, className, refetchOnWindowFocus, sticky = false, stickyTop = 0} = props;
 	
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -50,9 +50,9 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 	}, [ handleVisibilityChange, setupRefetchInterval, handleFocus ]);
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-4 isolate">
 			<div className={ cn((data.length > 0) && "border-b", "flex flex-col mb-0 -mx-4 -mt-4 sm:-mx-6 sm:-mt-6 sm:mb-2 border-gray-200/50 dark:border-gray-600/50") }>
-				<div className="rounded-t-lg bg-gray-200 dark:bg-gray-700/50 px-4 py-2.5 flex justify-end">
+				<div className="rounded-t-lg bg-gray-200 dark:bg-gray-800 px-4 py-2.5 flex justify-end z-10" style={{ position: sticky && "sticky" || "static", top: stickyTop }}>
 					<PaginationNav />
 				</div>
 				<ul className={ cn("divide-y divide-gray-200/50 dark:divide-gray-600/50", className) }>

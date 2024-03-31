@@ -90,10 +90,10 @@ export function PaginationClient<T = unknown>(props: PropsWithChildren<
 	
 	useEffect(function() {
 		const url = new URL(window.location.href);
-		if (perPage !== DEFAULT_PER_PAGE) url.searchParams.set([ name, "perPage" ].join("_"), perPage.toString());
+		if (perPage !== defaultPerPage) url.searchParams.set([ name, "perPage" ].join("_"), perPage.toString());
 		else url.searchParams.delete([ name, "perPage" ].join("_"));
 		
-		if (cursor !== DEFAULT_CURSOR) url.searchParams.set([ name, "cursor" ].join("_"), cursor.toString());
+		if (cursor !== defaultCursor) url.searchParams.set([ name, "cursor" ].join("_"), cursor.toString());
 		else url.searchParams.delete([ name, "cursor" ].join("_"));
 		window.history.replaceState(null, "", url.toString());
 	}, [ cursor, name, perPage, router ]);

@@ -22,6 +22,8 @@ export async function Pagination<T>({
 	cursor?: number;
 	perPage?: number;
 	className?: ClassValue;
+	sticky?: boolean;
+	stickyTop?: number;
 	searchParams?: Record<string, string>;
 }>) {
 

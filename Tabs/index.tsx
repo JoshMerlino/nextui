@@ -103,7 +103,7 @@ export function Tab({ children }: PropsWithChildren) {
 	return (
 		<li
 			className={ cn(
-				"uppercase font-medium text-sm rounded-md relative",
+				"uppercase font-medium text-sm rounded relative",
 				"inline-flex items-center focus:outline-0 transition-colors duration-100",
 				"active:bg-primary-700/10 dark:active:bg-primary-300/10 focus:bg-primary-700/10 dark:focus:bg-primary-300/10",
 				selected === index ? "active text-primary-700 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100",

@@ -67,7 +67,9 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 			</div>
 			<div className="flex flex-wrap items-center justify-between sm:-my-4">
 				<PaginationNav />
-				<PaginationPerPage />
+				<div className="my-2">
+					<PaginationPerPage />
+				</div>
 			</div>
 		</div>
 	);

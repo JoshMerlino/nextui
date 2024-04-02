@@ -6,7 +6,7 @@ import { usePagination } from ".";
 export function PaginationPerPage({ amounts = [ 10, 25, 50, 100 ]}: Partial<{ amounts: number[] }>) {
 	const { perPage: [ perPage, setPerPage ], cursor: [ cursor, setCursor ], total: [ total ], name } = usePagination();
 	return (
-		<div className="flex items-center gap-2 my-2 text-sm font-medium text-gray-900 dark:text-white">
+		<div className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white">
 			<p>Show</p>
 			<InputField
 				id={ "pagination-per-page-" + name }

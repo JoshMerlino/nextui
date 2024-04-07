@@ -99,8 +99,8 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 			<div className="relative flex bg-inherit group/switch">
 				<input
 					className={ cn(track) }
+					ref={ ref }
 					type="checkbox"
-					ref={ref}
 					{ ...props } />
 				<label className={ cn(thumb) } htmlFor={ props.id }>
 					{ icon }

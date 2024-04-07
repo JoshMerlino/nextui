@@ -62,13 +62,13 @@ export function ScrollSpy({ contents, htmlFor, highlight = true, highlightClass 
 			const shell = document.getElementById(htmlFor) as HTMLDivElement;
 			if (!element || !shell) return;
 
-			if(highlight) {
-				const h = document.createElement("div")
+			if (highlight) {
+				const h = document.createElement("div");
 				h.style.top = element.offsetTop + "px";
 				h.style.left = element.offsetLeft + "px";
 				h.style.width = element.offsetWidth + "px";
 				h.style.height = element.offsetHeight + "px";
-				h.className = cn("pointer-events-none absolute rounded-md ring-2 ring-primary transition-opacity duration-1000", highlightClass)
+				h.className = cn("pointer-events-none absolute rounded-md ring-2 ring-primary transition-opacity duration-1000", highlightClass);
 				element.parentElement?.appendChild(h);
 				setTimeout(() => [
 					h.classList.add("opacity-0"),

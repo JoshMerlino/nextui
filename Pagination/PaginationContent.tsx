@@ -17,7 +17,7 @@ export function PaginationContent(passedProps: Partial<GetProps<typeof Paginatio
 	};
 
 	// eslint-disable-next-line react/prop-types
-	const { refetchInterval = -1, renderRow: Row, className, refetchOnWindowFocus, sticky = false, stickyTop = 0} = props;
+	const { refetchInterval = -1, renderRow: Row, className, refetchOnWindowFocus, sticky = false, stickyTop = 0 } = props;
 	
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 

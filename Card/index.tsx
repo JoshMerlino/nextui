@@ -43,5 +43,5 @@ export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivEle
 
 	];
 
-	return <div className={ cn(classlist) } { ...props } ref={ref}>{ children }</div>;
-})
+	return <div className={ cn(classlist) } { ...props } ref={ ref }>{ children }</div>;
+});

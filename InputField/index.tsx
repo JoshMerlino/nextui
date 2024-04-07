@@ -62,15 +62,12 @@ interface Option {
 
 }
 
-
-
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>
 
 export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	const labelRef = useRef<HTMLParagraphElement>(null);
-
 
 	const ref = useRef<HTMLDivElement>(null);
 	
@@ -328,8 +325,8 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
-				<input className={ cn(input, className) } ref={fref} { ...props } />
-				{ label && <p className={ cn(labelStyles) } ref={labelRef}>{ label }</p> }
+				<input className={ cn(input, className) } ref={ fref } { ...props } />
+				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
 				{ props.type === "password" && (
@@ -346,7 +343,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					</div>
 				) }
 
-				{after}
+				{ after }
 
 			</label>
 			

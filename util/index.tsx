@@ -16,7 +16,6 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
  */
 export const css = (strings: TemplateStringsArray, ...values: Array<string | number>) => <style>{ String.raw(strings, ...values) }</style>;
 
-
 /**
  * Convert a hex color to rgb
  * @param {string} hex - Hex color

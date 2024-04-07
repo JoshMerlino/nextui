@@ -10,10 +10,10 @@ type Props = Omit<InputFieldProps, "before" | "after" | "options"> & Partial<{
 	state: "error" | "success" | "loading";
 }>;
 
-export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props>>(function ({ color, className, state, ...props }, ref) {
+export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Props>>(function({ color, className, state, ...props }, ref) {
 
 	// Filter input
-	const filter = useCallback(function (event: React.KeyboardEvent<HTMLInputElement> |
+	const filter = useCallback(function(event: React.KeyboardEvent<HTMLInputElement> |
 		React.DragEvent<HTMLInputElement> |
 		React.ClipboardEvent<HTMLInputElement>) {
 		const target = event.target as HTMLInputElement;
@@ -28,7 +28,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 				if (event.ctrlKey || event.altKey || event.metaKey) break;
 
 				// Prevent cursor from bouncing around
-				if (["Backspace", "Delete"].includes(event.key)) {
+				if ([ "Backspace", "Delete" ].includes(event.key)) {
 
 					// Get the string that the user is trying to delete
 					const { value } = target;
@@ -40,7 +40,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 						case "Backspace": {
 							const selection = start && value.slice(start - 1, end ?? start);
 							if (start === 5 && end === 5 && value.length !== 5) {
-								target.value = target.value.replace(`-${selection}`, "");
+								target.value = target.value.replace(`-${ selection }`, "");
 								target.dispatchEvent(new Event("input", { bubbles: true }));
 								target.setSelectionRange(4, 4);
 							}
@@ -49,7 +49,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 						case "Delete": {
 							const selection = start && value.slice(start, (end ?? start) + 1);
 							if (start === 4 && end === 4 && value.length !== 5) {
-								target.value = target.value.replace(`-${selection}`, "");
+								target.value = target.value.replace(`-${ selection }`, "");
 								target.dispatchEvent(new Event("input", { bubbles: true }));
 								target.setSelectionRange(4, 4);
 								event.preventDefault();
@@ -83,10 +83,10 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 				break;
 
 		}
-	}, [props]);
+	}, [ props ]);
 
 	// Format input
-	const format = useCallback(function (event: React.FormEvent<HTMLInputElement>) {
+	const format = useCallback(function(event: React.FormEvent<HTMLInputElement>) {
 		const target = event.target as HTMLInputElement;
 		let { selectionStart, selectionEnd } = target;
 		target.value = target.value
@@ -106,33 +106,33 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 	}, []);
 
 	const StatusIndicator = useCallback(function StatusIndicator() {
-		if (state === "loading") return <Spinner className="shrink-0 w-5" color={color} />;
+		if (state === "loading") return <Spinner className="shrink-0 w-5" color={ color } />;
 		if (state === "success") return <MdCheckCircleOutline className="text-xl text-success" />;
 		if (state === "error") return <MdErrorOutline className="text-xl text-error" />;
 		return <MdLockOutline className="text-xl" />;
-	}, [color, state]);
+	}, [ color, state ]);
 
 	return <InputField
-		{...props}
-		after={(
+		{ ...props }
+		after={ (
 			<div className="w-5 aspect-square relative">
 				<AnimatePresence>
 					<motion.div
 						animate={{ scale: 1 }}
 						className="w-5 aspect-square absolute inset-0 flex items-center justify-center"
 						initial={{ scale: 0 }}
-						key={state || "default"}
+						key={ state || "default" }
 						transition={{ duration: 0.1 }}>
 						<StatusIndicator />
 					</motion.div>
 				</AnimatePresence>
 			</div>
-		)}
-		className={cn("tracking-[2.5px]", className)}
-		onDrop={filter}
-		color={color || state && ["error","success"].includes(state) ? state as "error" | "success" : undefined || color } 
-		onInput={format}
-		onKeyDown={filter}
-		onPaste={filter}
-		ref={ref} />;
+		) }
+		className={ cn("tracking-[2.5px]", className) }
+		color={ color || state && [ "error", "success" ].includes(state) ? state as "error" | "success" : undefined || color }
+		onDrop={ filter }
+		onInput={ format }
+		onKeyDown={ filter }
+		onPaste={ filter }
+		ref={ ref } />;
 });

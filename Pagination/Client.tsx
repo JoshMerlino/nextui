@@ -96,7 +96,7 @@ export function PaginationClient<T = unknown>(props: PropsWithChildren<
 		if (cursor !== defaultCursor) url.searchParams.set([ name, "cursor" ].join("_"), cursor.toString());
 		else url.searchParams.delete([ name, "cursor" ].join("_"));
 		window.history.replaceState(null, "", url.toString());
-	}, [ cursor, name, perPage, router ]);
+	}, [ cursor, defaultCursor, defaultPerPage, name, perPage, router ]);
 
 	return (
 		<PaginationContext.Provider value={{

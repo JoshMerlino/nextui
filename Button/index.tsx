@@ -55,7 +55,6 @@ export function Button({ children, icon: Icon, className, size = "medium", color
 
 	// Record of classnames to apply based on props
 	const classes: ClassValue[] = [
-
 		
 		// Base class
 		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center",

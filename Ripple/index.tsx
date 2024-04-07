@@ -112,7 +112,7 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 
 	}, [ className, emitFromCenter, ref ]);
 
-	if(disabled) return null;
+	if (disabled) return null;
 
 	return <div className="absolute inset-0 z-50 opacity-30 ripple" ref={ ref } />;
 }

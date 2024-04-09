@@ -1,5 +1,5 @@
 import { ClassValue } from "clsx";
-import { InputHTMLAttributes, ReactNode, forwardRef } from "react";
+import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "../util";
 
 interface Props {
@@ -95,8 +95,8 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 	];
 
 	return (
-		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto bg-inherit isolate">
-			<div className="relative flex bg-inherit group/switch">
+		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto isolate">
+			<div className="relative flex group/switch">
 				<input
 					className={ cn(track) }
 					ref={ ref }

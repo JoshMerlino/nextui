@@ -1,7 +1,6 @@
 "use client";
 
 import { DependencyList, useCallback, useEffect, useMemo, useState } from "react";
-export { usePagination } from "./Pagination";
 
 export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement = document.body) {
 

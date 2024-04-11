@@ -351,7 +351,8 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			{ props.type === "select" && (
 				<dialog
 					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] bg-transparent focus-within:outline-0 -mx-[1px] top-full", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
-					onMouseDown={ e => e.preventDefault() }
+					onMouseDown={ e => [e.preventDefault(), e.stopPropagation()] }
+					onClick={ e => [e.preventDefault(), e.stopPropagation()] }
 					open={ dropdownOpen || dropdownVisible }
 					ref={ dropdownRef }>
 					<Card className={ cn(dropdownCard) }>

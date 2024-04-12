@@ -1,6 +1,6 @@
 "use client";
 
-import { DependencyList, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type DependencyList } from "react";
 
 export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement = document.body) {
 

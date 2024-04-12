@@ -38,7 +38,6 @@ export function useResize(handler: () => (void | unknown), additionalDeps?: Depe
 		handler();
 		window.addEventListener("resize", handler);
 		return () => window.removeEventListener("resize", handler);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ handler, ...additionalDeps ?? [] ]);
 }
 

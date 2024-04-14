@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useCallback, useEffect, useMemo, useState, type DependencyList } from "react";
 
 export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement = document.body) {

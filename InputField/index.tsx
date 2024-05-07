@@ -190,9 +190,9 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color,padding] bg-inherit rounded-md -mx-1.5 px-1.5": true,
 		"peer-focus-within:top-0 peer-focus-within:text-xs peer-focus-within:-mx-1.5 peer-focus-within:px-1.5": true,
 		"peer-placeholder-shown:top-0 peer-placeholder-shown:text-xs peer-placeholder-shown:-mx-1.5 peer-placeholder-shown:px-1.5": true,
-		"top-0 text-xs": (hasContents|| invalid && !!props.placeholder),
+		"top-0 text-xs": (hasContents|| !!props.placeholder),
 		"text-base": size === "large",
-		"text-sm": size === "large" && (hasContents|| invalid && !!props.placeholder),
+		"text-sm": size === "large" && (hasContents|| !!props.placeholder),
 		"peer-placeholder-shown:text-sm peer-focus-within:text-sm": size === "large",
 		"peer-focus-within:text-gray-800 group-focus-within/wrapper:text-gray-800 dark:peer-focus-within:text-gray-200 dark:group-focus-within/wrapper:text-gray-200": color === "neutral",
 		"peer-focus-within:text-primary group-focus-within/wrapper:text-primary": color === "primary",
@@ -204,7 +204,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"text-error dark:text-error": dropdownVisible && color === "error",
 		"text-warning dark:text-warning": dropdownVisible && color === "warning",
 		"text-success dark:text-success": dropdownVisible && color === "success",
-		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents|| invalid && !!props.placeholder),
+		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents|| !!props.placeholder),
 		"!text-error dark:!text-error": invalid,
 	};
 

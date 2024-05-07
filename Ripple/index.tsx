@@ -114,5 +114,5 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 
 	if (disabled) return null;
 
-	return <div className="absolute inset-0 z-50 opacity-30 ripple" ref={ ref } />;
+	return <div draggable="false" className="absolute inset-0 z-50 opacity-30 ripple" ref={ ref } />;
 }

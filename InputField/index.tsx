@@ -111,7 +111,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 		setValue(selected)
 
-	}, [ props ]);
+	}, [ props, value, options]);
 
 	// Hook into input changes 
 	useEffect(function effect() {
@@ -259,6 +259,8 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 
 		setIcon(iv.icon || null);
+
+		input.value = iv.value;
 
 		setValueState(options?.find(a => a.value === iv.value) || options?.find(a => a.label === iv.value) || null);
 		

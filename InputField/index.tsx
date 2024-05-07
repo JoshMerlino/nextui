@@ -398,7 +398,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 				{/* Input */}
 				<div className="relative bg-inherit grow flex">
 					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
-					<p className={cn(input,className)}>{value?.label || value?.label}</p>
+					{props.type === "select" && <p className={cn(input, className, !value?.label && "text-gray-600 dark:text-gray-400")}>{value?.label || props.placeholder}</p>}
 				</div>
 				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }
 				

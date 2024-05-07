@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { useEvent } from "nextui/hooks";
-import { ChangeEvent, InputHTMLAttributes, forwardRef, useEffect, useRef, useState, type ReactNode } from "react";
+import { InputHTMLAttributes, forwardRef, useCallback, useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
 import { Ripple } from "../Ripple";
@@ -58,13 +58,23 @@ interface Option {
 	/**
 	 * The label of the option
 	 */
+	label?: string;
+
+	/**
+	 * Icon to display next to the option
+	 */
+	icon?: ReactNode;
+
+	/**
+	 * The label of the option
+	 */
 	disabled?: boolean;
 
 }
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>
 
-export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
+export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
 
 	const options = ox?.map(value => typeof value === "string" ? { value } : value);
 	const labelRef = useRef<HTMLParagraphElement>(null);
@@ -72,7 +82,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	const ref = useRef<HTMLDivElement>(null);
 	
 	// Initialize unique ID
-	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
+	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36) as string;
 
 	// Make dropdowns readonly
 	if (props.type === "select") props.readOnly = true;
@@ -80,12 +90,28 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	// Check if input has contents
 	const [ hasContents, setHasContents ] = useState(false);
 	const [ passwordVisible, setPasswordVisible ] = useState(false);
+	const [ icon, setIcon ] = useState<ReactNode | null>(before);
+	const [ value, setValueState ] = useState<Option | null>(null);
 	
 	// Select dropdown states
 	const dropdownRef = useRef<HTMLDialogElement>(null);
 	const [ dropdownOpen, setDropdownOpen ] = useState(false);
 	const [ dropdownVisible, setDropdownVisible ] = useState(false);
 	const [ activeKey, setActiveKey ] = useState(-1);
+
+	// Set the initial icon
+	useEffect(function() {
+
+		const input = ref.current?.querySelector("input");
+		if (!input) return;
+
+		// Set the initial icon
+		const selected = options?.find(a => a.value === input.value) || options?.find(a => a.label === input.value) || null;
+		if(!selected || selected.value === value?.value) return;
+
+		setValue(selected)
+
+	}, [ props ]);
 
 	// Hook into input changes 
 	useEffect(function effect() {
@@ -189,13 +215,13 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 	// Dropdown classnames
 	const dropdownCard = {
-		"transition-[transform,opacity] select-none duration-75 p-0 origin-top": true,
+		"transition-[transform,opacity] select-none duration-75 p-0 origin-top bg-white dark:bg-gray-900 after:absolute after:inset-0 after:content-[''] dark:after:bg-gray-800/50 after:-z-10 isolate": true,
 		"scale-100 opacity-100": dropdownVisible,
 		"scale-75 opacity-0 pointer-events-none": !dropdownVisible
 	};
 
 	const dropdownItem = {
-		"relative flex items-center px-4 overflow-hidden text-sm h-9 hover:bg-gray-200/50 dark:hover:bg-gray-700/50": true,
+		"relative flex items-center px-4 overflow-hidden text-sm h-9 hover:bg-gray-50 hover:dark:bg-gray-700/25": true,
 		"h-12 text-base font-medium": size === "large",
 	};
 	
@@ -222,14 +248,20 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	}
 	
 	// Set input value
-	function setValue(value: string, key?: number) {
+	function setValue(iv: string | Option, key?: number) {
+
 		if (key !== undefined && key > -1) setActiveKey(key);
 
 		if (!props.id) return;
 		const input = document.getElementById(props.id) as HTMLInputElement;
+
+		if(typeof iv === "object" && iv.disabled || typeof iv !== "object") return;
+
+
+		setIcon(iv.icon || null);
+
+		setValueState(options?.find(a => a.value === iv.value) || options?.find(a => a.label === iv.value) || null);
 		
-		// Set value and dispatch change event
-		input.value = value;
 		input.dispatchEvent(new Event("change", { bubbles: true }));
 		if (props.onChange) props.onChange({ target: input } as ChangeEvent<HTMLInputElement>);
 
@@ -237,6 +269,14 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		close();
 		
 	}
+
+	const change = useCallback(function(event: Event) {
+		const target = event?.target as HTMLInputElement;
+		if (!target) return;
+		setValueState(options?.find(a => a.value === target.value) || options?.find(a => a.label === target.value) || null);
+	}, [])
+
+
 
 	// Bind event listeners
 	useEffect(function() {
@@ -248,7 +288,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			switch (event.key) {
 				case "Enter":
 					if (!dropdownVisible) open();
-					else setValue(options[activeKey].value, activeKey);
+					else setValue(options[activeKey], activeKey);
 					break;
 				case "Escape":
 					close();
@@ -259,7 +299,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (key < 0) key = 0;
 					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key].value, key);
+					else setValue(options[key], key);
 					break;
 				}
 				case "ArrowUp": {
@@ -268,7 +308,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (key < 0) key = options.length - 1;
 					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key].value, key);
+					else setValue(options[key], key);
 					break;
 				}
 			}
@@ -283,6 +323,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		// On focus open, and on blur close
 		input.addEventListener("focus", focus);
 		input.addEventListener("blur", close);
+		input.addEventListener("change", change)
 		input.addEventListener("mousedown", open);
 		input.addEventListener("keydown", keydown);
 		input.parentElement?.addEventListener("mousedown", labelMousedown);
@@ -291,6 +332,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		return function() {
 			input.removeEventListener("focus", focus);
 			input.removeEventListener("blur", close);
+			input.removeEventListener("change", change);
 			input.removeEventListener("mousedown", open);
 			input.removeEventListener("keydown", keydown);
 			input.parentElement?.removeEventListener("mousedown", labelMousedown);
@@ -325,7 +367,18 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
-				<input className={ cn(input, className) } ref={ fref } { ...props } />
+
+				{ icon && (
+					<div className="w-6 h-6 items-center justify-center flex">
+						{icon}
+					</div>
+				)}
+
+				{/* Input */}
+				<div className="relative bg-inherit grow flex">
+					<input className={ cn(input, className, props.type === "select" && "hidden") } ref={ fref } { ...props } />
+					<p className={cn(input,className)}>{value?.label || value?.label}</p>
+				</div>
 				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
@@ -350,7 +403,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			{ /* Select dropdown */ }
 			{ props.type === "select" && (
 				<dialog
-					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] bg-transparent focus-within:outline-0 -mx-[1px] top-full", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
+					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] focus-within:outline-0 -mx-[1px] top-full bg-transparent", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
 					onClick={ e => [ e.preventDefault(), e.stopPropagation() ] }
 					onMouseDown={ e => [ e.preventDefault(), e.stopPropagation() ] }
 					open={ dropdownOpen || dropdownVisible }
@@ -360,11 +413,14 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 							
 							{ /* Dropdown options */ }
 							{ options?.map((option, key) => (
-								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-200/75 dark:bg-gray-700/75 hover:first-letter:bg-gray-200/50 hover:first-letter:dark:bg-gray-700/50", option.disabled && "pointer-events-none opacity-50") }
+								<li className={ cn(dropdownItem, (activeKey === key) && "bg-gray-50 dark:bg-gray-700/25", option.disabled && "pointer-events-none opacity-50") }
 									key={ key }
-									onClick={ () => !option.disabled && setValue(option.value, key) }>
-									{ !option.disabled && <Ripple className="bg-black/50 dark:bg-white/50" /> }
-									{ option.value }
+									onClick={ () => !option.disabled && setValue(option, key) }>
+									{ !option.disabled && <Ripple className="bg-black/10 dark:bg-white/10" /> }
+									<div className="flex items-center gap-2">
+										{ option.icon && <div className="flex items-center justify-center w-6 h-6">{ option.icon }</div> }
+										<p className="text-gray-800 dark:text-gray-200">{ option.label || option.value }</p>
+									</div>
 								</li>
 							)) }
 						

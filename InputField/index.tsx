@@ -127,6 +127,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		function change(event: Event) {
 			const target = event.target as HTMLInputElement;
 			setHasContents(!!target.value);
+			setValueState(options?.find(a => a.value === target.value) || options?.find(a => a.label === target.value) || null);
 		}
 
 		if (!input) {
@@ -229,7 +230,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	function open() {
 
 		if (!props.id) return;
-		const input = document.getElementById(props.id) as HTMLInputElement;
+		const input = ref.current?.querySelector("input");
 		
 		input?.focus();
 
@@ -250,12 +251,14 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	// Set input value
 	function setValue(iv: string | Option, key?: number) {
 
+		console.log({ iv, key })
+
 		if (key !== undefined && key > -1) setActiveKey(key);
 
 		if (!props.id) return;
-		const input = document.getElementById(props.id) as HTMLInputElement;
+		const input = ref.current?.querySelector("input");
 
-		if(typeof iv === "object" && iv.disabled || typeof iv !== "object") return;
+		if(typeof iv === "object" && iv.disabled || typeof iv !== "object" || !input) return;
 
 
 		setIcon(iv.icon || null);
@@ -283,14 +286,22 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	// Bind event listeners
 	useEffect(function() {
 		if (!props.id || props.type !== "select") return;
-		const input = document.getElementById(props.id) as HTMLInputElement;
+		const input = ref.current?.querySelector("input");
+
+		console.log(input)
 		
 		function keydown(event: KeyboardEvent) {
+
+			console.log(event);
+
 			if (!options) return;
 			switch (event.key) {
 				case "Enter":
 					if (!dropdownVisible) open();
-					else setValue(options[activeKey], activeKey);
+					else {
+						setValue(options[activeKey], activeKey);
+			setValueState(options?.find(a => a.value === options[activeKey].value) || options?.find(a => a.label === options[activeKey].label) || null);
+					}
 					break;
 				case "Escape":
 					close();
@@ -301,7 +312,10 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (key < 0) key = 0;
 					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key], key);
+					else {
+						setValue(options[key], key);
+			setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
+					}
 					break;
 				}
 				case "ArrowUp": {
@@ -310,7 +324,10 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (key < 0) key = options.length - 1;
 					if (options[key].disabled) break;
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
-					else setValue(options[key], key);
+					else {
+						setValue(options[key], key);
+			setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
+					}
 					break;
 				}
 			}
@@ -321,6 +338,8 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			event.preventDefault();
 			open();
 		}
+
+		if(!input) return;
 
 		// On focus open, and on blur close
 		input.addEventListener("focus", focus);
@@ -378,7 +397,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 				{/* Input */}
 				<div className="relative bg-inherit grow flex">
-					<input className={ cn(input, className, props.type === "select" && "hidden") } ref={ fref } { ...props } />
+					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
 					<p className={cn(input,className)}>{value?.label || value?.label}</p>
 				</div>
 				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }

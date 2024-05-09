@@ -10,9 +10,15 @@ interface Props {
 	 */
 	color: "primary" | "neutral" | "error" | "warning" | "success";
 
+	/**
+	 * Pastel color
+	 * @default false
+	 */
+	pastel: boolean;
+
 }
 
-export function RadioButton({ color = "neutral", className, children, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
+export function RadioButton({ color = "neutral", className, children, pastel, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -32,8 +38,16 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 			"checked:border-success checked:after:bg-success/20": color === "success",
 		},
 
+		// Pastel color
+		{
+			"dark:checked:border-primary-300 dark:checked:after:bg-primary-300/10": color === "primary" && pastel,
+			"dark:checked:border-gray-300 dark:checked:after:bg-gray-300/10": color === "neutral" && pastel,
+			"dark:checked:border-error-300 dark:checked:after:bg-error-300/10": color === "error" && pastel,
+			"dark:checked:border-warning-300 dark:checked:after:bg-warning-300/10": color === "warning" && pastel,
+		},
+
 		// Ripple jawn
-		!props.disabled && "after:content[''] after:bg-gray-500/20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 focus:after:scale-100 group-active/checkbox:after:scale-100 duration-100 after:transition-transform after:z-10",
+		!props.disabled && "after:content[''] after:bg-gray-500/20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 focus:after:scale-100 group-active/radio:after:scale-100 group-active/radio:focus-within:after:scale-100 duration-100 after:transition-transform after:z-10",
 
 		// Disabled
 		props.disabled && "cursor-not-allowed !border-gray-500",
@@ -51,10 +65,18 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 		// Color
 		{
 			"bg-primary": color === "primary",
-			"bg-gray-800 dark:bg-gray-200": color === "neutral",
+			"bg-gray-800 dark:bg-gray-300": color === "neutral",
 			"bg-error": color === "error",
 			"bg-warning": color === "warning",
 			"bg-success": color === "success",
+		},
+
+		// Pastel color
+		{
+			"dark:bg-primary-300": color === "primary" && pastel,
+			"dark:bg-gray-300": color === "neutral" && pastel,
+			"dark:bg-error-300": color === "error" && pastel,
+			"dark:bg-warning-300": color === "warning" && pastel,
 		},
 
 		// Disabled
@@ -63,15 +85,15 @@ export function RadioButton({ color = "neutral", className, children, ...props }
 	];
 
 	return (
-		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto">
+		<label className="flex items-center gap-4 mr-auto group/radio font-roboto">
 			<div className="relative flex">
 				<input
 					className={ cn(radioButton) }
 					type="radio"
 					{ ...props } />
-				<label className={ cn(nipple) } htmlFor={ props.id } />
+				<div className={ cn(nipple) } />
 			</div>
-			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }
-		</div>
+			{ children && <div className={ cn("select-none", className) }>{ children }</div> }
+		</label>
 	);
 }

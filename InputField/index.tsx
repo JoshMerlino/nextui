@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { useEvent } from "nextui/hooks";
-import { InputHTMLAttributes, forwardRef, useCallback, useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import { InputHTMLAttributes, forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";
 import { Ripple } from "../Ripple";
@@ -45,6 +45,11 @@ export interface InputFieldProps {
 
 	before?: ReactNode;
 	after?: ReactNode;
+
+	/**
+	 * Whether the color should be pastel on dark mode
+	 */
+	pastel?: boolean;
 	
 }
 
@@ -74,9 +79,9 @@ interface Option {
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & Partial<InputFieldProps>
 
-export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", before, after, className, size = "dense", label, options: ox, invalid = false, ...props }, fref) {
+export const InputField = forwardRef<HTMLInputElement, Props>(function({ color = "primary", before, after, className, size = "dense", label, pastel = false, options: ox, invalid = false, ...props }, fref) {
 
-	const options = ox?.map(value => typeof value === "string" ? { value } : value);
+	const options = useMemo(() => ox?.map(value => typeof value === "string" ? { value } : value), [ ox ]);
 	const labelRef = useRef<HTMLParagraphElement>(null);
 
 	const ref = useRef<HTMLDivElement>(null);
@@ -98,20 +103,6 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	const [ dropdownOpen, setDropdownOpen ] = useState(false);
 	const [ dropdownVisible, setDropdownVisible ] = useState(false);
 	const [ activeKey, setActiveKey ] = useState(-1);
-
-	// Set the initial icon
-	useEffect(function() {
-
-		const input = ref.current?.querySelector("input");
-		if (!input) return;
-
-		// Set the initial icon
-		const selected = options?.find(a => a.value === input.value) || options?.find(a => a.label === input.value) || null;
-		if(!selected || selected.value === value?.value) return;
-
-		setValue(selected)
-
-	}, [ props, value, options]);
 
 	// Hook into input changes 
 	useEffect(function effect() {
@@ -164,6 +155,12 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"caret-warning": color === "warning",
 		"caret-success": color === "success",
 		"invalid:caret-error": hasContents,
+
+		"dark:caret-primary-300": pastel && color === "primary",
+		"dark:caret-error-300": pastel && color === "error",
+		"dark:caret-warning-300": pastel && color === "warning",
+		"dark:caret-success-300": pastel && color === "success",
+		"dark:caret-error": invalid,
 	};
 	
 	// Input classnames
@@ -181,8 +178,13 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"border-error ring-error dark:border-error dark:ring-error": dropdownVisible && color === "error",
 		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownVisible && color === "warning",
 		"border-success ring-success dark:border-success dark:ring-success": dropdownVisible && color === "success",
-		"[&:has(:invalid)]:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:dark:border-error": hasContents,
-		"!border-error focus-within:!ring-error dark:!border-error": invalid,
+		"[&:has(:invalid)]:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:dark:border-error/50  [&:has(:invalid)]:dark:focus-within:border-error": hasContents,
+		"!border-error focus-within:!ring-error dark:!border-error/50  dark:focus-within:!border-error": invalid,
+
+		"focus-within:dark:ring-primary-300 focus-within:dark:border-primary-300 dark:focus-within:border-primary-300": pastel && color === "primary",
+		"focus-within:dark:ring-error-300 focus-within:dark:border-error-300 dark:focus-within:border-error-300": pastel && color === "error",
+		"focus-within:dark:ring-warning-300 focus-within:dark:border-warning-300 dark:focus-within:border-warning-300": pastel && color === "warning",
+		"focus-within:dark:ring-success-300 focus-within:dark:border-success-300 dark:focus-within:border-success-300": pastel && color === "success",
 	};
 
 	// Label classnames
@@ -190,9 +192,9 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"absolute select-none text-gray-600 dark:text-gray-400 text-sm font-roboto font-normal pointer-events-none whitespace-nowrap top-1/2 -translate-y-1/2 transition-[top,font-size,color,padding] bg-inherit rounded-md -mx-1.5 px-1.5": true,
 		"peer-focus-within:top-0 peer-focus-within:text-xs peer-focus-within:-mx-1.5 peer-focus-within:px-1.5": true,
 		"peer-placeholder-shown:top-0 peer-placeholder-shown:text-xs peer-placeholder-shown:-mx-1.5 peer-placeholder-shown:px-1.5": true,
-		"top-0 text-xs": (hasContents|| !!props.placeholder),
+		"top-0 text-xs": (hasContents || !!props.placeholder),
 		"text-base": size === "large",
-		"text-sm": size === "large" && (hasContents|| !!props.placeholder),
+		"text-sm": size === "large" && (hasContents || !!props.placeholder),
 		"peer-placeholder-shown:text-sm peer-focus-within:text-sm": size === "large",
 		"peer-focus-within:text-gray-800 group-focus-within/wrapper:text-gray-800 dark:peer-focus-within:text-gray-200 dark:group-focus-within/wrapper:text-gray-200": color === "neutral",
 		"peer-focus-within:text-primary group-focus-within/wrapper:text-primary": color === "primary",
@@ -204,8 +206,17 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"text-error dark:text-error": dropdownVisible && color === "error",
 		"text-warning dark:text-warning": dropdownVisible && color === "warning",
 		"text-success dark:text-success": dropdownVisible && color === "success",
-		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents|| !!props.placeholder),
+		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents || !!props.placeholder),
 		"!text-error dark:!text-error": invalid,
+
+		"peer-focus-within:dark:!text-primary-300 group-focus-within/wrapper:!text-primary-300": pastel && color === "primary",
+		"peer-focus-within:dark:!text-error-300 group-focus-within/wrapper:!text-error-300": pastel && color === "error",
+		"peer-focus-within:dark:!text-warning-300 group-focus-within/wrapper:!text-warning-300": pastel && color === "warning",
+		"peer-focus-within:dark:!text-success-300 group-focus-within/wrapper:!text-success-300": pastel && color === "success",
+		"dark:!text-primary-300": pastel && color === "primary" && dropdownVisible,
+		"dark:!text-error-300": pastel && color === "error" && dropdownVisible,
+		"dark:!text-warning-300": pastel && color === "warning" && dropdownVisible,
+		"dark:!text-success-300": pastel && color === "success" && dropdownVisible
 	};
 
 	// Button classnames
@@ -227,7 +238,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 	};
 	
 	// Helper functions for select dropdown
-	function open() {
+	const open = useCallback(function() {
 
 		if (!props.id) return;
 		const input = ref.current?.querySelector("input");
@@ -240,26 +251,24 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 		setDropdownOpen(true);
 		requestAnimationFrame(() => setDropdownVisible(true));
-	}
+		
+	}, [ props.disabled, props.id, props.type ]);
 	
 	// Close dropdown
-	function close() {
+	const close = useCallback(function() {
 		setDropdownVisible(false);
 		requestAnimationFrame(() => dropdownRef.current?.addEventListener("transitionend", () => setDropdownOpen(false), { once: true }));
-	}
+	}, []);
 	
 	// Set input value
-	function setValue(iv: string | Option, key?: number) {
-
-		console.log({ iv, key })
+	const setValue = useCallback(function(iv: string | Option, key?: number) {
 
 		if (key !== undefined && key > -1) setActiveKey(key);
 
 		if (!props.id) return;
 		const input = ref.current?.querySelector("input");
 
-		if(typeof iv === "object" && iv.disabled || typeof iv !== "object" || !input) return;
-
+		if (typeof iv === "object" && iv.disabled || typeof iv !== "object" || !input) return;
 
 		setIcon(iv.icon || null);
 
@@ -273,26 +282,20 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		// Close dropdown
 		close();
 		
-	}
+	}, [ close, options, props ]);
 
 	const change = useCallback(function(event: Event) {
 		const target = event?.target as HTMLInputElement;
 		if (!target) return;
 		setValueState(options?.find(a => a.value === target.value) || options?.find(a => a.label === target.value) || null);
-	}, [])
-
-
+	}, [ options ]);
 
 	// Bind event listeners
 	useEffect(function() {
 		if (!props.id || props.type !== "select") return;
 		const input = ref.current?.querySelector("input");
-
-		console.log(input)
 		
 		function keydown(event: KeyboardEvent) {
-
-			console.log(event);
 
 			if (!options) return;
 			switch (event.key) {
@@ -300,7 +303,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (!dropdownVisible) open();
 					else {
 						setValue(options[activeKey], activeKey);
-			setValueState(options?.find(a => a.value === options[activeKey].value) || options?.find(a => a.label === options[activeKey].label) || null);
+						setValueState(options?.find(a => a.value === options[activeKey].value) || options?.find(a => a.label === options[activeKey].label) || null);
 					}
 					break;
 				case "Escape":
@@ -314,7 +317,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
 					else {
 						setValue(options[key], key);
-			setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
+						setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
 					}
 					break;
 				}
@@ -326,7 +329,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					if (dropdownVisible || dropdownOpen) setActiveKey(key);
 					else {
 						setValue(options[key], key);
-			setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
+						setValueState(options?.find(a => a.value === options[key].value) || options?.find(a => a.label === options[key].label) || null);
 					}
 					break;
 				}
@@ -339,12 +342,12 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			open();
 		}
 
-		if(!input) return;
+		if (!input) return;
 
 		// On focus open, and on blur close
 		input.addEventListener("focus", focus);
 		input.addEventListener("blur", close);
-		input.addEventListener("change", change)
+		input.addEventListener("change", change);
 		input.addEventListener("mousedown", open);
 		input.addEventListener("keydown", keydown);
 		input.parentElement?.addEventListener("mousedown", labelMousedown);
@@ -385,20 +388,34 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		if (!ref.current?.contains(event.target as Node)) close();
 	});
 
+	// Set the initial icon
+	useEffect(function() {
+
+		const input = ref.current?.querySelector("input");
+		if (!input) return;
+
+		// Set the initial icon
+		const selected = options?.find(a => a.value === input.value) || options?.find(a => a.label === input.value) || null;
+		if (!selected || selected.value === value?.value) return;
+
+		setValue(selected);
+
+	}, [ props, value, options, setValue ]);
+
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
 			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
 
 				{ icon && (
 					<div className="w-6 h-6 items-center justify-center flex">
-						{icon}
+						{ icon }
 					</div>
-				)}
+				) }
 
-				{/* Input */}
+				{ /* Input */ }
 				<div className="relative bg-inherit grow flex">
 					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
-					{props.type === "select" && <p className={cn(input, className, !value?.label && "text-gray-600 dark:text-gray-400")}>{value?.label || props.placeholder}</p>}
+					{ props.type === "select" && <p className={ cn(input, className, !value?.label && "text-gray-600 dark:text-gray-400") }>{ value?.label || props.placeholder }</p> }
 				</div>
 				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }
 				

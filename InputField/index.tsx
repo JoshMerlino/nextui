@@ -209,14 +209,14 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents || !!props.placeholder),
 		"!text-error dark:!text-error": invalid,
 
-		"peer-focus-within:dark:!text-primary-300 group-focus-within/wrapper:!text-primary-300": pastel && color === "primary",
-		"peer-focus-within:dark:!text-error-300 group-focus-within/wrapper:!text-error-300": pastel && color === "error",
-		"peer-focus-within:dark:!text-warning-300 group-focus-within/wrapper:!text-warning-300": pastel && color === "warning",
-		"peer-focus-within:dark:!text-success-300 group-focus-within/wrapper:!text-success-300": pastel && color === "success",
-		"dark:!text-primary-300": pastel && color === "primary" && dropdownVisible,
-		"dark:!text-error-300": pastel && color === "error" && dropdownVisible,
-		"dark:!text-warning-300": pastel && color === "warning" && dropdownVisible,
-		"dark:!text-success-300": pastel && color === "success" && dropdownVisible
+		"peer-focus-within:dark:text-primary-300 group-focus-within/wrapper:text-primary-300": pastel && color === "primary",
+		"peer-focus-within:dark:text-error-300 group-focus-within/wrapper:text-error-300": pastel && color === "error",
+		"peer-focus-within:dark:text-warning-300 group-focus-within/wrapper:text-warning-300": pastel && color === "warning",
+		"peer-focus-within:dark:text-success-300 group-focus-within/wrapper:text-success-300": pastel && color === "success",
+		"dark:text-primary-300": pastel && color === "primary" && dropdownVisible,
+		"dark:text-error-300": pastel && color === "error" && dropdownVisible,
+		"dark:text-warning-300": pastel && color === "warning" && dropdownVisible,
+		"dark:text-success-300": pastel && color === "success" && dropdownVisible
 	};
 
 	// Button classnames

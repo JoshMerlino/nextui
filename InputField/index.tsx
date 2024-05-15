@@ -189,7 +189,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"dark:ring-error-300 dark:border-error-300": pastel && color === "error" && dropdownVisible,
 		"dark:ring-warning-300 dark:border-warning-300": pastel && color === "warning" && dropdownVisible,
 		"dark:ring-success-300 dark:border-success-300": pastel && color === "success" && dropdownVisible
-		
+
 	};
 
 	// Label classnames
@@ -214,10 +214,10 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents || !!props.placeholder),
 		"!text-error dark:!text-error": invalid,
 
-		"peer-focus-within:dark:text-primary-300 group-focus-within/wrapper:text-primary-300": pastel && color === "primary",
-		"peer-focus-within:dark:text-error-300 group-focus-within/wrapper:text-error-300": pastel && color === "error",
-		"peer-focus-within:dark:text-warning-300 group-focus-within/wrapper:text-warning-300": pastel && color === "warning",
-		"peer-focus-within:dark:text-success-300 group-focus-within/wrapper:text-success-300": pastel && color === "success",
+		"peer-focus-within:dark:text-primary-300 dark:group-focus-within/wrapper:text-primary-300": pastel && color === "primary",
+		"peer-focus-within:dark:text-error-300 dark:group-focus-within/wrapper:text-error-300": pastel && color === "error",
+		"peer-focus-within:dark:text-warning-300 dark:group-focus-within/wrapper:text-warning-300": pastel && color === "warning",
+		"peer-focus-within:dark:text-success-300 dark:group-focus-within/wrapper:text-success-300": pastel && color === "success",
 		"dark:text-primary-300": pastel && color === "primary" && dropdownVisible,
 		"dark:text-error-300": pastel && color === "error" && dropdownVisible,
 		"dark:text-warning-300": pastel && color === "warning" && dropdownVisible,
@@ -232,7 +232,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 	// Dropdown classnames
 	const dropdownCard = {
-		"transition-[transform,opacity] select-none duration-75 p-0 origin-top bg-white dark:bg-gray-900 after:absolute after:inset-0 after:content-[''] dark:after:bg-gray-800/50 after:-z-10 isolate": true,
+		"transition-[transform,opacity] select-none duration-75 p-0 origin-top bg-white dark:bg-gray-900 after:absolute after:inset-0 after:content-[''] after:bg-gray-50/50 dark:after:bg-gray-800/50 after:-z-10 isolate": true,
 		"scale-100 opacity-100": dropdownVisible,
 		"scale-75 opacity-0 pointer-events-none": !dropdownVisible
 	};

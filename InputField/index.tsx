@@ -185,6 +185,11 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"focus-within:dark:ring-error-300 focus-within:dark:border-error-300 dark:focus-within:border-error-300": pastel && color === "error",
 		"focus-within:dark:ring-warning-300 focus-within:dark:border-warning-300 dark:focus-within:border-warning-300": pastel && color === "warning",
 		"focus-within:dark:ring-success-300 focus-within:dark:border-success-300 dark:focus-within:border-success-300": pastel && color === "success",
+		"dark:ring-primary-300 dark:border-primary-300": pastel && color === "primary" && dropdownVisible,
+		"dark:ring-error-300 dark:border-error-300": pastel && color === "error" && dropdownVisible,
+		"dark:ring-warning-300 dark:border-warning-300": pastel && color === "warning" && dropdownVisible,
+		"dark:ring-success-300 dark:border-success-300": pastel && color === "success" && dropdownVisible
+		
 	};
 
 	// Label classnames

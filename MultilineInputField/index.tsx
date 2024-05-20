@@ -29,7 +29,7 @@ interface Props {
 
 }
 
-export function MultilineInputField({ invalid = false, color = "primary", label, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & Partial<Props>): JSX.Element {
+export function MultilineInputField({ invalid = false, className, color = "primary", label, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement> & Partial<Props>): JSX.Element {
 
 	const [ hasContents, setHasContents ] = useState(false);
 	const ref = useRef<HTMLLabelElement>(null);
@@ -99,8 +99,8 @@ export function MultilineInputField({ invalid = false, color = "primary", label,
 			<label className={ cn(wrapper) } htmlFor={ props.id } ref={ ref }>
 				{ label && <p className={ cn(labelStyles) }>{ label }</p> }
 				<textarea
-					className={ cn(input) }
 					{ ...props }
+					className={ cn(input, className) }
 					onChange={ event => {
 						resize(event);
 						props.onChange && props.onChange(event);

@@ -26,7 +26,7 @@ export const Card = forwardRef<HTMLDivElement, Props & HTMLAttributes<HTMLDivEle
 		{
 			"shadow-md bg-white dark:bg-gray-800": variant === "raised",
 			"border bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50": variant === "outlined",
-			"bg-gray-200 dark:bg-gray-800/50": variant === "flat"
+			"bg-gray-200/80 dark:bg-gray-800/80": variant === "flat"
 		},
 
 		// Header subclass

@@ -4,25 +4,25 @@
 
 import { useCallback, useEffect, useMemo, useState, type DependencyList } from "react";
 
-export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement = document.body) {
-
-	const element = useMemo(() => "current" in container ? container.current : container, [ container ]);
-
+export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement) {
+	
+	const element = useMemo(() => container && "current" in container ? container.current : container, [ container ]);
+	
 	const [ scrollX, setScrollX ] = useState(0);
 	const [ scrollY, setScrollY ] = useState(0);
-
+	
 	const handle = useCallback(function({ target }: Event) {
 		if (!(target instanceof HTMLElement)) return;
 		setScrollX(target.scrollLeft);
 		setScrollY(target.scrollTop);
 	}, [ container ]);
-
+	
 	useEffect(function() {
 		if (!element) return;
 		element.addEventListener("scroll", handle);
 		() => element.removeEventListener("scroll", handle);
 	}, [ element, handle ]);
-
+	
 	return { scrollX, scrollY };
 
 }

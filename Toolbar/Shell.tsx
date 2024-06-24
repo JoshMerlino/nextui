@@ -1,5 +1,6 @@
 "use client";
 
+import { useResize } from "nextui/hooks";
 import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 import { cn } from "../util";
 
@@ -57,20 +58,12 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 
 	}, [ raised, setRaised ]);
 	
-	useEffect(function() {
+	useResize(function() {
+		const toolbar = toolbarRef.current;
+		if (!toolbar || !backdropRef.current) return;
 		
-		function resize() {
-			const toolbar = toolbarRef.current;
-			if (!toolbar || !backdropRef.current) return;
-		
-			const height = backdropRef.current.clientHeight - toolbar.clientHeight;
-			backdropRef.current.style.top = `-${ height }px`;
-		}
-
-		resize();
-		window.addEventListener("resize", resize);
-		return () => window.removeEventListener("resize", resize);
-
+		const height = backdropRef.current.clientHeight - toolbar.clientHeight;
+		backdropRef.current.style.top = `-${ height }px`;
 	}, [ backdrop, backdropRef, toolbarRef ]);
 
 	return (

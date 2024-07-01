@@ -26,9 +26,15 @@ interface Props {
 	 */
 	blur?: number;
 
+	/**
+	 * Whether to hide the scrim on desktop
+	 * @default false
+	 */
+	hideOnDesktop?: boolean;
+
 }
 
-export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], darken = 0.25, blur = 8, ...props }: Props & HTMLAttributes<HTMLElement>) {
+export function DrawerScrim({ drawer, children, className, state: [ open, setOpen ], darken = 0.25, blur = 8, hideOnDesktop = false, ...props }: Props & HTMLAttributes<HTMLElement>) {
 	
 	const [ touchSupported, setTouchSupported ] = useState(false);
 	
@@ -152,7 +158,9 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 	return (
 		<div className="absolute inset-0 flex isolate bg-inherit overflow-hidden">
-			{ drawer }
+			<div className={ cn(hideOnDesktop && "md:hidden") }>
+				{ drawer }
+			</div>
 			<div
 				className={ cn("h-full w-4 absolute z-10 flex items-center justify-center xl:hidden", !touchSupported && "pointer-events-none hidden", open && "w-full") }
 				onClick={ () => open && setOpen(false) }
@@ -160,8 +168,8 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 				style={{ touchAction: "none" }}>
 				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px] backdrop-blur-2xl shrink-0 max-w-1.5 mr-auto" />
 			</div>
-			<div className={ cn("grow relative bg-inherit", className) }>{ children }</div>
-			<div className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden group/scrim backdrop-blur-0", open ? "pointer-events-auto" : "pointer-events-none") } onClick={ () => setOpen(false) } { ...props } />
+			<div className={ cn("grow relative bg-inherit", hideOnDesktop && "!translate-x-0", className) }>{ children }</div>
+			<div className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden group/scrim backdrop-blur-0", open ? "pointer-events-auto" : "pointer-events-none", hideOnDesktop && "md:hidden") } onClick={ () => setOpen(false) } { ...props } />
 		</div>
 	);
 }

@@ -99,7 +99,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 		// if (target.value.length === 5 && selectionEnd === 4) {
 		if (selectionEnd === 4) {
 			selectionEnd++;
-			selectionStart && selectionStart++;
+			if (selectionStart) selectionStart++;
 		}
 
 		target.setSelectionRange(selectionStart, selectionEnd);
@@ -129,7 +129,7 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 			</div>
 		) }
 		className={ cn("tracking-[2.5px]", className) }
-		color={ color || state && [ "error", "success" ].includes(state) ? state as "error" | "success" : undefined || color }
+		color={ color }
 		onDrop={ filter }
 		onInput={ format }
 		onKeyDown={ filter }

@@ -128,7 +128,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		
 		// Add event listeners
 		input.addEventListener("change", change);
-		() => input.removeEventListener("change", change);
+		return () => input.removeEventListener("change", change);
 
 	}, [ props.id, props.type, props.defaultValue, options, activeKey ]);
 	

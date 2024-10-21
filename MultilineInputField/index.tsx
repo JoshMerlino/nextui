@@ -103,19 +103,19 @@ export function MultilineInputField({ invalid = false, className, color = "prima
 					className={ cn(input, className) }
 					onChange={ event => {
 						resize(event);
-						props.onChange && props.onChange(event);
+						if (props.onChange) props.onChange(event);
 						setHasContents(event.target.value.length > 0);
 					} }
 					onKeyDownCapture={ event => {
 						const target = event.target as HTMLTextAreaElement;
 						resize({ target });
-						props.onKeyDownCapture && props.onKeyDownCapture(event);
+						if (props.onKeyDownCapture) props.onKeyDownCapture(event);
 						setHasContents(target.value.length > 0);
 					} }
 					onKeyUpCapture={ event => {
 						const target = event.target as HTMLTextAreaElement;
 						resize({ target });
-						props.onKeyUpCapture && props.onKeyUpCapture(event);
+						if (props.onKeyUpCapture) props.onKeyUpCapture(event);
 						setHasContents(target.value.length > 0);
 					} } />
 			</label>

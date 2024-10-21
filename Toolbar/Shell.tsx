@@ -43,18 +43,19 @@ export function ToolbarShell({ children, className, before, after, toolbar, stat
 	const beforeWrapperRef = useRef<HTMLDivElement>(null);
 
 	useEffect(function() {
-		if (!ref.current) return;
+		const toolbar = ref.current;
+		if (!toolbar) return;
 
 		// See if the element is scrolled
 		function onScroll() {
-			if (!ref.current) return;
-			if (ref.current.scrollTop > (beforeWrapperRef.current?.clientHeight ?? 0)) setRaised(true);
+			if (!toolbar) return;
+			if (toolbar.scrollTop > (beforeWrapperRef.current?.clientHeight ?? 0)) setRaised(true);
 			else if (raised) setRaised(false);
 		}
 
 		// Add the event listener
-		ref.current.addEventListener("scroll", onScroll);
-		() => ref.current?.removeEventListener("scroll", onScroll);
+		toolbar.addEventListener("scroll", onScroll);
+		return () => toolbar.removeEventListener("scroll", onScroll);
 
 	}, [ raised, setRaised ]);
 	

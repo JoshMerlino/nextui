@@ -57,7 +57,7 @@ export function Toolbar({ children, glassmorphism = true, className, raised: def
 
 		// Add the event listener
 		content.addEventListener("scroll", onScroll);
-		() => content.removeEventListener("scroll", onScroll);
+		return () => content.removeEventListener("scroll", onScroll);
 		
 	}, [ elevate, htmlFor ]);
 

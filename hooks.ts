@@ -20,7 +20,7 @@ export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement)
 	useEffect(function() {
 		if (!element) return;
 		element.addEventListener("scroll", handle);
-		() => element.removeEventListener("scroll", handle);
+		return () => element.removeEventListener("scroll", handle);
 	}, [ element, handle ]);
 	
 	return { scrollX, scrollY };

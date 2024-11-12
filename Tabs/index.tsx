@@ -1,32 +1,44 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { cn } from "nextui/util";
-import { Children, createContext, useCallback, useContext, useEffect, useRef, useState, type Dispatch, type PropsWithChildren, type RefObject, type SetStateAction } from "react";
+import { Children, createContext, type PropsWithChildren, type RefObject, useCallback, useEffect, useRef, useState } from "react";
+export { Tab } from "./Tab";
 
-export const TabsContext = createContext<{
-	indicator: RefObject<HTMLDivElement> | null,
-	background: RefObject<HTMLDivElement> | null,
-	selected: number,
-	setSelected: Dispatch<SetStateAction<number>>
-}>({
-	indicator: null,
-	background: null,
-	selected: -1,
-	setSelected: () => {}
-});
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, func-call-spacing
+export const TabsContext = createContext<[number | null, (val: number) => void]>([ -1, (_index: number) => { } ]);
+export const IndexContext = createContext(-1);
+export const IndicatorContext = createContext<RefObject<HTMLLIElement> | null>(null);
 
-export const KeyContext = createContext(-1);
+export function Tabs({ children }: Readonly<PropsWithChildren>) {
 
-export function Tabs({ children }: PropsWithChildren) {
-	const indicator = useRef<HTMLDivElement>(null);
-	const background = useRef<HTMLDivElement>(null);
-	const items = useRef<HTMLUListElement>(null);
-	const [ selected, setSelected ] = useState(-1);
-	const pathname = usePathname();
+	const indicator = useRef<HTMLLIElement>(null);
+	const hover = useRef<HTMLLIElement>(null);
+
+	const [ selected, setSelected ] = useState<number | null>(null);
+
+	useEffect(function() {
+		const slider = indicator.current;
+		if (selected === null) return;
+		const target = indicator.current?.parentElement?.children[selected] as HTMLElement;
+		if (!slider || !target) return;
+		slider.style.left = `${ target.offsetLeft }px`;
+		slider.style.width = `${ target.offsetWidth - 20 }px`;
+		slider.style.transitionProperty = "left, width";
+	}, [ selected ]);
+
+	const onMouseMove = useCallback(function(event: React.MouseEvent<HTMLLIElement, MouseEvent> | React.FocusEvent<HTMLLIElement>) {
+		const slider = hover.current;
+		const target = event.target instanceof HTMLLIElement ? event.target : (event.target as HTMLElement).closest("li") as HTMLLIElement;
+		if (!slider || !target) return;
+		slider.style.top = `${ target.offsetTop }px`;
+		slider.style.height = `${ target.offsetHeight }px`;
+		slider.style.opacity = "1";
+		slider.style.left = `${ target.offsetLeft }px`;
+		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
+		slider.style.transitionProperty = "opacity, left, right";
+	}, []);
 
 	const onMouseLeave = useCallback(function(event: React.MouseEvent<HTMLUListElement, MouseEvent>) {
-		const slider = background.current;
+		const slider = hover.current;
 		const target = event.target as HTMLUListElement;
 		if (!slider || !target) return;
 		slider.style.transitionProperty = "opacity";
@@ -37,81 +49,37 @@ export function Tabs({ children }: PropsWithChildren) {
 		}, { once: true });
 	}, []);
 
-	useEffect(function() {
-		if (!indicator.current || !items.current) return;
-		const slider = indicator.current;
-		const target = items.current.querySelector(":nth-child(" + (selected + 1) + ")") as HTMLLIElement;
-		if (!target) return;
-		slider.style.left = `${ target.offsetLeft }px`;
-		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
-		slider.addEventListener("transitionend", function() {
-			slider.style.opacity = "1";
-		}, { once: true });
-	}, [ selected ]);
-
-	useEffect(function() {
-		if (!items.current) return;
-		const defaultTarget =
-			items.current.querySelector(`a[href='${ pathname }']`) as HTMLLIElement ||
-			items.current.querySelector(":first-child") as HTMLLIElement;
-
-		// Get the index of the default target
-		const index = Array.from(items.current.children).indexOf(defaultTarget);
-		setSelected(index);
-	}, [ pathname ]);
+	const onBlur = useCallback(function(event: React.FocusEvent<HTMLUListElement>) {
+		const slider = hover.current;
+		if (!slider) return;
+		if (event.target.contains(event.relatedTarget)) return;
+		if (event.currentTarget.contains(event.relatedTarget)) return;
+		slider.style.transitionProperty = "opacity";
+		slider.style.opacity = "0";
+	}, []);
 
 	return (
-		<TabsContext.Provider value={{ indicator, background, selected, setSelected }}>
-			<div className="relative isolate">
-				<div
-					className="absolute rounded bg-primary/10 pointer-events-none transition-[left,right,opacity] -z-10"
-					ref={ background } />
-				<div
-					className="absolute bg-primary-700 dark:bg-primary-300 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px]"
-					ref={ indicator } />
+		<TabsContext.Provider value={ [ selected, setSelected ] }>
+			<IndicatorContext.Provider value={ indicator }>
 				<ul
-					className="flex items-center gap-1 group pb-2"
-					onMouseLeave={ onMouseLeave }
-					ref={ items }>
-					{ Children.map(children, (child, key) => <KeyContext.Provider
-						key={ key }
-						value={ key }>
-						{ child }
-					</KeyContext.Provider>) }
+					className="border-b border-gray-200 dark:border-gray-750 inline-flex self-start relative isolate w-full md:w-auto"
+					onBlurCapture={ onBlur }
+					onMouseLeave={ onMouseLeave }>
+					{ Children.map(children, (child, key) => (
+						<IndexContext.Provider
+							key={ key }
+							value={ key }>
+							<li
+								className="w-full md:w-auto flex"
+								onFocusCapture={ onMouseMove }
+								onMouseMove={ onMouseMove }>{ child }</li>
+						</IndexContext.Provider>
+					)) }
+					<li className="h-[3px] bg-primary rounded-full bottom-0 absolute transition-all translate-y-[2px] mx-2.5" ref={ indicator } />
+					<li className="absolute bg-gray-200 dark:bg-gray-700/25 rounded -z-10 -translate-y-1 transition-all" ref={ hover } />
 				</ul>
-			</div>
+			</IndicatorContext.Provider>
 		</TabsContext.Provider>
 	);
 }
 
-export function Tab({ children }: PropsWithChildren) {
-	const { background, selected, setSelected } = useContext(TabsContext);
-	const index = useContext(KeyContext);
-
-	const onMouseMove = useCallback(function(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
-		const slider = background?.current;
-		const target = event.target instanceof HTMLLIElement ? event.target : (event.target as HTMLElement).closest("li") as HTMLLIElement;
-		if (!slider || !target) return;
-		slider.style.top = `${ target.offsetTop }px`;
-		slider.style.height = `${ target.offsetHeight }px`;
-		slider.style.opacity = "1";
-		slider.style.left = `${ target.offsetLeft }px`;
-		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
-		slider.style.transitionProperty = "opacity, left, right";
-	}, [ background ]);
-
-	return (
-		<li
-			className={ cn(
-				"uppercase font-medium text-sm rounded relative",
-				"inline-flex items-center focus:outline-0 transition-colors duration-100",
-				"active:bg-primary-700/10 dark:active:bg-primary-300/10 focus:bg-primary-700/10 dark:focus:bg-primary-300/10",
-				selected === index ? "active text-primary-700 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100",
-				"h-8 px-3"
-			) }
-			onClick={ () => setSelected(index) }
-			onMouseMove={ onMouseMove }>
-			{ children }
-		</li>
-	);
-}

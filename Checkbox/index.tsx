@@ -19,7 +19,7 @@ interface Props {
 
 }
 
-export function Checkbox({ color = "neutral", className, children, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
+export function Checkbox({ color, className, children, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -28,7 +28,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 	const checkbox: ClassValue[] = [
 
 		// Base class
-		"appearance-none border-2 border-gray-500 w-5 h-5 rounded checked:border-[10px] transition-[border] duration-75 focus:outline-0 peer",
+		"appearance-none border-2 border-gray-500 w-[18px] h-[18px] rounded-[4px] checked:border-[9px] transition-[border] duration-75 focus:outline-0 peer",
 
 		// Color
 		{
@@ -53,7 +53,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 	const icon: ClassValue[] = [
 
 		// Base class
-		"m-0.5 scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none",
+		"m-0.5 scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none text-inherit",
 
 		// Color
 		{
@@ -71,7 +71,7 @@ export function Checkbox({ color = "neutral", className, children, ...props }: I
 
 	return (
 		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto">
-			<div className="relative flex">
+			<div className={ cn("relative flex", className) }>
 				<input
 					className={ cn(checkbox) }
 					type="checkbox"

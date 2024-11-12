@@ -37,7 +37,7 @@ export interface ItemProps {
 
 }
 
-export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition = "before", size = "large", active, ...props }: Partial<ItemProps> & HTMLAttributes<HTMLLIElement>) {
+export function DrawerItem({ className, children, disableRipple, icon: Icon, iconPosition = "before", size = "large", active, ...props }: Partial<ItemProps> & HTMLAttributes<HTMLLIElement>) {
 
 	// Record of classnames to apply based on props
 	const classes: ClassValue[] = [
@@ -50,6 +50,8 @@ export function DrawerItem({ children, disableRipple, icon: Icon, iconPosition =
 
 		// If active
 		active ? "bg-primary/10 hover:bg-primary/20 text-primary-600 dark:text-primary-400 active:bg-primary/20 border-primary-600 dark:border-primary-400" : "hover:bg-gray-100 group-focus/link:bg-gray-100 group-focus/link:border-current text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:active:bg-gray-700/50 dark:group-focus/link:bg-gray-700/50",
+
+		className
 
 	];
 

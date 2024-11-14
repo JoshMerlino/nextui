@@ -28,7 +28,7 @@ export function Checkbox({ color, className, children, ...props }: InputHTMLAttr
 	const checkbox: ClassValue[] = [
 
 		// Base class
-		"appearance-none border-2 border-gray-500 w-[18px] h-[18px] rounded-[4px] checked:border-[9px] transition-[border] duration-75 focus:outline-0 peer",
+		"appearance-none border-2 border-gray-500 w-5 h-5 rounded-[4px] checked:border-[10px] transition-[border] duration-75 focus:outline-0 peer",
 
 		// Color
 		{

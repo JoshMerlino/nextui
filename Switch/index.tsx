@@ -95,7 +95,7 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 	];
 
 	return (
-		<div className="flex items-center gap-4 mr-auto group/checkbox font-roboto isolate">
+		<div className={ cn("flex items-center gap-4 mr-auto group/checkbox font-roboto isolate", className) }>
 			<div className="relative flex group/switch">
 				<input
 					className={ cn(track) }

@@ -1,9 +1,9 @@
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
-import { type PropsWithChildren, useCallback, useContext } from "react";
+import { type HTMLAttributes, useCallback, useContext } from "react";
 import { KeyContext, TabsContext } from ".";
 
-export function Tab({ children }: PropsWithChildren) {
+export function Tab({ children, className, onClick, ...props }: HTMLAttributes<HTMLLIElement>) {
 	const { background, selected, setSelected } = useContext(TabsContext);
 	const index = useContext(KeyContext);
 
@@ -26,10 +26,12 @@ export function Tab({ children }: PropsWithChildren) {
 				"inline-flex items-center focus:outline-0 transition-colors duration-100",
 				"focus:bg-primary-700/10 dark:focus:bg-primary-400/10",
 				selected === index ? "active text-primary-700 dark:text-primary-400" : "hover:text-primary-900 dark:hover:text-primary-100",
-				"h-8 px-3"
+				"h-8 px-3",
+				className
 			) }
-			onClick={ () => setSelected(index) }
+			onClick={ ev => [ setSelected(index), onClick?.(ev) ] }
 			onMouseMove={ onMouseMove }
+			{ ...props }
 			tabIndex={ 0 }>
 			<Ripple className="bg-primary-700/20 dark:bg-primary-400/20" />
 			{ children }

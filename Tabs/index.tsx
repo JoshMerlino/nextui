@@ -49,17 +49,6 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 		}, { once: true });
 	}, [ selected ]);
 
-	// useEffect(function() {
-	// 	if (!items.current) return;
-	// 	const defaultTarget =
-	// 		items.current.querySelector(`a[href='${ pathname }']`) as HTMLLIElement ||
-	// 		items.current.querySelector(":first-child") as HTMLLIElement;
-
-	// 	// Get the index of the default target
-	// 	const index = Array.from(items.current.children).indexOf(defaultTarget);
-	// 	setSelected(index);
-	// }, [ pathname ]);
-
 	return (
 		<TabsContext.Provider value={{ indicator, background, selected, setSelected }}>
 			<div className="relative isolate">
@@ -67,7 +56,7 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 					className="absolute rounded bg-primary/10 pointer-events-none transition-[left,right,opacity] -z-10"
 					ref={ background } />
 				<div
-					className="absolute bg-primary-700 dark:bg-primary-300 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2"
+					className="absolute bg-primary-700 dark:bg-primary-400 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2"
 					ref={ indicator } />
 				<ul
 					className="flex items-center gap-1 group mb-2"

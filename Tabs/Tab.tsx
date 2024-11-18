@@ -1,30 +1,38 @@
-"use client";
+import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
-import { type HTMLAttributes, useContext, useEffect, useMemo } from "react";
-import { IndexContext, IndicatorContext, TabsContext } from ".";
+import { type PropsWithChildren, useCallback, useContext } from "react";
+import { KeyContext, TabsContext } from ".";
 
-export function Tab({ children, defaultChecked, onClick, ...props }: HTMLAttributes<HTMLButtonElement>) {
+export function Tab({ children }: PropsWithChildren) {
+	const { background, selected, setSelected } = useContext(TabsContext);
+	const index = useContext(KeyContext);
 
-	const index = useContext(IndexContext);
-	const [ selected, setSelected ] = useContext(TabsContext);
-
-	const active = useMemo(() => selected === index, [ selected, index ]);
-	const indicator = useContext(IndicatorContext);
-
-	useEffect(function() {
-		if (defaultChecked && indicator?.current) {
-			indicator.current.style.transitionProperty = "none";
-			setSelected(index);
-			indicator.current.style.transitionProperty = "left, width";
-		}
-	}, [ defaultChecked, index, indicator, setSelected ]);
+	const onMouseMove = useCallback(function(event: React.MouseEvent<HTMLLIElement, MouseEvent>) {
+		const slider = background?.current;
+		const target = event.target instanceof HTMLLIElement ? event.target : (event.target as HTMLElement).closest("li") as HTMLLIElement;
+		if (!slider || !target) return;
+		slider.style.top = `${ target.offsetTop }px`;
+		slider.style.height = `${ target.offsetHeight }px`;
+		slider.style.opacity = "1";
+		slider.style.left = `${ target.offsetLeft }px`;
+		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
+		slider.style.transitionProperty = "opacity, left, right";
+	}, [ background ]);
 
 	return (
-		<button
-			className={ cn("w-full mx-1 px-2.5 font-semibold text-gray-400 pb-2.5 select-none text-center transition-colors cursor-pointer outline-0 truncate", active ? "text-gray-800 dark:text-gray-200" : "hover:text-gray-500 dark:hover:text-gray-300") }
-			onClick={ e => [ setSelected(index), onClick?.(e) ] }
-			{ ...props }>
+		<li
+			className={ cn(
+				"font-medium text-sm rounded relative overflow-hidden cursor-pointer",
+				"inline-flex items-center focus:outline-0 transition-colors duration-100",
+				"focus:bg-primary-700/10 dark:focus:bg-primary-300/10",
+				selected === index ? "active text-primary-700 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100",
+				"h-8 px-3"
+			) }
+			onClick={ () => setSelected(index) }
+			onMouseMove={ onMouseMove }
+			tabIndex={ 0 }>
+			<Ripple className="bg-primary-700/20 dark:bg-primary-300/20" />
 			{ children }
-		</button>
+		</li>
 	);
 }

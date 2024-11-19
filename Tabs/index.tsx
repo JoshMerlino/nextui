@@ -59,7 +59,7 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 					className="absolute bg-primary-700 dark:bg-primary-400 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2"
 					ref={ indicator } />
 				<ul
-					className="flex items-center gap-1 group mb-2"
+					className="flex items-center gap-2 group my-2"
 					onMouseLeave={ onMouseLeave }
 					ref={ items }>
 					{ Children.map(children, (child, key) => <KeyContext.Provider

@@ -1,9 +1,9 @@
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
-import { type HTMLAttributes, useCallback, useContext } from "react";
+import { type HTMLAttributes, useCallback, useContext, useEffect } from "react";
 import { KeyContext, TabsContext } from ".";
 
-export function Tab({ children, className, onClick, ...props }: HTMLAttributes<HTMLLIElement>) {
+export function Tab({ children, className, onClick, defaultChecked, ...props }: HTMLAttributes<HTMLLIElement & Partial<{ defaultChecked: boolean }>>) {
 	const { background, selected, setSelected } = useContext(TabsContext);
 	const index = useContext(KeyContext);
 
@@ -18,6 +18,10 @@ export function Tab({ children, className, onClick, ...props }: HTMLAttributes<H
 		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
 		slider.style.transitionProperty = "opacity, left, right";
 	}, [ background ]);
+	
+	useEffect(function() {
+		if (defaultChecked) setSelected(index);
+	}, [ defaultChecked, setSelected, index ]);
 
 	return (
 		<li

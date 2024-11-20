@@ -37,7 +37,7 @@ export function Tab({ children, className, onClick, defaultChecked, disabled, ..
 			onClick={ ev => disabled || [ setSelected(index), onClick?.(ev) ] }
 			onMouseMove={ ev => disabled || onMouseMove(ev) }
 			{ ...props }
-			tabIndex={ 0 }>
+			tabIndex={ disabled ? -1 : 0 }>
 			{ disabled || <Ripple className="bg-primary-500/20 dark:bg-primary-400/20" /> }
 			{ children }
 		</li>

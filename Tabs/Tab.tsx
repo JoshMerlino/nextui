@@ -28,7 +28,7 @@ export function Tab({ children, className, onClick, defaultChecked, ...props }: 
 			className={ cn(
 				"font-medium text-sm rounded relative overflow-hidden cursor-pointer",
 				"inline-flex items-center focus:outline-0 transition-colors duration-100",
-				"focus:bg-primary-700/10 dark:focus:bg-primary-400/10",
+				"focus:bg-primary-700/10 dark:focus:bg-primary-400/10 focus:text-primary-900 dark:focus:text-primary-200",
 				selected === index ? "active text-primary-700 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100",
 				"h-8 px-3",
 				className

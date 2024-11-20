@@ -56,7 +56,7 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 					className="absolute rounded bg-primary/10 pointer-events-none transition-[left,right,opacity] -z-10"
 					ref={ background } />
 				<div
-					className="absolute bg-primary-700 dark:bg-primary-400 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2"
+					className="absolute bg-primary-700 dark:bg-primary-300 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2 mx-3"
 					ref={ indicator } />
 				<ul
 					className="flex items-center gap-2 group my-2"

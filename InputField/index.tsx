@@ -409,7 +409,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
-			<label className={ cn(wrapper, "rounded-lg") } htmlFor={ props.id }>
+			<label className={ cn(wrapper, "rounded-lg", className) } htmlFor={ props.id }>
 
 				{ icon && (
 					<div className="w-6 h-6 items-center justify-center flex">

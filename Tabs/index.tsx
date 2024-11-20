@@ -23,8 +23,6 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 	const items = useRef<HTMLUListElement>(null);
 	const [ selected, setSelected ] = useState(defaultSelected);
 
-	// const pathname = usePathname();
-
 	const onMouseLeave = useCallback(function(event: React.MouseEvent<HTMLUListElement, MouseEvent>) {
 		const slider = background.current;
 		const target = event.target as HTMLUListElement;
@@ -48,6 +46,8 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 			slider.style.opacity = "1";
 		}, { once: true });
 	}, [ selected ]);
+	
+	useEffect(() => setSelected(defaultSelected), [ defaultSelected ]);
 
 	return (
 		<TabsContext.Provider value={{ indicator, background, selected, setSelected }}>
@@ -56,7 +56,7 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 					className="absolute rounded bg-primary/10 pointer-events-none transition-[left,right,opacity] -z-10"
 					ref={ background } />
 				<div
-					className="absolute bg-primary-700 dark:bg-primary-300 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2 mx-3"
+					className="absolute bg-primary dark:bg-primary-300 pointer-events-none h-0.5 transition-[left,right,opacity] -bottom-[1px] -mb-2 mx-3"
 					ref={ indicator } />
 				<ul
 					className="flex items-center gap-2 group my-2"

@@ -3,7 +3,7 @@ import { cn } from "nextui/util";
 import { type HTMLAttributes, useCallback, useContext, useEffect } from "react";
 import { KeyContext, TabsContext } from ".";
 
-export function Tab({ children, className, onClick, defaultChecked, ...props }: HTMLAttributes<HTMLLIElement & Partial<{ defaultChecked: boolean }>>) {
+export function Tab({ children, className, onClick, defaultChecked, disabled, ...props }: HTMLAttributes<HTMLLIElement> & Partial<{ defaultChecked: boolean, disabled: boolean }>) {
 	const { background, selected, setSelected } = useContext(TabsContext);
 	const index = useContext(KeyContext);
 
@@ -28,16 +28,17 @@ export function Tab({ children, className, onClick, defaultChecked, ...props }: 
 			className={ cn(
 				"font-medium text-sm rounded relative overflow-hidden cursor-pointer",
 				"inline-flex items-center focus:outline-0 transition-colors duration-100",
-				"focus:bg-primary-700/10 dark:focus:bg-primary-400/10 focus:text-primary-900 dark:focus:text-primary-200",
-				selected === index ? "active text-primary-700 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100",
+				!disabled && "focus:bg-primary-500/10 dark:focus:bg-primary-400/10 focus:text-primary-700 dark:focus:text-primary-200",
+				!disabled && (selected === index ? "active text-primary-500 dark:text-primary-300" : "hover:text-primary-900 dark:hover:text-primary-100"),
 				"h-8 px-3",
+				disabled && "text-gray-500 dark:text-gray-400 cursor-not-allowed",
 				className
 			) }
-			onClick={ ev => [ setSelected(index), onClick?.(ev) ] }
-			onMouseMove={ onMouseMove }
+			onClick={ ev => disabled || [ setSelected(index), onClick?.(ev) ] }
+			onMouseMove={ ev => disabled || onMouseMove(ev) }
 			{ ...props }
 			tabIndex={ 0 }>
-			<Ripple className="bg-primary-700/20 dark:bg-primary-400/20" />
+			{ disabled || <Ripple className="bg-primary-500/20 dark:bg-primary-400/20" /> }
 			{ children }
 		</li>
 	);

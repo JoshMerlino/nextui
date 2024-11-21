@@ -422,7 +422,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
 					{ props.type === "select" && <p className={ cn(input, className, !(value?.label || value?.value) && "text-gray-600 dark:text-gray-400") }>{ (value?.label || value?.value) || props.placeholder }</p> }
 				</div>
-				{ label && <p className={ cn(labelStyles) } ref={ labelRef }>{ label }</p> }
+				{ label && <p className={ cn(labelStyles, className, "w-auto") } ref={ labelRef }>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
 				{ props.type === "password" && (

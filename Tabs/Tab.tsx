@@ -18,10 +18,8 @@ export function Tab({ children, className, onClick, defaultChecked, disabled, ..
 		slider.style.right = `${ slider.parentElement!.offsetWidth - target.offsetLeft - target.offsetWidth }px`;
 		slider.style.transitionProperty = "opacity, left, right";
 	}, [ background ]);
-	
-	useEffect(function() {
-		if (defaultChecked) setSelected(index);
-	}, [ defaultChecked, setSelected, index ]);
+
+	useEffect(() => void (defaultChecked && setSelected(index)), [ defaultChecked, index, setSelected ]);
 
 	return (
 		<li>

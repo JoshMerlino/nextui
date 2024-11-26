@@ -53,7 +53,7 @@ export function Checkbox({ color, className, children, ...props }: InputHTMLAttr
 	const icon: ClassValue[] = [
 
 		// Base class
-		"m-0.5 scale-0 peer-checked:scale-125 absolute transition-transform pointer-events-none text-inherit",
+		"scale-0 peer-checked:scale-125 absolute inset-0 transition-transform pointer-events-none text-inherit flex items-center justify-center",
 
 		// Color
 		{

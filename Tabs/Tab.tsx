@@ -19,7 +19,7 @@ export function Tab({ children, className, onClick, defaultChecked, disabled, ..
 		slider.style.transitionProperty = "opacity, left, right";
 	}, [ background ]);
 
-	useEffect(() => void (defaultChecked && setSelected(index)), [ defaultChecked, index, setSelected ]);
+	useEffect(() => void requestAnimationFrame(() => defaultChecked && setSelected(index)), [ defaultChecked, index, setSelected ]);
 
 	return (
 		<li>

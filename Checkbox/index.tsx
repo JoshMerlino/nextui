@@ -19,7 +19,7 @@ interface Props {
 
 }
 
-export function Checkbox({ color, className, children, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
+export function Checkbox({ color, className, children, indeterminate, ...props }: InputHTMLAttributes<HTMLInputElement> & Partial<Props>) {
 
 	// Initialize unique ID
 	props.id = props.id || Math.floor(Math.random() * 1e10).toString(36);
@@ -77,7 +77,7 @@ export function Checkbox({ color, className, children, ...props }: InputHTMLAttr
 					type="checkbox"
 					{ ...props } />
 				<div className={ cn(icon) }>
-					{ props.indeterminate ? <MdRemove /> : <MdCheck /> }
+					{ indeterminate ? <MdRemove /> : <MdCheck /> }
 				</div>
 			</div>
 			{ children && <label className={ cn("select-none", className) } htmlFor={ props.id }>{ children }</label> }

@@ -409,7 +409,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
-			<label className={ cn(wrapper, "rounded-lg", className) } htmlFor={ props.id }>
+			<label className={ cn(wrapper, "rounded-lg relative", className) } htmlFor={ props.id }>
 
 				{ icon && (
 					<div className="w-6 h-6 items-center justify-center flex">
@@ -420,9 +420,9 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 				{ /* Input */ }
 				<div className="relative bg-inherit grow flex">
 					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
-					{ props.type === "select" && <p className={ cn(input, className, !(value?.label || value?.value) && "text-gray-600 dark:text-gray-400") }>{ (value?.label || value?.value) || props.placeholder }</p> }
+					{ props.type === "select" && <p className={ cn(input, className, "w-auto flex items-center truncate", !(value?.label || value?.value) && "text-gray-600 dark:text-gray-400") }>{ (value?.label || value?.value) || props.placeholder }</p> }
 				</div>
-				{ label && <p className={ cn(labelStyles, className, "w-auto") } ref={ labelRef }>{ label }</p> }
+				{ label && <p className={ cn(labelStyles, className) } ref={ labelRef }>{ label }</p> }
 				
 				{ /* Toggle password visibility */ }
 				{ props.type === "password" && (

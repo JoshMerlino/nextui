@@ -1,158 +1,221 @@
-import { ClassValue } from "clsx";
-import { ButtonHTMLAttributes } from "react";
-import { IconType } from "react-icons";
+import { cva, type VariantProps } from "class-variance-authority";
+import type { ClassValue } from "clsx";
+import { merge } from "lodash";
+import { Spinner } from "nextui/Spinner";
+import { ButtonHTMLAttributes, type CSSProperties, type ReactNode } from "react";
 import { Ripple } from "../Ripple";
-import { Spinner } from "../Spinner";
 import { cn } from "../util";
-import "./index.css";
 
-interface Props {
+export const classes = {
+
+	button: cva([ "w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center outline-transparent" ], {
+		
+		defaultVariants: {
+
+			size: "medium",
+
+		},
+
+		variants: {
+
+			size: {
+				"small": "px-3 h-7 py-0.5 text-xs",
+				"medium": "px-4 h-9 py-1 text-sm",
+				"large": "px-6 h-11 py-2 text-base",
+				"md:large": "px-4 h-9 py-1 text-sm md:px-6 md:h-11 md:py-2 md:text-base",
+			},
+
+			variant: {
+				"raised": "shadow-md hover:shadow-lg",
+				"outlined": "border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100 bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]",
+				"flat": "bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15] dark:bg-opacity-0 dark:hover:bg-opacity-10 dark:focus:bg-opacity-[.15]"
+			},
+
+			color: {
+				"primary": null,
+				"neutral": null,
+				"error": null,
+				"success": null,
+				"warning": null,
+			}
+			
+		},
+		compoundVariants: [
+		
+			{
+				variant: "raised",
+				color: "primary",
+				className: "text-white bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800"
+			}, {
+				variant: "flat",
+				color: "primary",
+				className: "text-primary bg-primary"
+			}, {
+				variant: "outlined",
+				color: "primary",
+				className: "text-primary bg-primary border-primary"
+			},
+			
+			{
+				variant: "raised",
+				color: "neutral",
+				className: "text-white bg-gray-600 hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-800 dark:text-gray-800 dark:bg-gray-300 dark:hover:bg-gray-200 dark:focus:bg-gray-200 dark:active:bg-gray-100"
+			}, {
+				variant: "flat",
+				color: "neutral",
+				className: "text-gray-800 bg-gray-800 dark:text-gray-200 dark:bg-gray-200"
+			}, {
+				variant: "outlined",
+				color: "neutral",
+				className: "text-gray-800 bg-gray-800 border-gray-800 dark:text-gray-200 dark:bg-gray-200 dark:border-gray-200"
+			},
+
+			{
+				variant: "raised",
+				color: "error",
+				className: "text-white bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800"
+			}, {
+				variant: "flat",
+				color: "error",
+				className: "text-error bg-error"
+			}, {
+				variant: "outlined",
+				color: "error",
+				className: "text-error bg-error border-error"
+			},
+
+			{
+				variant: "raised",
+				color: "success",
+				className: "text-white bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800"
+			}, {
+				variant: "flat",
+				color: "success",
+				className: "text-success bg-success"
+			}, {
+				variant: "outlined",
+				color: "success",
+				className: "text-success bg-success border-success"
+			},
+
+			{
+				variant: "raised",
+				color: "warning",
+				className: "text-white bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800"
+			}, {
+				variant: "flat",
+				color: "warning",
+				className: "text-warning bg-warning"
+			}, {
+				variant: "outlined",
+				color: "warning",
+				className: "text-warning bg-warning border-warning"
+			},
+
+		]
+	}),
+
+	spinner: cva(null, {
+		
+		variants: {
+			size: {
+				"large": "w-6",
+				"small": "w-4",
+				"medium": "w-5",
+				"md:large": "w-5 md:w-6"
+			}
+		},
+
+		defaultVariants: {
+			size: "medium"
+		}
+
+	})
+};
+
+export function Button({ children, ripple, loading, className, style, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.button> & Partial<{
 	
 	/**
-	 * Size of the button
-	 * @default "medium"
+	 * Weather or not to show the ripple effect
+	 * @default true
 	 */
-	size: "small" | "medium" | "large" | "md:large";
+	ripple: boolean | Partial<{
+		
+		/**
+		 * Weather or not to emit the ripple from the center of the element, or the props to pass to a <Ripple /> component
+		 * @default false
+		 */
+		emitFromCenter: boolean;
+
+		/**
+		 * Custom class overrides
+		 */
+		className: string | ClassValue;
+
+		/**
+		 * Weather or not the ripple is disabled
+		 * @default false
+		 */
+		disabled: boolean;
+
+	}>;
 
 	/**
-	 * Color of the button
-	 * @default "primary"
-	 */
-	color: "primary" | "neutral" | "error" | "warning" | "success";
-
-	/**
-	 * Variant of the button
-	 * @default "raised"
-	 */
-	variant: "raised" | "outlined" | "flat";
-
-	/**
-	 * Disable the ripple
+	 * Weather or not to show the loading indicator, or the props to pass to a <Spinner /> component
 	 * @default false
 	 */
-	disableRipple: boolean;
+	loading: boolean | Partial<{
+		
+		/**
+		 * Custom class overrides
+		 */
+		className: string | ClassValue;
+
+		/**
+		 * Weather or not the ripple is disabled
+		 * @default true
+		 */
+		enabled?: boolean;
+
+	}>;
 
 	/**
-	 * Icon position
-	 * @default "before"
+	 * The icon to display
 	 */
-	iconPosition: "before" | "after";
+	icon: ReactNode | {
 
-	/**
-	 * Icon
-	 */
-	icon: IconType;
+		/**
+		 * The position of the icon
+		 * @default "before"
+		 */
+		position?: "before" | "after";
 
-	/**
-	 * Weather or not to show the loading indicator
-	 * @default false
-	 */
-	loading: boolean;
+		/**
+		 * The icon to display
+		 */
+		icon: ReactNode;
 
-}
-
-export function Button({ children, icon: Icon, className, size = "medium", color = "primary", variant = "raised", loading, iconPosition = "before", disableRipple, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & Partial<Props>) {
-
-	// Record of classnames to apply based on props
-	const classes: ClassValue[] = [
-		
-		// Base class
-		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center",
-		
-		// Size classes
-		{
-			"px-4 h-9 py-1 text-sm": true,
-			"px-3 h-7 py-0.5 text-xs": size === "small",
-			"md:px-6 md:h-11 md:py-2 md:text-base": size === "md:large",
-			"px-6 h-11 py-2 text-base": size === "large",
-		},
-		
-		// Custom class
-		className
-	];
-
-	// Classes for the ripple effect
-	const ripple: ClassValue[] = [];
-
-	// Variant classes
-	switch (variant) {
-
-		// Raised
-		default:
-			classes.push({
-				"shadow-md hover:shadow-lg": true,
-				"text-white bg-gray-500 hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700": color === "neutral",
-				"text-primary-text bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800": color === "primary",
-				"text-error-text bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800": color === "error",
-				"text-success-text bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800": color === "success",
-				"text-warning-text bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800": color === "warning",
-
-				// Disabled
-				"text-gray-500 dark:text-gray-400 !bg-gray-500/40 cursor-not-allowed !shadow-sm": props.disabled,
-			});
-			ripple.push({
-				"bg-primary-text": color === "primary",
-				"bg-error-text": color === "error",
-				"bg-success-text": color === "success",
-				"bg-warning-text": color === "warning",
-			});
-			break;
-		
-		// Outlined
-		case "outlined":
-			classes.push({
-				"border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100": true,
-				"border-gray-500": color === "neutral",
-				"border-primary": color === "primary",
-				"border-error": color === "error",
-				"border-success": color === "success",
-				"border-warning": color === "warning",
-				
-			});
-
-		// Flat
-		case "flat":
-			ripple.push({
-				"bg-opacity-50": true,
-				"bg-gray-500": color === "neutral",
-				"bg-primary": color === "primary",
-				"bg-error": color === "error",
-				"bg-success": color === "success",
-				"bg-warning": color === "warning",
-			});
-			classes.push({
-				"bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]": true,
-				"text-gray-800 dark:text-gray-200 bg-gray-500": color === "neutral",
-				"active:bg-opacity-20": disableRipple,
-				"active:bg-opacity-10": !disableRipple,
-				"text-primary bg-primary": color === "primary",
-				"text-error bg-error": color === "error",
-				"text-success bg-success": color === "success",
-				"text-warning bg-warning": color === "warning",
-
-				// Disabled
-				"!bg-transparent !text-gray-500/75 cursor-not-allowed border-gray-500/25": props.disabled,
-
-			});
-			break;
 	}
 
+}>) {
 	return (
-		<button { ...props } className={ cn(classes) }>
-
+		<button
+			{ ...props }
+			className={ cn(classes.button(props as VariantProps<typeof classes.button>), className) }
+			style={ merge(style, {
+				WebkitTapHighlightColor: "transparent",
+				["-webkit-focus-ring-color" as keyof CSSProperties]: "transparent"
+			} satisfies CSSProperties) }>
+			
 			{ /* Ripple */ }
-			{ (props.disabled || disableRipple) ? null : <Ripple className={ ripple } /> }
+			{ (props.disabled || (typeof ripple === "boolean" && !ripple)) || <Ripple { ...typeof ripple === "boolean" ? {} : ripple } /> }
 			
-			{ /* Icon */ }
-			{ (!!Icon && iconPosition === "before" && !loading) && <Icon className={ cn("shrink-0", size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "before") && <Spinner className={ cn("shrink-0", size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } /> }
+			{ /* Spinner */ }
+			{ !!loading && <Spinner
+				{ ...(typeof loading === "boolean" ? {} : loading) }
+				className={ cn(classes.spinner(props as VariantProps<typeof classes.spinner>), typeof loading === "boolean" ? "" : loading.className) } /> }
 			
-			{ /* Children */ }
 			{ children }
-
-			{ /* Icon */ }
-			{ (!!Icon && iconPosition === "after" && !loading) && <Icon className={ cn("shrink-0", size === "md:large" ? "md:text-2xl" : size === "large" ? "text-2xl" : size === "small" ? "text-lg" : "text-xl") } /> }
-			{ (loading && iconPosition === "after") && <Spinner className={ cn("shrink-0", size === "md:large" ? "md:w-6" : size === "large" ? "w-6" : size === "small" ? "w-4" : "w-5", variant === "raised" && "!stroke-current text-inherit") } color={ color } /> }
 			
 		</button>
 	);

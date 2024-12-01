@@ -18,6 +18,11 @@ export const classes = {
 
 		variants: {
 
+			// disabled
+			disabled: {
+				true: "cursor-not-allowed pointer-events-none opacity-50",
+			},
+
 			size: {
 				"small": "px-3 h-7 py-0.5 text-xs",
 				"medium": "px-4 h-9 py-1 text-sm",
@@ -27,12 +32,13 @@ export const classes = {
 
 			variant: {
 				"raised": "shadow-md hover:shadow-lg",
-				"outlined": "border border-opacity-50 hover:border-opacity-100 focus:border-opacity-100 active:border-opacity-100 bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15]",
+				"outlined": "border bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15] dark:bg-opacity-0 dark:hover:bg-opacity-10 dark:focus:bg-opacity-[.15]",
 				"flat": "bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15] dark:bg-opacity-0 dark:hover:bg-opacity-10 dark:focus:bg-opacity-[.15]"
 			},
 
 			color: {
 				"primary": null,
+				"primary:pastel": null,
 				"neutral": null,
 				"error": null,
 				"success": null,
@@ -53,7 +59,17 @@ export const classes = {
 			}, {
 				variant: "outlined",
 				color: "primary",
-				className: "text-primary bg-primary border-primary"
+				className: "text-primary bg-primary border-primary/50"
+			},
+
+			{
+				variant: "flat",
+				color: "primary:pastel",
+				className: "text-primary bg-primary dark:text-primary-300 dark:bg-primary-300"
+			}, {
+				variant: "outlined",
+				color: "primary:pastel",
+				className: "text-primary bg-primary border-primary/50 dark:text-primary-300 dark:bg-primary-300 dark:border-primary-300/50"
 			},
 			
 			{
@@ -67,7 +83,7 @@ export const classes = {
 			}, {
 				variant: "outlined",
 				color: "neutral",
-				className: "text-gray-800 bg-gray-800 border-gray-800 dark:text-gray-200 dark:bg-gray-200 dark:border-gray-200"
+				className: "text-gray-800 bg-gray-800 border-gray-800/50 dark:text-gray-200 dark:bg-gray-200 dark:border-gray-200/50"
 			},
 
 			{
@@ -81,7 +97,7 @@ export const classes = {
 			}, {
 				variant: "outlined",
 				color: "error",
-				className: "text-error bg-error border-error"
+				className: "text-error bg-error border-error/50"
 			},
 
 			{
@@ -95,7 +111,7 @@ export const classes = {
 			}, {
 				variant: "outlined",
 				color: "success",
-				className: "text-success bg-success border-success"
+				className: "text-success bg-success border-success/50"
 			},
 
 			{
@@ -109,8 +125,22 @@ export const classes = {
 			}, {
 				variant: "outlined",
 				color: "warning",
-				className: "text-warning bg-warning border-warning"
+				className: "text-warning bg-warning border-warning/50"
 			},
+
+			{
+				variant: "raised",
+				disabled: true,
+				className: "text-white bg-gray-500 shadow-none hover:shadow-none"
+			}, {
+				variant: "flat",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200"
+			}, {
+				variant: "outlined",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200 border-gray-500/50 dark:border-gray-400/50"
+			}
 
 		]
 	}),

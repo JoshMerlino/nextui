@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import type { ClassValue } from "clsx";
 import { merge } from "lodash";
 import { Spinner } from "nextui/Spinner";
-import { ButtonHTMLAttributes, type CSSProperties, type ReactNode } from "react";
+import { ButtonHTMLAttributes, forwardRef, type CSSProperties, type ReactNode } from "react";
 import { Ripple } from "../Ripple";
 import { cn } from "../util";
 
@@ -133,7 +133,7 @@ export const classes = {
 	})
 };
 
-export function Button({ children, ripple, loading, className, style, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.button> & Partial<{
+export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.button> & Partial<{
 	
 	/**
 	 * Weather or not to show the ripple effect
@@ -197,11 +197,12 @@ export function Button({ children, ripple, loading, className, style, ...props }
 
 	}
 
-}>) {
+}>>(function({ children, ripple, loading, className, style, ...props }, ref) {
 	return (
 		<button
 			{ ...props }
 			className={ cn(classes.button(props as VariantProps<typeof classes.button>), className) }
+			ref={ ref }
 			style={ merge(style, {
 				WebkitTapHighlightColor: "transparent",
 				["-webkit-focus-ring-color" as keyof CSSProperties]: "transparent"
@@ -219,4 +220,4 @@ export function Button({ children, ripple, loading, className, style, ...props }
 			
 		</button>
 	);
-}
+});

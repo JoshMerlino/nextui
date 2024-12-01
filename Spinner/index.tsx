@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { merge } from "lodash";
 import { cn } from "nextui/util";
-import type { HTMLAttributes } from "react";
+import { forwardRef, type HTMLAttributes } from "react";
 import "./index.css";
 
 export const classes = {
@@ -10,7 +10,7 @@ export const classes = {
 		defaultVariants: {
 
 			size: "large"
-			
+
 		},
 
 		variants: {
@@ -34,7 +34,7 @@ export const classes = {
 	})
 };
 
-export function Spinner({ className, speed = 2000, rounded = true, style, ...props }: HTMLAttributes<HTMLOrSVGElement> & VariantProps<typeof classes.spinner> & Partial<{
+export const Spinner = forwardRef<SVGSVGElement, HTMLAttributes<SVGSVGElement> & VariantProps<typeof classes.spinner> & Partial<{
 
 	/**
 	 * Weather or not the spinner edges are rounded
@@ -49,11 +49,12 @@ export function Spinner({ className, speed = 2000, rounded = true, style, ...pro
 	 */
 	speed: string | number;
 
-}>) {
+}>>(function({ className, speed = 2000, rounded = true, style, ...props }, ref) {
 	return (
 		<svg
 			{ ...props }
 			className={ cn(classes.spinner(props as VariantProps<typeof classes.spinner>), className) }
+			ref={ ref }
 			style={ merge({ animationDuration: typeof speed === "number" ? `${ speed }ms` : speed }, style) }
 			viewBox="0 0 50 50">
 			<circle
@@ -70,4 +71,4 @@ export function Spinner({ className, speed = 2000, rounded = true, style, ...pro
 				}} />
 		</svg>
 	);
-}
+});

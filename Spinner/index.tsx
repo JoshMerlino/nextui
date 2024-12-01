@@ -1,56 +1,73 @@
-import { ClassValue } from "clsx";
-import { cn } from "../util";
+import { cva, type VariantProps } from "class-variance-authority";
+import { merge } from "lodash";
+import { cn } from "nextui/util";
+import type { HTMLAttributes } from "react";
 import "./index.css";
 
-interface Props {
+export const classes = {
+	spinner: cva("aspect-square animate-spin", {
+
+		defaultVariants: {
+
+			size: "large"
+			
+		},
+
+		variants: {
+
+			color: {
+				"neutral": "text-gray-800 dark:text-gray-200",
+				"primary": "text-primary",
+				"error": "text-error",
+				"warning": "text-warning",
+				"success": "text-success"
+			},
+
+			size: {
+				"large": "w-auto max-w-[48px]",
+				"small": "w-6",
+				"medium": "w-9"
+			}
+
+		}
+
+	})
+};
+
+export function Spinner({ className, speed = 2000, rounded = true, style, ...props }: HTMLAttributes<HTMLOrSVGElement> & VariantProps<typeof classes.spinner> & Partial<{
 
 	/**
-	 * Additional class names to apply to the spinner.
+	 * Weather or not the spinner edges are rounded
+	 * @default true
 	 */
-	className?: ClassValue;
+	rounded: boolean;
 
 	/**
-	 * Color of the button
-	 * @default "neutral"
+	 * Speed of the spinner animation
+	 * @default 1.5s
+	 * @example "2s" or 2000
 	 */
-	color?: "primary" | "neutral" | "error" | "warning" | "success";
+	speed: string | number;
 
-	/**
-	 * Size of the button (this can be overridden by className)
-	 * @default "large"
-	 */
-	size?: "small" | "medium" | "large";
-	
-}
-
-export function Spinner({ className, color = "neutral", size = "large" }: Props): JSX.Element {
-
-	// Record of classnames to apply based on props
-	const classes = cn({
-		"stroke-gray-800 dark:stroke-gray-200": color === "neutral",
-		"stroke-primary": color === "primary",
-		"stroke-error": color === "error",
-		"stroke-warning": color === "warning",
-		"stroke-success": color === "success"
-	});
-
+}>) {
 	return (
 		<svg
-			className={ cn("spinner aspect-square", {
-				"w-6": size === "small",
-				"w-9": size === "medium",
-				"w-auto max-w-[48px]": size === "large",
-			}, className) }
+			{ ...props }
+			className={ cn(classes.spinner(props as VariantProps<typeof classes.spinner>), className) }
+			style={ merge({ animationDuration: typeof speed === "number" ? `${ speed }ms` : speed }, style) }
 			viewBox="0 0 50 50">
 			<circle
-				className={ cn("path", classes, className) }
+				className="stroke-current"
 				cx="25"
 				cy="25"
 				fill="none"
 				r="20"
 				shapeRendering="geometricPrecision"
-				strokeWidth="5" />
+				strokeWidth="5"
+				style={{
+					strokeLinecap: rounded ? "round" : "butt",
+					animation: "dash 1.5s ease-in-out infinite"
+				}} />
 		</svg>
 	);
-	
 }

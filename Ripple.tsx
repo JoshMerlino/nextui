@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { useCallback, useEffect, useRef } from "react";
-import { cn } from "../util";
+import { cn } from "./util";
 
 interface Props {
 
@@ -10,7 +10,7 @@ interface Props {
 	 * Weather or not to emit the ripple from the center of the element
 	 * @default false
 	 */
-	emitFromCenter: boolean;
+	emitFromCenter?: boolean;
 
 	/**
 	 * Custom class overrides
@@ -19,6 +19,7 @@ interface Props {
 
 	/**
 	 * Weather or not the ripple is disabled
+	 * @default false
 	 */
 	disabled: boolean;
 	

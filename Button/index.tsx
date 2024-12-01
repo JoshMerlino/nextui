@@ -3,8 +3,8 @@ import type { ClassValue } from "clsx";
 import { merge } from "lodash";
 import { Spinner } from "nextui/Spinner";
 import { ButtonHTMLAttributes, type CSSProperties, type ReactNode } from "react";
-import { Ripple } from "./Ripple";
-import { cn } from "./util";
+import { Ripple } from "../Ripple";
+import { cn } from "../util";
 
 export const classes = {
 

@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { useCallback, useEffect, useRef } from "react";
-import { cn } from "./util";
+import { cn } from "../util";
 
 interface Props {
 

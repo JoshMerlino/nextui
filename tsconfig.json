@@ -4,7 +4,8 @@
 		"jsx": "react-jsx",
 		"paths": {
 			"nextui/*": [
-				"./*"
+				"./components/*",
+				"./*",
 			],
 		}
 	}

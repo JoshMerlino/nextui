@@ -2,35 +2,31 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { merge } from "lodash";
 import { cn } from "nextui/util";
 import { forwardRef, type HTMLAttributes } from "react";
-import "./index.css";
+import "../index.css";
 
 export const classes = {
 	spinner: cva("aspect-square animate-spin", {
-
 		defaultVariants: {
-
 			size: "large"
-
 		},
-
 		variants: {
-
 			color: {
 				"neutral": "text-gray-800 dark:text-gray-200",
 				"primary": "text-primary",
+				"primary:pastel": "text-primary dark:text-primary-300",
 				"error": "text-error",
+				"error:pastel": "text-error dark:text-error-300",
 				"warning": "text-warning",
-				"success": "text-success"
+				"warning:pastel": "text-warning dark:text-warning-300",
+				"success": "text-success",
+				"success:pastel": "text-success dark:text-success-300"
 			},
-
 			size: {
 				"large": "w-auto max-w-[48px]",
-				"small": "w-6",
-				"medium": "w-9"
+				"small": "min-w-6 w-6",
+				"medium": "min-w-9 w-9"
 			}
-
 		}
-
 	})
 };
 
@@ -38,7 +34,7 @@ export const Spinner = forwardRef<SVGSVGElement, HTMLAttributes<SVGSVGElement> &
 
 	/**
 	 * Weather or not the spinner edges are rounded
-	 * @default true
+	 * @default false
 	 */
 	rounded: boolean;
 
@@ -49,7 +45,7 @@ export const Spinner = forwardRef<SVGSVGElement, HTMLAttributes<SVGSVGElement> &
 	 */
 	speed: string | number;
 
-}>>(function({ className, speed = 2000, rounded = true, style, ...props }, ref) {
+}>>(function({ className, speed = 2000, rounded, style, ...props }, ref) {
 	return (
 		<svg
 			{ ...props }

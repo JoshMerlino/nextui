@@ -1,10 +1,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ClassValue } from "clsx";
 import { merge } from "lodash";
-import { Spinner } from "nextui/Spinner";
+import { Spinner } from "nextui/components/Spinner";
 import { ButtonHTMLAttributes, forwardRef, type CSSProperties, type ReactNode } from "react";
-import { Ripple } from "../Ripple";
 import { cn } from "../util";
+import { Ripple } from "./Ripple";
 
 export const classes = {
 
@@ -146,7 +146,6 @@ export const classes = {
 	}),
 
 	spinner: cva(null, {
-		
 		variants: {
 			size: {
 				"large": "w-6",
@@ -155,12 +154,11 @@ export const classes = {
 				"md:large": "w-5 md:w-6"
 			}
 		},
-
 		defaultVariants: {
 			size: "medium"
 		}
-
 	})
+
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.button> & Partial<{

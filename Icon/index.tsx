@@ -2,7 +2,7 @@
 
 import { HTMLAttributes } from "react";
 import { IconType } from "react-icons";
-import { Ripple } from "../Ripple";
+import { Ripple } from "../components/Ripple";
 import { cn } from "../util";
 
 export function Icon({ icon: Icon, className, ...props }: { icon: IconType; } & HTMLAttributes<HTMLButtonElement>) {

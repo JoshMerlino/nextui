@@ -284,7 +284,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
 			ref={ ref }
 			style={ merge(style, {
 				WebkitTapHighlightColor: "transparent",
-				["-webkit-focus-ring-color" as keyof CSSProperties]: "transparent"
+				["WebkitFocusRingColor" as keyof CSSProperties]: "transparent"
 			} satisfies CSSProperties) }>
 			
 			{ /* Ripple */ }

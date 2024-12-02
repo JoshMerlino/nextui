@@ -1,10 +1,23 @@
 "use client";
 
+import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
 import { isFunction, merge, omit } from "lodash";
 import { cn } from "nextui/util";
-import { forwardRef, useEffect, useRef, useState, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
+import { forwardRef, useEffect, useLayoutEffect, useRef, useState, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
 import type { IconType } from "react-icons";
+import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { MdDateRange } from "react-icons/md";
+import { IconButton } from "./IconButton";
+
+export const masks = {
+
+	date: (format: string) => new Mask({
+		mask: format.replace(/[a-zA-Z]/g, "_"),
+		replacement: "_"
+	})
+
+};
 
 export const classes = {
 
@@ -45,11 +58,11 @@ export const classes = {
 	}),
 
 	input: cva([
-		"peer bg-transparent cursor-text grow w-max outline-0",
-		"placeholder:text-gray-500 placeholder:dark:text-gray-400"
+		"peer bg-transparent cursor-text grow w-max outline-0 border-0",
+		"placeholder:text-gray-500 placeholder:dark:text-gray-400",
+		"disabled:select-none"
 	], {
 		defaultVariants: {
-			variant: "outlined",
 			color: "primary",
 			size: "default"
 		},
@@ -57,9 +70,6 @@ export const classes = {
 			size: {
 				dense: "h-10 text-sm",
 				default: "h-14"
-			},
-			variant: {
-				outlined: "rounded-md border-0",
 			},
 			color: {
 				primary: "caret-primary",
@@ -73,7 +83,7 @@ export const classes = {
 				neutral: "caret-gray-800 dark:caret-gray-200",
 			},
 			disabled: {
-				true: "cursor-not-allowed",
+				true: "cursor-not-allowed select-none",
 			},
 			invalid: {
 				true: "caret-error dark:caret-error",
@@ -116,7 +126,7 @@ export const classes = {
 		}
 	}),
 
-	icon: cva("shrink-0", {
+	icon: cva("shrink-0 opacity-80 text-gray-700 dark:text-gray-300", {
 		variants: {
 			size: {
 				dense: "text-xl -mx-0.5",
@@ -126,7 +136,19 @@ export const classes = {
 				true: "text-gray-400 dark:text-gray-500"
 			},
 			invalid: {
-				true: "text-error/85 dark:text-error/85"
+				true: "text-error dark:text-error"
+			}
+		},
+		defaultVariants: {
+			size: "default"
+		}
+	}),
+
+	button: cva("", {
+		variants: {
+			size: {
+				dense: "-mr-1.5",
+				default: "-mr-2"
 			}
 		},
 		defaultVariants: {
@@ -169,51 +191,95 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 }>>>(function({ className, children, label, icon: Icon, ...props }, ref) {
 
 	// Combine forwarded ref with internal ref
-	const internalRef = useRef<HTMLInputElement | null>(null);
+	const internalRef = useRef<HTMLInputElement>(null);
+	
 	useEffect(() => {
 		const currentRef = internalRef.current;
 		if (ref && typeof ref === "function") ref(currentRef);
 		else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = currentRef;
-	}, [ ref ]);
+	}, [ internalRef, ref ]);
 
 	// Hook the input value to determine if it has contents
 	const [ hasContents, setHasContents ] = useState(false);
-	useEffect(() => setHasContents(!!internalRef.current?.value), [ internalRef.current?.value ]);
+	useEffect(() => setHasContents(!!internalRef.current?.value), [ internalRef ]);
 	
 	// Hook the input value to determine if it is invalid
 	const [ isValid, setIsValid ] = useState(false);
-	useEffect(() => setIsValid(internalRef.current?.validity.valid || false), [ internalRef.current?.validity.valid ]);
-
-	switch (props.type) {
-
-		default: return (
-			<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }>
-
-				{ children }
+	useEffect(() => setIsValid(internalRef.current?.validity.valid || false), [ internalRef ]);
 	
-				{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+	// Password specific state
+	const [ plainText, setPlainText ] = useState(props.type !== "password");
+	
+	// Date specific state
+	const [ format, setFormat ] = useState("");
+	useLayoutEffect(function() {
+		if (props.type !== "date") return;
+		const date = new Date("1000-10-20");
+		const format = date
+			.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
+			.replace(/\d{4}/, "yyyy")
+			.replace((date.getMonth() + 1).toString(), "mm")
+			.replace(date.getDate().toString(), "dd");
+		setFormat(format);
+	}, [ props.type ]);
 
-				<div className="flex relative h-full grow">
+	// Apply the mask if it exists
+	useEffect(function() {
+		if (!format) return;
+		if (masks[props.type as keyof typeof masks]) {
+			if (!internalRef.current) return;
+			const mask = masks[props.type as keyof typeof masks](format);
+			mask.register(internalRef.current);
+		}
+	}, [ format, internalRef, props.type ]);
 
-					<input
-						{ ...omit(props, "size") }
-						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
-						onChange={ event => [
-							props.onChange?.(event),
-							setHasContents(event.target.value.length > 0),
-							setIsValid(event.target.validity.valid)
-						] }
-						ref={ internalRef } />
+	return (
+		<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }>
+
+			{ children }
+	
+			{ /* Leading icon */ }
+			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+
+			{ /* Input wrapper */ }
+			<div className="flex relative h-full grow items-center" onBlur={ () => setPlainText(false) }>
+
+				{ /* Input */ }
+				<input
+					{ ...omit(props, "size") }
+					className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+					onChange={ event => [
+						props.onChange?.(event),
+						setHasContents(event.target.value.length > 0),
+						setIsValid(event.target.validity.valid),
+					] }
+					placeholder={ props.type === "date" ? format : props.placeholder }
+					ref={ internalRef }
+					type={ props.type === "password" ? (plainText ? "text" : "password")
+						: props.type === "date" ? "text"
+							: props.type } />
 			
-					{ label && <p
-						className={ cn(classes.label(props as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
-						style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
-	
-				</div>
+				{ /* Floating label */ }
+				{ label && <p
+					className={ cn(classes.label(props as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
+					style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
 
-			</label>
-		);
+				{ /* Password visibility toggle */ }
+				{ props.type === "password" && <IconButton
+					className={ cn(classes.button(props as VariantProps<typeof classes.button>), "hidden", hasContents && "group-focus-within/inputfield:inline-flex") }
+					icon={ plainText ? IoMdEyeOff : IoMdEye }
+					onClick={ () => setPlainText(!plainText) }
+					size={ props.size === "dense" ? "small" : "medium" } /> }
+				
+				{ /* Date picker icon calendar */ }
+				{ props.type === "date" && <IconButton
+					className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+					icon={ props.multiple ? MdDateRange : IoMdCalendar }
+					size={ props.size === "dense" ? "small" : "medium" } /> }
+					
+			</div>
 
-	}
+		</label>
+	);
 
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { isFunction, omit } from "lodash";
+import { isFunction, merge, omit } from "lodash";
 import { cn } from "nextui/util";
 import { forwardRef, useEffect, useRef, useState, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
 import type { IconType } from "react-icons";
@@ -115,13 +115,17 @@ export const classes = {
 		}
 	}),
 
-	icon: cva([
-		"shrink-0"
-	], {
+	icon: cva("shrink-0", {
 		variants: {
 			size: {
 				dense: "text-xl -mx-0.5",
 				default: "text-2xl"
+			},
+			disabled: {
+				true: "text-gray-400 dark:text-gray-500"
+			},
+			invalid: {
+				true: "text-error/85 dark:text-error/85"
 			}
 		},
 		defaultVariants: {
@@ -174,6 +178,10 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 	// Hook the input value to determine if it has contents
 	const [ hasContents, setHasContents ] = useState(false);
 	useEffect(() => setHasContents(!!internalRef.current?.value), [ internalRef.current?.value ]);
+	
+	// Hook the input value to determine if it is invalid
+	const [ isValid, setIsValid ] = useState(false);
+	useEffect(() => setIsValid(internalRef.current?.validity.valid || false), [ internalRef.current?.validity.valid ]);
 
 	switch (props.type) {
 
@@ -182,14 +190,18 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 				{ children }
 	
-				{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(props as VariantProps<typeof classes.icon>)) } /> : Icon }
+				{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
 
 				<div className="flex relative h-full grow">
 
 					<input
 						{ ...omit(props, "size") }
 						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
-						onChange={ event => [ props.onChange?.(event), setHasContents(event.target.value.length > 0) ] }
+						onChange={ event => [
+							props.onChange?.(event),
+							setHasContents(event.target.value.length > 0),
+							setIsValid(event.target.validity.valid)
+						] }
 						ref={ internalRef } />
 			
 					{ label && <p

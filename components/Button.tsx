@@ -41,8 +41,11 @@ export const classes = {
 				"primary:pastel": null,
 				"neutral": null,
 				"error": null,
+				"error:pastel": null,
 				"success": null,
+				"success:pastel": null,
 				"warning": null,
+				"warning:pastel": null
 			}
 			
 		},
@@ -63,6 +66,10 @@ export const classes = {
 			},
 
 			{
+				variant: "raised",
+				color: "primary:pastel",
+				className: "text-primary-950 bg-primary-300 hover:bg-primary-400 focus:bg-primary-400 active:bg-primary-500"
+			}, {
 				variant: "flat",
 				color: "primary:pastel",
 				className: "text-primary bg-primary dark:text-primary-300 dark:bg-primary-300"
@@ -102,6 +109,20 @@ export const classes = {
 
 			{
 				variant: "raised",
+				color: "error:pastel",
+				className: "text-error-950 bg-error-300 hover:bg-error-400 focus:bg-error-400 active:bg-error-500"
+			}, {
+				variant: "flat",
+				color: "error:pastel",
+				className: "text-error bg-error dark:text-error-300 dark:bg-error-300"
+			}, {
+				variant: "outlined",
+				color: "error:pastel",
+				className: "text-error bg-error border-error/50 dark:text-error-300 dark:bg-error-300 dark:border-error-300/50"
+			},
+
+			{
+				variant: "raised",
 				color: "success",
 				className: "text-white bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800"
 			}, {
@@ -116,6 +137,20 @@ export const classes = {
 
 			{
 				variant: "raised",
+				color: "success:pastel",
+				className: "text-success-950 bg-success-300 hover:bg-success-400 focus:bg-success-400 active:bg-success-500"
+			}, {
+				variant: "flat",
+				color: "success:pastel",
+				className: "text-success bg-success dark:text-success-300 dark:bg-success-300"
+			}, {
+				variant: "outlined",
+				color: "success:pastel",
+				className: "text-success bg-success border-success/50 dark:text-success-300 dark:bg-success-300 dark:border-success-300/50"
+			},
+
+			{
+				variant: "raised",
 				color: "warning",
 				className: "text-white bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800"
 			}, {
@@ -126,6 +161,34 @@ export const classes = {
 				variant: "outlined",
 				color: "warning",
 				className: "text-warning bg-warning border-warning/50"
+			},
+
+			{
+				variant: "raised",
+				color: "warning:pastel",
+				className: "text-warning-950 bg-warning-300 hover:bg-warning-400 focus:bg-warning-400 active:bg-warning-500"
+			}, {
+				variant: "flat",
+				color: "warning:pastel",
+				className: "text-warning bg-warning dark:text-warning-300 dark:bg-warning-300"
+			}, {
+				variant: "outlined",
+				color: "warning:pastel",
+				className: "text-warning bg-warning border-warning/50 dark:text-warning-300 dark:bg-warning-300 dark:border-warning-300/50"
+			},
+			
+			{
+				variant: "raised",
+				disabled: true,
+				className: "text-white bg-gray-500 shadow-none hover:shadow-none"
+			}, {
+				variant: "flat",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200"
+			}, {
+				variant: "outlined",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200 border-gray-500/50 dark:border-gray-400/50"
 			},
 
 			{

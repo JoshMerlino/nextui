@@ -4,7 +4,7 @@ import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
 import { isFunction, merge, omit } from "lodash";
 import { cn } from "nextui/util";
-import { forwardRef, useEffect, useLayoutEffect, useRef, useState, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
@@ -158,7 +158,7 @@ export const classes = {
 	
 };
 
-export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
+export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> & { type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
 	 * The text to display in the floating label
@@ -232,6 +232,22 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			mask.register(internalRef.current);
 		}
 	}, [ format, internalRef, props.type ]);
+	
+	// A function to coerce the value of the input
+	const coerceValue = useCallback(function({ target }: ChangeEvent<HTMLInputElement>) {
+		if (!internalRef.current) return;
+		switch (props.type) {
+
+			// Determine if the value is a valid date
+			case "date":
+				const date = new Date(target.value);
+				const isValid = !isNaN(date.getTime()) || target.value.toString().trim().length === 0;
+				target.setCustomValidity(isValid ? "" : "Invalid date");
+				setIsValid(isValid);
+				break;
+
+		}
+	}, [ props.type ]);
 
 	return (
 		<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }>
@@ -252,12 +268,13 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						props.onChange?.(event),
 						setHasContents(event.target.value.length > 0),
 						setIsValid(event.target.validity.valid),
+						coerceValue(event),
 					] }
 					placeholder={ props.type === "date" ? format : props.placeholder }
 					ref={ internalRef }
 					type={ props.type === "password" ? (plainText ? "text" : "password")
 						: props.type === "date" ? "text"
-							: props.type } />
+							: props.type || "text" } />
 			
 				{ /* Floating label */ }
 				{ label && <p

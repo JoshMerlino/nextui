@@ -8,10 +8,12 @@ import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, 
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
+import { Card } from "./Card";
 import { IconButton } from "./IconButton";
+import { Popover } from "./Popover";
 
 export const masks = {
-
+	
 	date: (format: string) => new Mask({
 		mask: format.replace(/[a-zA-Z]/g, "_"),
 		replacement: "_"
@@ -22,7 +24,7 @@ export const masks = {
 export const classes = {
 
 	wrapper: cva([
-		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4",
+		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
 		"[&:has(:invalid)]:border-error/50 [&:has(:invalid)]:dark:border-error/50 [&:has(:invalid)]:focus-within:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:active:border-error [&:has(:invalid)]:active:ring-error [&:has(:invalid)]:dark:focus-within:border-error [&:has(:invalid)]:dark:focus-within:ring-error [&:has(:invalid)]:dark:active:border-error [&:has(:invalid)]:dark:active:ring-error",
 		"[&:has(:disabled)]:border-dashed [&:has(:disabled)]:active:ring-0 [&:has(:disabled)]:focus-within:ring-0 [&:has(:disabled)]:dark:border-dashed [&:has(:disabled)]:active:border-gray-200 [&:has(:disabled)]:active:dark:border-gray-700",
 	], {
@@ -58,7 +60,7 @@ export const classes = {
 	}),
 
 	input: cva([
-		"peer bg-transparent cursor-text grow w-max outline-0 border-0",
+		"peer bg-transparent cursor-text outline-0 border-0 shrink grow inline-flex w-0 min-w-0",
 		"placeholder:text-gray-500 placeholder:dark:text-gray-400",
 		"disabled:select-none"
 	], {
@@ -144,7 +146,7 @@ export const classes = {
 		}
 	}),
 
-	button: cva("", {
+	button: cva("shrink-0", {
 		variants: {
 			size: {
 				dense: "-mr-1.5",
@@ -223,6 +225,9 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		setFormat(format);
 	}, [ props.type ]);
 
+	// Popover specific state
+	const [ popoverOpen, setPopoverOpen ] = useState(false);
+
 	// Apply the mask if it exists
 	useEffect(function() {
 		if (!format) return;
@@ -289,10 +294,23 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					size={ props.size === "dense" ? "small" : "medium" } /> }
 				
 				{ /* Date picker icon calendar */ }
-				{ props.type === "date" && <IconButton
-					className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
-					icon={ props.multiple ? MdDateRange : IoMdCalendar }
-					size={ props.size === "dense" ? "small" : "medium" } /> }
+				{ props.type === "date" && <div className="relative">
+					<IconButton
+						className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+						icon={ props.multiple ? MdDateRange : IoMdCalendar }
+						onClick={ () => setPopoverOpen(!popoverOpen) }
+						onMouseDown={ event => event.stopPropagation() }
+						onTouchStart={ event => event.stopPropagation() }
+						size={ props.size === "dense" ? "small" : "medium" } />
+					
+					{ /* Date picker calendar popover */ }
+					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
+						<Card variant="popover">
+							Popover
+						</Card>
+					</Popover>
+					
+				</div> }
 					
 			</div>
 

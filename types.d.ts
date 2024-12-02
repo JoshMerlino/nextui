@@ -1,0 +1,1 @@
+declare type Stateable<T> = [T, (value: T) => void] | ReturnType<typeof import("react").useState<T>>;

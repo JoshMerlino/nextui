@@ -10,7 +10,8 @@ export const classes = {
 
 	icon: cva([
 		"rounded-full select-none p-0.5 shrink-0 overflow-hidden aspect-square relative inline-flex items-center justify-center",
-		"hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5"
+		"hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5",
+		"disabled:opacity-50 disabled:pointer-events-none"
 	], {
 		defaultVariants: {
 			size: "large"
@@ -20,6 +21,9 @@ export const classes = {
 				large: "w-12 h-12 text-2xl",
 				medium: "w-10 h-10 text-xl",
 				small: "w-8 h-8 text-base",
+			},
+			disabled: {
+				true: "opacity-50 pointer-events-none"
 			}
 		}
 	})

@@ -8,7 +8,7 @@ import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, 
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
-import { Card } from "./Card";
+import { Calendar } from "./Calendar";
 import { IconButton } from "./IconButton";
 import { Popover } from "./Popover";
 
@@ -25,8 +25,8 @@ export const classes = {
 
 	wrapper: cva([
 		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
-		"[&:has(:invalid)]:border-error/50 [&:has(:invalid)]:dark:border-error/50 [&:has(:invalid)]:focus-within:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:active:border-error [&:has(:invalid)]:active:ring-error [&:has(:invalid)]:dark:focus-within:border-error [&:has(:invalid)]:dark:focus-within:ring-error [&:has(:invalid)]:dark:active:border-error [&:has(:invalid)]:dark:active:ring-error",
-		"[&:has(:disabled)]:border-dashed [&:has(:disabled)]:active:ring-0 [&:has(:disabled)]:focus-within:ring-0 [&:has(:disabled)]:dark:border-dashed [&:has(:disabled)]:active:border-gray-200 [&:has(:disabled)]:active:dark:border-gray-700",
+		"[&:has(input:invalid)]:border-error/50 [&:has(input:invalid)]:dark:border-error/50 [&:has(input:invalid)]:focus-within:border-error [&:has(input:invalid)]:focus-within:ring-error [&:has(input:invalid)]:active:border-error [&:has(input:invalid)]:active:ring-error [&:has(input:invalid)]:dark:focus-within:border-error [&:has(input:invalid)]:dark:focus-within:ring-error [&:has(input:invalid)]:dark:active:border-error [&:has(input:invalid)]:dark:active:ring-error",
+		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 [&:has(input:disabled)]:dark:border-dashed [&:has(input:disabled)]:active:border-gray-200 [&:has(input:disabled)]:active:dark:border-gray-700",
 	], {
 		defaultVariants: {
 			variant: "outlined",
@@ -305,9 +305,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
-						<Card className="p-0" variant="popover">
-							kalendar
-						</Card>
+						<Calendar />
 					</Popover>
 					
 				</div> }

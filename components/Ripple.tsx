@@ -4,7 +4,7 @@ import { ClassValue } from "clsx";
 import { useCallback, useEffect, useRef } from "react";
 import { cn } from "../util";
 
-interface Props {
+export function Ripple({ emitFromCenter, className, disabled, duration = 500 }: Partial<{
 
 	/**
 	 * Weather or not to emit the ripple from the center of the element
@@ -22,13 +22,14 @@ interface Props {
 	 * @default false
 	 */
 	disabled: boolean;
+
+	/**
+	 * The duration of the ripple animation
+	 * @default 500
+	 */
+	duration: number;
 	
-}
-
-export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) {
-
-	// The duration of the ripple animation
-	const DURATION = 500;
+}>) {
 
 	// Create a ref to the ripple element
 	const ref = useRef<HTMLDivElement>(null);
@@ -39,11 +40,11 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 			
 		ripple.querySelectorAll<HTMLDivElement>(".ripple")
 			.forEach(ripple => {
-				ripple.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION / 2 }ms ease-out`;
+				ripple.style.transition = `transform ${ duration }ms cubic-bezier(0,.5,0,.75), opacity ${ duration / 2 }ms ease-out`;
 				ripple.style.opacity = "0";
-				setTimeout(() => ripple.remove(), DURATION * 2);
+				setTimeout(() => ripple.remove(), duration * 2);
 			});
-	}, [ ref ]);
+	}, [ duration ]);
 
 	// Creates a ripple at the given coordinates
 	const createRipple = useCallback(function(event: MouseEvent) {
@@ -68,7 +69,7 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 		// Add the ripple to the DOM
 		const rippleElement = document.createElement("div");
 		rippleElement.className = cn("absolute bg-current rounded-full aspect-square ripple", className);
-		rippleElement.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION / 2 }ms ease-out`;
+		rippleElement.style.transition = `transform ${ duration }ms cubic-bezier(0,.5,0,.75), opacity ${ duration / 2 }ms ease-out`;
 		rippleElement.style.width = `${ size }px`;
 		rippleElement.style.top = `${ offsetY - size / 2 }px`;
 		rippleElement.style.left = `${ offsetX - size / 2 }px`;
@@ -83,7 +84,7 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 			rippleElement.style.opacity = "1";
 			requestAnimationFrame(function() {
 					
-				rippleElement.style.transition = `transform ${ DURATION }ms cubic-bezier(0,.5,0,.75), opacity ${ DURATION * 2 }ms ease-out`;
+				rippleElement.style.transition = `transform ${ duration }ms cubic-bezier(0,.5,0,.75), opacity ${ duration * 2 }ms ease-out`;
 				rippleElement.style.transform = "scale(1)";
 
 				document.body.addEventListener("mouseup", function() {
@@ -95,7 +96,7 @@ export function Ripple({ emitFromCenter, className, disabled }: Partial<Props>) 
 
 		});
 			
-	}, [ className, clear, emitFromCenter ]);
+	}, [ className, clear, duration, emitFromCenter ]);
 
 	// Add event listeners
 	useEffect(function() {

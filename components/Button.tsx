@@ -8,12 +8,14 @@ import { Ripple } from "./Ripple";
 
 export const classes = {
 
-	button: cva([ "w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center outline-transparent" ], {
+	button: cva([
+		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center outline-transparent shrink-0",
+	], {
 		
 		defaultVariants: {
-
+			color: "primary",
 			size: "medium",
-
+			variant: "raised",
 		},
 
 		variants: {
@@ -180,21 +182,7 @@ export const classes = {
 			{
 				variant: "raised",
 				disabled: true,
-				className: "text-white bg-gray-500 shadow-none hover:shadow-none"
-			}, {
-				variant: "flat",
-				disabled: true,
-				className: "text-gray-700 dark:text-gray-200"
-			}, {
-				variant: "outlined",
-				disabled: true,
-				className: "text-gray-700 dark:text-gray-200 border-gray-500/50 dark:border-gray-400/50"
-			},
-
-			{
-				variant: "raised",
-				disabled: true,
-				className: "text-white bg-gray-500 shadow-none hover:shadow-none"
+				className: "text-white bg-gray-500 shadow-none hover:shadow-none dark:text-white dark:bg-gray-500"
 			}, {
 				variant: "flat",
 				disabled: true,
@@ -211,10 +199,10 @@ export const classes = {
 	spinner: cva(null, {
 		variants: {
 			size: {
-				"large": "w-6",
+				"large": "w-6 -ml-2",
 				"small": "w-4",
 				"medium": "w-5",
-				"md:large": "w-5 md:w-6"
+				"md:large": "w-5 md:w-6 md:-ml-2 "
 			}
 		},
 		defaultVariants: {

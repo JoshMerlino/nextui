@@ -50,6 +50,7 @@ export const classes = {
 	], {
 		defaultVariants: {
 			variant: "outlined",
+			color: "primary",
 			size: "default"
 		},
 		variants: {

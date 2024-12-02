@@ -5,7 +5,7 @@ import { forwardRef, type HTMLAttributes } from "react";
 import "../index.css";
 
 export const classes = {
-	spinner: cva("aspect-square animate-spin", {
+	spinner: cva("aspect-square animate-spin shrink-0", {
 		defaultVariants: {
 			size: "large"
 		},

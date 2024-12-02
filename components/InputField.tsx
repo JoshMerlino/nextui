@@ -305,8 +305,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
-						<Card variant="popover">
-							Popover
+						<Card className="p-0" variant="popover">
+							kalendar
 						</Card>
 					</Popover>
 					

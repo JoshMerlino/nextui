@@ -1,9 +1,9 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { cva, type VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "nextui/util";
-import { useEffect, useMemo, useRef, useState, type HTMLAttributes } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type HTMLAttributes } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { MdChevronLeft, MdChevronRight, MdToday } from "react-icons/md";
 import { Button } from "./Button";
@@ -115,9 +115,21 @@ export function Calendar({
 	
 	// Date selection
 	const [ selectedDate, setSelectedDate ] = useState(new Date());
+	const directionRef = useRef<"left" | "right">("right");
+	const previousDateRef = useRef(renderDate);
 	
 	// When a date is selected, update the render date
 	useEffect(() => void (selectedDate && setRenderDate(selectedDate)), [ selectedDate ]);
+
+	const updateRenderDate = useCallback(function(newDate: Date) {
+		const newMonth = newDate.getMonth();
+		const prevMonth = previousDateRef.current.getMonth();
+		directionRef.current = newMonth > prevMonth || (newMonth === 0 && prevMonth === 11)
+			? "right"
+			: "left";
+		previousDateRef.current = newDate;
+		setRenderDate(newDate);
+	}, []);
 
 	return (
 		<Card
@@ -142,29 +154,21 @@ export function Calendar({
 					{ /* Go to today button */ }
 					<IconButton
 						icon={ MdToday }
-						onClick={ () => setRenderDate(new Date()) }
+						onClick={ () => updateRenderDate(new Date()) }
 						size="medium" />
-					
+
 					{ /* Go to previous month */ }
 					<IconButton
 						icon={ MdChevronLeft }
 						onClick={ () =>
-							setRenderDate(function(date) {
-								const newDate = new Date(date);
-								newDate.setMonth(newDate.getMonth() - 1);
-								return newDate;
-							}) }
+							updateRenderDate(new Date(renderDate.setMonth(renderDate.getMonth() - 1))) }
 						size="medium" />
-					
+
 					{ /* Go to next month */ }
 					<IconButton
 						icon={ MdChevronRight }
 						onClick={ () =>
-							setRenderDate(function(date) {
-								const newDate = new Date(date);
-								newDate.setMonth(newDate.getMonth() + 1);
-								return newDate;
-							}) }
+							updateRenderDate(new Date(renderDate.setMonth(renderDate.getMonth() + 1))) }
 						size="medium" />
 					
 				</div>
@@ -251,55 +255,66 @@ export function Calendar({
 						hidden: { opacity: 1, top: 0 },
 					}}>
 					
-					<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
+					<AnimatePresence>
+						<motion.div
+							animate={{ x: 0, opacity: 1 }}
+							className="absolute inset-0"
+							exit={{ x: directionRef.current === "right" ? -300 : 300, opacity: 0 }}
+							initial={{ x: directionRef.current === "right" ? 300 : -300, opacity: 0 }}
+							key={ renderDate.toISOString() }
+							transition={{ duration: 0.1 }}>
+							<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
 						
-						{ /* Blank days of week */ }
-						{ Array(firstDay).fill(null).map(function(_, index, { length }) {
-							return (
-								<div
-									className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-									key={ index }>
-									{ lastDayOfLastMonth - length + index + 1 }
-								</div>
-							);
-						}) }
+								{ /* Blank days of week */ }
+								{ Array(firstDay).fill(null).map(function(_, index, { length }) {
+									return (
+										<div
+											className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+											key={ index }>
+											{ lastDayOfLastMonth - length + index + 1 }
+										</div>
+									);
+								}) }
 
-						{ /* Days of week */ }
-						{ Array(daysInMonth).fill(null).map(function(_, index) {
-							const date = new Date(renderDate);
-							date.setDate(index + 1);
+								{ /* Days of week */ }
+								{ Array(daysInMonth).fill(null).map(function(_, index) {
+									const date = new Date(renderDate);
+									date.setDate(index + 1);
 
-							const isToday = dayjs(date).isSame(new Date(), "day") && dayjs(date).isSame(new Date(), "month") && dayjs(date).isSame(new Date(), "year");
-							const isSelected = dayjs(date).isSame(selectedDate, "day") && dayjs(date).isSame(selectedDate, "month") && dayjs(date).isSame(selectedDate, "year");
+									const isToday = dayjs(date).isSame(new Date(), "day") && dayjs(date).isSame(new Date(), "month") && dayjs(date).isSame(new Date(), "year");
+									const isSelected = dayjs(date).isSame(selectedDate, "day") && dayjs(date).isSame(selectedDate, "month") && dayjs(date).isSame(selectedDate, "year");
 
-							return (
-								<Button
-									className={ cn([
-										"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
-									]) }
-									color={ (isSelected || isToday) ? color : "neutral" }
-									key={ date.toString() }
-									onClick={ () => setSelectedDate(date) }
-									ripple={{ emitFromCenter: true }}
-									type="button"
-									variant={ isSelected ? "raised" : "flat" }>
-									{ date.getDate() }
-								</Button>
-							);
-						}) }
+									return (
+										<Button
+											className={ cn([
+												"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
+											]) }
+											color={ (isSelected || isToday) ? color : "neutral" }
+											key={ date.toString() }
+											onClick={ () => setSelectedDate(date) }
+											ripple={{ emitFromCenter: true }}
+											type="button"
+											variant={ isSelected ? "raised" : "flat" }>
+											{ date.getDate() }
+										</Button>
+									);
+								}) }
 						
-						{ /* Blank days of week */ }
-						{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map(function(_, index) {
-							return (
-								<div
-									className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-									key={ index }>
-									{ index + 1 }
-								</div>
-							);
-						}) }
+								{ /* Blank days of week */ }
+								{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map(function(_, index) {
+									return (
+										<div
+											className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+											key={ index }>
+											{ index + 1 }
+										</div>
+									);
+								}) }
+								
+							</div>
 
-					</div>
+						</motion.div>
+					</AnimatePresence>
 
 				</motion.div>
 

@@ -1,17 +1,18 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { cva, type VariantProps } from "class-variance-authority";
+import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { cn } from "nextui/util";
-import { useEffect, useRef, useState, type HTMLAttributes } from "react";
+import { useEffect, useMemo, useRef, useState, type HTMLAttributes } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdChevronLeft, MdChevronRight, MdToday } from "react-icons/md";
 import { Button } from "./Button";
 import { Card } from "./Card";
 import { IconButton } from "./IconButton";
+import { Ripple } from "./Ripple";
 
 export const classes = {
 
-	// Style for the calendar container
 	container: cva("inline-flex flex-col", {
 		defaultVariants: {
 			variant: "desktop"
@@ -25,18 +26,40 @@ export const classes = {
 
 };
 
-const MONTHS = [
-	"January", "February", "March", "April", "May", "June",
-	"July", "August", "September", "October", "November", "December"
-];
-
-export function Calendar({ className, yearPickerRange = 200, ...props }: HTMLAttributes<HTMLDivElement> & Partial<{
+export function Calendar({
+	className,
+	yearPickerStart = 1900,
+	yearPickerEnd = 2099,
+	color = "primary",
+	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
+	...props
+}: HTMLAttributes<HTMLDivElement> & Partial<{
 
 	/**
-	 * The range of years to show in the year picker
-	 * @default 200
+	 * The starting range for the year picker
+	 * @default 1900
 	 */
-	yearPickerRange: number
+	yearPickerStart: number;
+
+	/**
+	 * The ending range for the year picker
+	 * @default 2099
+	 */
+	yearPickerEnd: number;
+
+	/**
+	 * The format for the year picker
+	 * @default (date: Date) => dayjs(date).format("MMM YYYY")
+	 * @param date The date to format
+	 * @returns The formatted date
+	 */
+	yearFormat: (date: Date) => string;
+
+	/**
+	 * The color to use for the selection
+	 * @default "primary"
+	 */
+	color: "primary" | "success" | "warning" | "error" | "primary:pastel" | "success:pastel" | "warning:pastel" | "error:pastel" | "neutral"
 
 }>) {
 
@@ -48,108 +71,145 @@ export function Calendar({ className, yearPickerRange = 200, ...props }: HTMLAtt
 	const yearPickerRef = useRef<HTMLDivElement>(null);
 
 	// The virtualizer
+	const totalYears = yearPickerEnd - yearPickerStart + 1;
 	const rowVirtualizer = useVirtualizer({
-		count: 1000,
+		count: Math.ceil(totalYears / 4),
 		getScrollElement: () => yearPickerRef.current,
 		scrollToFn: scroll => yearPickerRef.current?.scrollTo({ top: scroll }),
 		estimateSize: () => 36,
 	});
 
+	// Auto scroll to the current year
 	useEffect(function() {
 		if (!yearPicker) return;
-		rowVirtualizer.scrollToIndex(Math.floor(renderDate.getFullYear() / 4));
+		const currentYearIndex = Math.floor((renderDate.getFullYear() - yearPickerStart) / 4);
+		rowVirtualizer.scrollToIndex(currentYearIndex);
 		setTimeout(function() {
-			yearPickerRef.current?.querySelector(`button[data-value="${ renderDate.getFullYear() }`)?.scrollIntoView({
+			yearPickerRef.current?.querySelector(`button[data-value="${ renderDate.getFullYear() }"]`)?.scrollIntoView({
 				block: "center",
-				behavior: "smooth"
+				behavior: "smooth",
 			});
 		});
-	}, [ renderDate, rowVirtualizer, yearPicker ]);
+	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
+	
+	// Day of week of first day of month
+	const firstDay = useMemo(() => {
+		const date = new Date(renderDate);
+		date.setDate(1);
+		return date.getDay();
+	}, [ renderDate ]);
+	
+	// Last day of last month
+	const lastDayOfLastMonth = useMemo(() => {
+		const date = new Date(renderDate);
+		date.setDate(0);
+		return date.getDate();
+	}, [ renderDate ]);
+	
+	// Get the number of days in the month
+	const daysInMonth = useMemo(() => {
+		const date = new Date(renderDate);
+		date.setMonth(date.getMonth() + 1);
+		date.setDate(0);
+		return date.getDate();
+	}, [ renderDate ]);
 
 	return (
 		<Card
 			className={ cn(classes.container(props as VariantProps<typeof classes.container>), "p-0", className) }
 			variant="popover">
-            
+			
 			{ /* Calendar Header */ }
 			<div className="flex items-center justify-between gap-2 p-2.5 border-b border-gray-200 dark:border-gray-700">
-                
+
+				{ /* Toggle year picker */ }
 				<Button
 					color="neutral"
 					onClick={ () => setYearPicker(!yearPicker) }
 					variant="flat">
-					{ MONTHS[renderDate.getMonth()] } { renderDate.getFullYear() }
-					<IoMdArrowDropdown />
+					{ yearFormat(renderDate) }
+					<IoMdArrowDropdown className={ cn("transition-[transform] text-xl -mx-1", yearPicker && "rotate-180") } />
 				</Button>
-                
-				<div className="flex items-center gap-2">
+
+				{ /* Month navigation */ }
+				<div className="flex items-center gap-1">
+
+					{ /* Go to today button */ }
+					<IconButton
+						icon={ MdToday }
+						onClick={ () => setRenderDate(new Date()) }
+						size="medium" />
+					
+					{ /* Go to previous month */ }
 					<IconButton
 						icon={ MdChevronLeft }
-						onClick={ () => setRenderDate(function(date) {
-							const newDate = new Date(date);
-							newDate.setMonth(newDate.getMonth() - 1);
-							return newDate;
-						}) }
+						onClick={ () =>
+							setRenderDate(function(date) {
+								const newDate = new Date(date);
+								newDate.setMonth(newDate.getMonth() - 1);
+								return newDate;
+							}) }
 						size="medium" />
+					
+					{ /* Go to next month */ }
 					<IconButton
 						icon={ MdChevronRight }
-						onClick={ () => setRenderDate(function(date) {
-							const newDate = new Date(date);
-							newDate.setMonth(newDate.getMonth() + 1);
-							return newDate;
-						}) }
+						onClick={ () =>
+							setRenderDate(function(date) {
+								const newDate = new Date(date);
+								newDate.setMonth(newDate.getMonth() + 1);
+								return newDate;
+							}) }
 						size="medium" />
+					
 				</div>
-
 			</div>
-            
+
 			{ /* Calendar Body */ }
 			<div className="relative grow overflow-hidden">
-				
+
 				{ /* Year picker */ }
 				<motion.div
 					animate={ yearPicker ? "visible" : "hidden" }
-					className={ cn("absolute inset-0 overflow-auto", yearPicker || "pointer-events-none") }
+					className={ cn(
+						"absolute inset-0 overflow-auto py-2",
+						yearPicker || "pointer-events-none"
+					) }
 					exit="hidden"
 					initial="hidden"
 					ref={ yearPickerRef }
 					style={{
-						scrollbarColor: "currentColor transparent",
-						scrollbarWidth: "thin",
-						maskImage: "linear-gradient(to bottom, #0000 0px, #000f 16px, #000f calc(100% - 16px), #0000 100%)"
+						scrollbarWidth: "none",
+						maskImage: "linear-gradient(to bottom, #0000 0px, #000f 16px, #000f calc(100% - 16px), #0000 100%)",
 					}}
 					transition={{ duration: 0.2 }}
 					variants={{
 						hidden: { opacity: 0, top: -16 },
-						visible: { opacity: 1, top: 0 }
+						visible: { opacity: 1, top: 0 },
 					}}>
 					
-					<div style={{
-						height: `${ rowVirtualizer.getTotalSize() }px`,
-						width: "100%",
-						position: "relative",
-					}}>
-                    
+					<div
+						className="relative w-full"
+						style={{ height: `${ rowVirtualizer.getTotalSize() }px` }}>
 						{ rowVirtualizer.getVirtualItems().map(function(virtualItem) {
-							
-							const yearBase = virtualItem.index * 4;
-
+							const yearBase = yearPickerStart + virtualItem.index * 4;
 							return (
 								<div
-									className="absolute top-0 left-0 w-full py-1"
+									className="absolute top-0 left-0 w-full py-1 items-center flex justify-center"
 									key={ yearBase }
 									style={{
 										height: `${ virtualItem.size }px`,
 										transform: `translateY(${ virtualItem.start }px)`,
 									}}>
-									<div className="px-4 gap-2 grid grid-cols-4">
+									<div className="px-4 gap-4 grid grid-cols-4">
 										{ Array(4).fill(null).map(function(_, col) {
 											const year = yearBase + col;
+											if (year > yearPickerEnd) return null;
 											return (
 												<Button
 													{ ...{ "data-value": year } }
 													className="rounded-full !shadow-none"
-													color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? "primary" : "neutral" }
+													color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? color : "neutral" }
 													key={ year }
 													onClick={ function() {
 														setRenderDate(function(date) {
@@ -159,10 +219,71 @@ export function Calendar({ className, yearPickerRange = 200, ...props }: HTMLAtt
 														});
 													} }
 													size="small"
-													variant={ year === renderDate.getFullYear() ? "raised" : "flat" }>{ year.toString().padStart(4, "0") }</Button>
+													variant={ year === renderDate.getFullYear() ? "raised" : "flat" }>
+													{ year.toString().padStart(4, "0") }
+												</Button>
 											);
 										}) }
 									</div>
+								</div>
+							);
+						}) }
+					</div>
+				</motion.div>
+
+				{ /* Calendar */ }
+				<motion.div
+					animate={ yearPicker ? "visible" : "hidden" }
+					className={ cn(
+						"absolute inset-0",
+						yearPicker && "pointer-events-none"
+					) }
+					exit="hidden"
+					initial="hidden"
+					transition={{ duration: 0.2 }}
+					variants={{
+						visible: { opacity: 0, top: -16 },
+						hidden: { opacity: 1, top: 0 },
+					}}>
+					
+					<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
+						
+						{ /* Blank days of week */ }
+						{ Array(firstDay).fill(null).map(function(_, index, { length }) {
+							return (
+								<div
+									className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+									key={ index }>
+									{ lastDayOfLastMonth - length + index + 1 }
+								</div>
+							);
+						}) }
+
+						{ /* Days of week */ }
+						{ Array(daysInMonth).fill(null).map(function(_, index) {
+							const date = new Date(renderDate);
+							date.setDate(index + 1);
+							return (
+								<button
+									className={ cn([
+										"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
+										"hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5"
+									]) }
+									key={ index }
+									type="button">
+									{ date.getDate() }
+									<Ripple emitFromCenter />
+								</button>
+							);
+						}) }
+						
+						{ /* Blank days of week */ }
+						{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map(function(_, index) {
+							return (
+								<div
+									className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+									key={ index }>
+									{ index + 1 }
 								</div>
 							);
 						}) }
@@ -170,23 +291,8 @@ export function Calendar({ className, yearPickerRange = 200, ...props }: HTMLAtt
 					</div>
 
 				</motion.div>
-				
-				{ /* Calendar */ }
-				<motion.div
-					animate={ yearPicker ? "visible" : "hidden" }
-					className={ cn("bg-red-500 absolute inset-0", yearPicker && "pointer-events-none") }
-					exit="hidden"
-					initial="hidden"
-					transition={{ duration: 0.2 }}
-					variants={{
-						visible: { opacity: 0, top: -16 },
-						hidden: { opacity: 1, top: 0 }
-					}}>
-                    calendar
-				</motion.div>
-                    
+
 			</div>
-            
 		</Card>
 	);
 }

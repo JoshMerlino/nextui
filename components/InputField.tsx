@@ -2,6 +2,7 @@
 
 import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
+import dayjs from "dayjs";
 import { isFunction, merge, omit } from "lodash";
 import { cn } from "nextui/util";
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
@@ -305,7 +306,20 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
-						<Calendar />
+						<Calendar
+							onSelect={ date => {
+								if (!internalRef.current || !date) return;
+								const [ startDate ] = (Array.isArray(date) ? date : [ date, null ]) as [ Date, Date | null ];
+								
+								// Format the date
+								const formatted = dayjs(startDate).format(format.toUpperCase());
+								const current = internalRef.current.value;
+								if (current === formatted) return;
+
+								internalRef.current.value = formatted;
+								setPopoverOpen(false);
+
+							} } />
 					</Popover>
 					
 				</div> }

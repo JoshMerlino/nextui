@@ -32,7 +32,7 @@ export function Calendar({
 	color = "primary",
 	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
 	...props
-}: HTMLAttributes<HTMLDivElement> & Partial<{
+}: Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> & Partial<{
 
 	/**
 	 * The starting range for the year picker
@@ -58,8 +58,14 @@ export function Calendar({
 	 * The color to use for the selection
 	 * @default "primary"
 	 */
-	color: "primary" | "success" | "warning" | "error" | "primary:pastel" | "success:pastel" | "warning:pastel" | "error:pastel" | "neutral"
+	color: "primary" | "success" | "warning" | "error" | "primary:pastel" | "success:pastel" | "warning:pastel" | "error:pastel" | "neutral";
 
+	/**
+	 * A callback for when a date is selected
+	 * @param date The selected date
+	 */
+	onSelect: (date: Date | readonly [Date, Date] | null) => unknown;
+	
 }>) {
 
 	// State for year picker
@@ -77,7 +83,8 @@ export function Calendar({
 
 	// State for the current page of the calendar
 	const [ renderDate, setRenderDate ] = useState(new Date);
-	const [ selectedDate, setSelectedDate ] = useState<Date>();
+	const [ selectionStartDate, setSelectedDate ] = useState<Date>();
+	const [ selectionEndDate, setSelectionEndDate ] = useState<Date>();
 
 	// Auto scroll to the current year
 	useEffect(function() {
@@ -117,12 +124,19 @@ export function Calendar({
 	// Date selection
 	const [ direction, setDirection ] = useState<"left" | "right">("right");
 	
+	// Update the render date
 	const updateRenderDate = useCallback(function(next: Date) {
 		const current = new Date(renderDate);
 		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
 		setDirection(direction);
 		setRenderDate(next);
 	}, [ renderDate ]);
+	
+	// On selection date change, call the onSelect callback
+	useEffect(function() {
+		const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
+		props.onSelect?.(value);
+	}, [ selectionStartDate, props, selectionEndDate ]);
 
 	return (
 		<Card
@@ -276,9 +290,9 @@ export function Calendar({
 
 									// Check if the current cell is selected
 									const isSelected =
-										dayjs(date).isSame(dayjs(selectedDate), "day") &&
+										dayjs(date).isSame(dayjs(selectionStartDate), "day") &&
 										dayjs(date).isSame(dayjs(renderDate), "month") &&
-										dayjs(date).isSame(dayjs(selectedDate), "year");
+										dayjs(date).isSame(dayjs(selectionStartDate), "year");
 
 									// Check if the current cell is today
 									const isToday =
@@ -288,9 +302,7 @@ export function Calendar({
 
 									return (
 										<Button
-											className={ cn([
-												"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
-											]) }
+											className={ cn("rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer") }
 											color={ (isSelected || isToday) ? color : "neutral" }
 											key={ date.toISOString() }
 											onClick={ () => setSelectedDate(new Date(date.setMonth(renderDate.getMonth()))) }
@@ -303,27 +315,23 @@ export function Calendar({
 								}) }
 						
 								{ /* Blank days of week */ }
-								{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map(function(_, index) {
-									return (
+								{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map((_, index) => (
+									<div
+										className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+										key={ index }>
+										{ index + 1 }
+									</div>
+								)) }
+								
+								{ /* Add an additional row if necessary */ }
+								{ firstDay + daysInMonth + (7 - (firstDay + daysInMonth) % 7) <= 35 && (
+									Array(7).fill(null).map((_, index) => (
 										<div
 											className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
 											key={ index }>
 											{ index + 1 }
 										</div>
-									);
-								}) }
-								
-								{ /* Add an additional row if necessary */ }
-								{ firstDay + daysInMonth + (7 - (firstDay + daysInMonth) % 7) <= 35 && (
-									Array(7).fill(null).map(function(_, index) {
-										return (
-											<div
-												className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-												key={ index }>
-												{ index + 1 }
-											</div>
-										);
-									})
+									))
 								) }
 								
 							</div>

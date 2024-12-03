@@ -9,7 +9,6 @@ import { MdChevronLeft, MdChevronRight, MdToday } from "react-icons/md";
 import { Button } from "./Button";
 import { Card } from "./Card";
 import { IconButton } from "./IconButton";
-import { Ripple } from "./Ripple";
 
 export const classes = {
 
@@ -113,6 +112,12 @@ export function Calendar({
 		date.setDate(0);
 		return date.getDate();
 	}, [ renderDate ]);
+	
+	// Date selection
+	const [ selectedDate, setSelectedDate ] = useState(new Date());
+	
+	// When a date is selected, update the render date
+	useEffect(() => void (selectedDate && setRenderDate(selectedDate)), [ selectedDate ]);
 
 	return (
 		<Card
@@ -263,17 +268,23 @@ export function Calendar({
 						{ Array(daysInMonth).fill(null).map(function(_, index) {
 							const date = new Date(renderDate);
 							date.setDate(index + 1);
+
+							const isToday = dayjs(date).isSame(new Date(), "day") && dayjs(date).isSame(new Date(), "month") && dayjs(date).isSame(new Date(), "year");
+							const isSelected = dayjs(date).isSame(selectedDate, "day") && dayjs(date).isSame(selectedDate, "month") && dayjs(date).isSame(selectedDate, "year");
+
 							return (
-								<button
+								<Button
 									className={ cn([
 										"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
-										"hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5"
 									]) }
-									key={ index }
-									type="button">
+									color={ (isSelected || isToday) ? color : "neutral" }
+									key={ date.toString() }
+									onClick={ () => setSelectedDate(date) }
+									ripple={{ emitFromCenter: true }}
+									type="button"
+									variant={ isSelected ? "raised" : "flat" }>
 									{ date.getDate() }
-									<Ripple emitFromCenter />
-								</button>
+								</Button>
 							);
 						}) }
 						

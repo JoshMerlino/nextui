@@ -34,6 +34,7 @@ export function Calendar({
 	openToDate: _defaultRenderDate,
 	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
 	selection = null,
+	onSelect,
 	...props
 }: Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> & Partial<{
 
@@ -159,10 +160,17 @@ export function Calendar({
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 	
 	// On selection date change, call the onSelect callback
+	const previousSelectionRef = useRef(selection);
+
 	useEffect(function() {
 		const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
-		props.onSelect?.(value);
-	}, [ selectionStartDate, props, selectionEndDate ]);
+		const [ currStart, currEnd ] = Array.isArray(value) ? value : [ value, null ] as const;
+		const [ prevStart, preEnd ] = Array.isArray(previousSelectionRef.current) ? previousSelectionRef.current : [ previousSelectionRef.current, null ] as const;
+		if (!dayjs(prevStart).isSame(currStart, "day") || !dayjs(preEnd).isSame(currEnd, "day")) {
+			previousSelectionRef.current = value;
+			onSelect?.(value);
+		}
+	}, [ selectionStartDate, selectionEndDate, onSelect ]);
 
 	return (
 		<Card

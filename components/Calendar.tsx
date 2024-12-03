@@ -19,7 +19,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				desktop: "w-[300px] h-[340px]",
+				desktop: "w-[300px] h-[360px]",
 			}
 		}
 	})
@@ -182,7 +182,7 @@ export function Calendar({
 						scrollbarWidth: "none",
 						maskImage: "linear-gradient(to bottom, #0000 0px, #000f 16px, #000f calc(100% - 16px), #0000 100%)",
 					}}
-					transition={{ duration: 0.2 }}
+					transition={{ duration: 0.1 }}
 					variants={{
 						hidden: { opacity: 0, top: -16 },
 						visible: { opacity: 1, top: 0 },
@@ -240,7 +240,7 @@ export function Calendar({
 					) }
 					exit="hidden"
 					initial="hidden"
-					transition={{ duration: 0.2 }}
+					transition={{ duration: 0.1 }}
 					variants={{
 						visible: { opacity: 0, top: -16 },
 						hidden: { opacity: 1, top: 0 },

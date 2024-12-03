@@ -122,13 +122,27 @@ export function Calendar({
 	useEffect(() => void (selectedDate && setRenderDate(selectedDate)), [ selectedDate ]);
 
 	const updateRenderDate = useCallback(function(newDate: Date) {
+
+		// Clone the previous and new dates to avoid mutations
 		const newMonth = newDate.getMonth();
+		const newYear = newDate.getFullYear();
 		const prevMonth = previousDateRef.current.getMonth();
-		directionRef.current = newMonth > prevMonth || (newMonth === 0 && prevMonth === 11)
+		const prevYear = previousDateRef.current.getFullYear();
+
+		// Check if the date actually changed
+		if (newMonth === prevMonth && newYear === prevYear) {
+			return; // No change, avoid animation
+		}
+
+		// Determine direction based on year and month comparison
+		directionRef.current =
+		newYear > prevYear || (newYear === prevYear && newMonth > prevMonth)
 			? "right"
 			: "left";
-		previousDateRef.current = newDate;
-		setRenderDate(newDate);
+
+		// Update refs and state
+		previousDateRef.current = new Date(newDate); // Create a new instance to avoid mutation
+		setRenderDate(new Date(newDate)); // Ensure a fresh copy is set
 	}, []);
 
 	return (
@@ -259,9 +273,9 @@ export function Calendar({
 						<motion.div
 							animate={{ x: 0, opacity: 1 }}
 							className="absolute inset-0"
-							exit={{ x: directionRef.current === "right" ? -300 : 300, opacity: 0 }}
-							initial={{ x: directionRef.current === "right" ? 300 : -300, opacity: 0 }}
-							key={ renderDate.toISOString() }
+							exit={{ x: directionRef.current === "right" ? -16 : 16, opacity: 0 }}
+							initial={{ x: directionRef.current === "right" ? 16 : -16, opacity: 0 }}
+							key={ dayjs(renderDate).format("YYYY-MM") }
 							transition={{ duration: 0.1 }}>
 							<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
 						

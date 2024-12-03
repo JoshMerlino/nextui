@@ -307,6 +307,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
 						<Calendar
+							className="cursor-default"
 							onSelect={ date => {
 								if (!internalRef.current || !date) return;
 								const [ startDate ] = (Array.isArray(date) ? date : [ date, null ]) as [ Date, Date | null ];
@@ -319,7 +320,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								internalRef.current.value = formatted;
 								setPopoverOpen(false);
 
-							} } />
+							} }
+							selection={ props.defaultValue ? new Date(props.defaultValue.toString()) : undefined } />
 					</Popover>
 					
 				</div> }

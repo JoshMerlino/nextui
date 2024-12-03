@@ -18,7 +18,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				desktop: "w-[300px] h-[316px]",
+				desktop: "w-[300px] h-[340px]",
 			}
 		}
 	})
@@ -30,7 +30,10 @@ export function Calendar({
 	yearPickerStart = 1900,
 	yearPickerEnd = 2099,
 	color = "primary",
+	yearPicker: _yearPicker = false,
+	openToDate: _defaultRenderDate,
 	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
+	selection = null,
 	...props
 }: Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> & Partial<{
 
@@ -45,6 +48,12 @@ export function Calendar({
 	 * @default 2099
 	 */
 	yearPickerEnd: number;
+
+	/**
+	 * Whether to show the year picker by default
+	 * @default false
+	 */
+	yearPicker: boolean;
 
 	/**
 	 * The format for the year picker
@@ -65,11 +74,23 @@ export function Calendar({
 	 * @param date The selected date
 	 */
 	onSelect: (date: Date | readonly [Date, Date] | null) => unknown;
+
+	/**
+	 * The date to open the calendar to
+	 * @default selection | new Date
+	 */
+	openToDate: Date;
+
+	/**
+	 * The selected date
+	 * @default null
+	 */
+	selection: Date | readonly [Date, Date] | null;
 	
 }>) {
 
 	// State for year picker
-	const [ yearPicker, setYearPicker ] = useState(false);
+	const [ yearPicker, setYearPicker ] = useState(_yearPicker);
 	const yearPickerRef = useRef<HTMLDivElement>(null);
 
 	// The virtualizer
@@ -82,9 +103,9 @@ export function Calendar({
 	});
 
 	// State for the current page of the calendar
-	const [ renderDate, setRenderDate ] = useState(new Date);
-	const [ selectionStartDate, setSelectedDate ] = useState<Date>();
-	const [ selectionEndDate, setSelectionEndDate ] = useState<Date>();
+	const [ selectionStartDate, setSelectedDate ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
+	const [ selectionEndDate ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
+	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
 
 	// Auto scroll to the current year
 	useEffect(function() {
@@ -127,10 +148,15 @@ export function Calendar({
 	// Update the render date
 	const updateRenderDate = useCallback(function(next: Date) {
 		const current = new Date(renderDate);
+
+		// Make sure next is within the range
+		if (dayjs(next).isBefore(dayjs(new Date(yearPickerStart, 0, 1)))) return;
+		if (dayjs(next).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)))) return;
+
 		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
 		setDirection(direction);
 		setRenderDate(next);
-	}, [ renderDate ]);
+	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 	
 	// On selection date change, call the onSelect callback
 	useEffect(function() {
@@ -152,26 +178,29 @@ export function Calendar({
 					onClick={ () => setYearPicker(!yearPicker) }
 					variant="flat">
 					{ yearFormat(renderDate) }
-					<IoMdArrowDropdown className={ cn("transition-[transform] text-xl -mx-1", yearPicker && "rotate-180") } />
+					<IoMdArrowDropdown className={ cn("transition-[transform] text-xl -mx-1 duration-75", yearPicker && "rotate-180") } />
 				</Button>
 
 				{ /* Month navigation */ }
 				<div className="flex items-center gap-1">
 
+					{ /* Go to previous month */ }
+					<IconButton
+						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "year")) || (dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "year")) }
+						icon={ MdChevronLeft }
+						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() - 1))) }
+						size="medium" />
+					
 					{ /* Go to today button */ }
 					<IconButton
+						disabled={ dayjs(renderDate).isSame(dayjs(), "month") && dayjs(renderDate).isSame(dayjs(), "year") }
 						icon={ MdToday }
 						onClick={ () => updateRenderDate(new Date) }
 						size="medium" />
 
-					{ /* Go to previous month */ }
-					<IconButton
-						icon={ MdChevronLeft }
-						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() - 1))) }
-						size="medium" />
-
 					{ /* Go to next month */ }
 					<IconButton
+						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) || (dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) }
 						icon={ MdChevronRight }
 						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() + 1))) }
 						size="medium" />
@@ -260,84 +289,104 @@ export function Calendar({
 						hidden: { opacity: 1, top: 0 },
 					}}>
 					
-					<AnimatePresence>
-						<motion.div
-							animate={{ x: 0, opacity: 1 }}
-							className="absolute inset-0"
-							exit={{ x: direction === "right" ? -16 : 16, opacity: 0 }}
-							initial={{ x: direction === "right" ? 16 : -16, opacity: 0 }}
-							key={ dayjs(renderDate).format("YYYY-MM") }
-							transition={{ duration: 0.1 }}>
-							<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
+					<div className="flex flex-col grow">
 						
-								{ /* Blank days of week */ }
-								{ Array(firstDay).fill(null).map(function(_, index, { length }) {
-									return (
-										<div
-											className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-											key={ index }>
-											{ lastDayOfLastMonth - length + index + 1 }
-										</div>
-									);
-								}) }
-
-								{ /* Days of week */ }
-								{ Array(daysInMonth).fill(null).map(function(_, index) {
-
-									// Generate the date for this cell
-									const date = new Date(renderDate);
-									date.setDate(index + 1);
-
-									// Check if the current cell is selected
-									const isSelected =
-										dayjs(date).isSame(dayjs(selectionStartDate), "day") &&
-										dayjs(date).isSame(dayjs(renderDate), "month") &&
-										dayjs(date).isSame(dayjs(selectionStartDate), "year");
-
-									// Check if the current cell is today
-									const isToday =
-										dayjs(date).isSame(dayjs(), "day") &&
-										dayjs(date).isSame(dayjs(renderDate), "month") &&
-										dayjs(date).isSame(dayjs(), "year");
-
-									return (
-										<Button
-											className={ cn("rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer") }
-											color={ (isSelected || isToday) ? color : "neutral" }
-											key={ date.toISOString() }
-											onClick={ () => setSelectedDate(new Date(date.setMonth(renderDate.getMonth()))) }
-											ripple={{ emitFromCenter: true }}
-											type="button"
-											variant={ isSelected ? "raised" : "flat" }>
-											{ date.getDate() }
-										</Button>
-									);
-								}) }
-						
-								{ /* Blank days of week */ }
-								{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map((_, index) => (
+						{ /* Days of week */ }
+						<div className="grid grid-cols-7 mx-2 pt-3 -mb-1">
+							{ [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ].map(function(day) {
+								return (
 									<div
-										className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-										key={ index }>
-										{ index + 1 }
+										className="flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-wide"
+										key={ day }>
+										{ day }
 									</div>
-								)) }
-								
-								{ /* Add an additional row if necessary */ }
-								{ firstDay + daysInMonth + (7 - (firstDay + daysInMonth) % 7) <= 35 && (
-									Array(7).fill(null).map((_, index) => (
-										<div
-											className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
-											key={ index }>
-											{ index + 1 }
-										</div>
-									))
-								) }
-								
-							</div>
+								);
+							}) }
+						</div>
+						
+						{ /* Pan area */ }
+						<div className="relative grow">
+							<AnimatePresence>
+								<motion.div
+									animate={{ x: 0, opacity: 1 }}
+									className="absolute inset-0"
+									exit={{ x: direction === "right" ? -16 : 16, opacity: 0 }}
+									initial={{ x: direction === "right" ? 16 : -16, opacity: 0 }}
+									key={ dayjs(renderDate).format("YYYY-MM") }
+									transition={{ duration: 0.1 }}>
+									<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
+						
+										{ /* Blank days of week */ }
+										{ Array(firstDay).fill(null).map(function(_, index, { length }) {
+											return (
+												<div
+													className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"
+													key={ index }>
+													{ lastDayOfLastMonth - length + index + 1 }
+												</div>
+											);
+										}) }
 
-						</motion.div>
-					</AnimatePresence>
+										{ /* Days of week */ }
+										{ Array(daysInMonth).fill(null).map(function(_, index) {
+
+											// Generate the date for this cell
+											const date = new Date(renderDate);
+											date.setDate(index + 1);
+
+											// Check if the current cell is selected
+											const isSelected =
+												dayjs(date).isSame(dayjs(selectionStartDate), "day") &&
+												dayjs(date).isSame(dayjs(renderDate), "month") &&
+												dayjs(date).isSame(dayjs(selectionStartDate), "year");
+
+											// Check if the current cell is today
+											const isToday =
+												dayjs(date).isSame(dayjs(), "day") &&
+												dayjs(date).isSame(dayjs(renderDate), "month") &&
+												dayjs(date).isSame(dayjs(), "year");
+
+											return (
+												<Button
+													className="rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer shadow-none hover:shadow-none active:shadow-none"
+													color={ (isSelected || isToday) ? color : "neutral" }
+													key={ date.toISOString() }
+													onClick={ () => setSelectedDate(new Date(date.setMonth(renderDate.getMonth()))) }
+													ripple={{ emitFromCenter: true }}
+													type="button"
+													variant={ isSelected ? "raised" : "flat" }>
+													{ date.getDate() }
+												</Button>
+											);
+										}) }
+						
+										{ /* Blank days of week */ }
+										{ Array(7 - (firstDay + daysInMonth) % 7).fill(null).map((_, index) => (
+											<div
+												className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"
+												key={ index }>
+												{ index + 1 }
+											</div>
+										)) }
+								
+										{ /* Add an additional row if necessary */ }
+										{ firstDay + daysInMonth + (7 - (firstDay + daysInMonth) % 7) <= 35 && (
+											Array(7).fill(null).map((_, index) => (
+												<div
+													className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"
+													key={ index + 1 + 7 - (firstDay + daysInMonth) % 7 }>
+													{ index + 1 + 7 - (firstDay + daysInMonth) % 7 }
+												</div>
+											))
+										) }
+								
+									</div>
+
+								</motion.div>
+							</AnimatePresence>
+						</div>
+
+					</div>
 
 				</motion.div>
 

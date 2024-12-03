@@ -18,7 +18,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				desktop: "w-[300px] h-[360px]",
+				desktop: "w-[300px] h-[316px]",
 			}
 		}
 	})
@@ -62,9 +62,6 @@ export function Calendar({
 
 }>) {
 
-	// State for the selected date range
-	const [ renderDate, setRenderDate ] = useState(new Date());
-
 	// State for year picker
 	const [ yearPicker, setYearPicker ] = useState(false);
 	const yearPickerRef = useRef<HTMLDivElement>(null);
@@ -77,6 +74,10 @@ export function Calendar({
 		scrollToFn: scroll => yearPickerRef.current?.scrollTo({ top: scroll }),
 		estimateSize: () => 36,
 	});
+
+	// State for the current page of the calendar
+	const [ renderDate, setRenderDate ] = useState(new Date);
+	const [ selectedDate, setSelectedDate ] = useState<Date>();
 
 	// Auto scroll to the current year
 	useEffect(function() {
@@ -114,36 +115,14 @@ export function Calendar({
 	}, [ renderDate ]);
 	
 	// Date selection
-	const [ selectedDate, setSelectedDate ] = useState(new Date());
-	const directionRef = useRef<"left" | "right">("right");
-	const previousDateRef = useRef(renderDate);
+	const [ direction, setDirection ] = useState<"left" | "right">("right");
 	
-	// When a date is selected, update the render date
-	useEffect(() => void (selectedDate && setRenderDate(selectedDate)), [ selectedDate ]);
-
-	const updateRenderDate = useCallback(function(newDate: Date) {
-
-		// Clone the previous and new dates to avoid mutations
-		const newMonth = newDate.getMonth();
-		const newYear = newDate.getFullYear();
-		const prevMonth = previousDateRef.current.getMonth();
-		const prevYear = previousDateRef.current.getFullYear();
-
-		// Check if the date actually changed
-		if (newMonth === prevMonth && newYear === prevYear) {
-			return; // No change, avoid animation
-		}
-
-		// Determine direction based on year and month comparison
-		directionRef.current =
-		newYear > prevYear || (newYear === prevYear && newMonth > prevMonth)
-			? "right"
-			: "left";
-
-		// Update refs and state
-		previousDateRef.current = new Date(newDate); // Create a new instance to avoid mutation
-		setRenderDate(new Date(newDate)); // Ensure a fresh copy is set
-	}, []);
+	const updateRenderDate = useCallback(function(next: Date) {
+		const current = new Date(renderDate);
+		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
+		setDirection(direction);
+		setRenderDate(next);
+	}, [ renderDate ]);
 
 	return (
 		<Card
@@ -168,21 +147,19 @@ export function Calendar({
 					{ /* Go to today button */ }
 					<IconButton
 						icon={ MdToday }
-						onClick={ () => updateRenderDate(new Date()) }
+						onClick={ () => updateRenderDate(new Date) }
 						size="medium" />
 
 					{ /* Go to previous month */ }
 					<IconButton
 						icon={ MdChevronLeft }
-						onClick={ () =>
-							updateRenderDate(new Date(renderDate.setMonth(renderDate.getMonth() - 1))) }
+						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() - 1))) }
 						size="medium" />
 
 					{ /* Go to next month */ }
 					<IconButton
 						icon={ MdChevronRight }
-						onClick={ () =>
-							updateRenderDate(new Date(renderDate.setMonth(renderDate.getMonth() + 1))) }
+						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() + 1))) }
 						size="medium" />
 					
 				</div>
@@ -258,7 +235,7 @@ export function Calendar({
 				<motion.div
 					animate={ yearPicker ? "visible" : "hidden" }
 					className={ cn(
-						"absolute inset-0",
+						"absolute inset-0 flex flex-col",
 						yearPicker && "pointer-events-none"
 					) }
 					exit="hidden"
@@ -273,8 +250,8 @@ export function Calendar({
 						<motion.div
 							animate={{ x: 0, opacity: 1 }}
 							className="absolute inset-0"
-							exit={{ x: directionRef.current === "right" ? -16 : 16, opacity: 0 }}
-							initial={{ x: directionRef.current === "right" ? 16 : -16, opacity: 0 }}
+							exit={{ x: direction === "right" ? -16 : 16, opacity: 0 }}
+							initial={{ x: direction === "right" ? 16 : -16, opacity: 0 }}
 							key={ dayjs(renderDate).format("YYYY-MM") }
 							transition={{ duration: 0.1 }}>
 							<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
@@ -292,11 +269,22 @@ export function Calendar({
 
 								{ /* Days of week */ }
 								{ Array(daysInMonth).fill(null).map(function(_, index) {
+
+									// Generate the date for this cell
 									const date = new Date(renderDate);
 									date.setDate(index + 1);
 
-									const isToday = dayjs(date).isSame(new Date(), "day") && dayjs(date).isSame(new Date(), "month") && dayjs(date).isSame(new Date(), "year");
-									const isSelected = dayjs(date).isSame(selectedDate, "day") && dayjs(date).isSame(selectedDate, "month") && dayjs(date).isSame(selectedDate, "year");
+									// Check if the current cell is selected
+									const isSelected =
+										dayjs(date).isSame(dayjs(selectedDate), "day") &&
+										dayjs(date).isSame(dayjs(renderDate), "month") &&
+										dayjs(date).isSame(dayjs(selectedDate), "year");
+
+									// Check if the current cell is today
+									const isToday =
+										dayjs(date).isSame(dayjs(), "day") &&
+										dayjs(date).isSame(dayjs(renderDate), "month") &&
+										dayjs(date).isSame(dayjs(), "year");
 
 									return (
 										<Button
@@ -304,8 +292,8 @@ export function Calendar({
 												"rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer",
 											]) }
 											color={ (isSelected || isToday) ? color : "neutral" }
-											key={ date.toString() }
-											onClick={ () => setSelectedDate(date) }
+											key={ date.toISOString() }
+											onClick={ () => setSelectedDate(new Date(date.setMonth(renderDate.getMonth()))) }
 											ripple={{ emitFromCenter: true }}
 											type="button"
 											variant={ isSelected ? "raised" : "flat" }>
@@ -324,6 +312,19 @@ export function Calendar({
 										</div>
 									);
 								}) }
+								
+								{ /* Add an additional row if necessary */ }
+								{ firstDay + daysInMonth + (7 - (firstDay + daysInMonth) % 7) <= 35 && (
+									Array(7).fill(null).map(function(_, index) {
+										return (
+											<div
+												className="flex items-center justify-center aspect-square text-gray-400 dark:text-gray-500"
+												key={ index }>
+												{ index + 1 }
+											</div>
+										);
+									})
+								) }
 								
 							</div>
 

@@ -32,7 +32,7 @@ export const classes = {
 
 export const IconButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.icon> & Partial<{
 
-		/**
+	/**
 	 * The icon to display in the input
 	 */
 	icon: IconType | ReactElement;

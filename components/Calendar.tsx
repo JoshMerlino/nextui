@@ -1,7 +1,8 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import { cn } from "nextui/util";
-import { useState, type HTMLAttributes } from "react";
+import { useEffect, useRef, useState, type HTMLAttributes } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { Button } from "./Button";
@@ -29,15 +30,41 @@ const MONTHS = [
 	"July", "August", "September", "October", "November", "December"
 ];
 
-const YEAR_PADDING = 40;
+export function Calendar({ className, yearPickerRange = 200, ...props }: HTMLAttributes<HTMLDivElement> & Partial<{
 
-export function Calendar({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+	/**
+	 * The range of years to show in the year picker
+	 * @default 200
+	 */
+	yearPickerRange: number
+
+}>) {
 
 	// State for the selected date range
 	const [ renderDate, setRenderDate ] = useState(new Date());
 
 	// State for year picker
 	const [ yearPicker, setYearPicker ] = useState(false);
+	const yearPickerRef = useRef<HTMLDivElement>(null);
+
+	// The virtualizer
+	const rowVirtualizer = useVirtualizer({
+		count: 1000,
+		getScrollElement: () => yearPickerRef.current,
+		scrollToFn: scroll => yearPickerRef.current?.scrollTo({ top: scroll }),
+		estimateSize: () => 36,
+	});
+
+	useEffect(function() {
+		if (!yearPicker) return;
+		rowVirtualizer.scrollToIndex(Math.floor(renderDate.getFullYear() / 4));
+		setTimeout(function() {
+			yearPickerRef.current?.querySelector(`button[data-value="${ renderDate.getFullYear() }`)?.scrollIntoView({
+				block: "center",
+				behavior: "smooth"
+			});
+		});
+	}, [ renderDate, rowVirtualizer, yearPicker ]);
 
 	return (
 		<Card
@@ -82,73 +109,63 @@ export function Calendar({ className, ...props }: HTMLAttributes<HTMLDivElement>
 				{ /* Year picker */ }
 				<motion.div
 					animate={ yearPicker ? "visible" : "hidden" }
-					className={ cn("absolute inset-0 overflow-y-auto", yearPicker || "pointer-events-none") }
+					className={ cn("absolute inset-0 overflow-auto", yearPicker || "pointer-events-none") }
 					exit="hidden"
 					initial="hidden"
+					ref={ yearPickerRef }
 					style={{
 						scrollbarColor: "currentColor transparent",
-						scrollbarWidth: "thin"
+						scrollbarWidth: "thin",
+						maskImage: "linear-gradient(to bottom, #0000 0px, #000f 16px, #000f calc(100% - 16px), #0000 100%)"
 					}}
 					transition={{ duration: 0.2 }}
 					variants={{
 						hidden: { opacity: 0, top: -16 },
 						visible: { opacity: 1, top: 0 }
 					}}>
+					
+					<div style={{
+						height: `${ rowVirtualizer.getTotalSize() }px`,
+						width: "100%",
+						position: "relative",
+					}}>
                     
-					{ /* <div className="grid grid-cols-4 gap-2">
-						{ Array.from({ length: YEAR_PADDING * 2 + 1 }).map(function(_, key) {
-							const year = renderDate.getFullYear() - YEAR_PADDING + key;
-							v
-						}) }
-					</div> */ }
+						{ rowVirtualizer.getVirtualItems().map(function(virtualItem) {
+							
+							const yearBase = virtualItem.index * 4;
 
-					<div className="flex flex-col">
-
-						{ /* { Array.from({ length: 5 }).map(function(_, key, { length }) {
-							const year = renderDate.getFullYear() - (length / 2) + key;
-							const group = year - (year % 4);
 							return (
-								<div className="grid grid-cols-4 gap-2" key={ group }> */ }
-						{ /* { Array.from({ length: 4 }).map(function(_, key) {
-										const year = group + key;
-										return (
-											<Button
-												className="rounded-full !shadow-none"
-												color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? "primary" : "neutral" }
-												key={ year }
-												onClick={ function() {
-													setRenderDate(function(date) {
-														const newDate = new Date(date);
-														newDate.setFullYear(year);
-														return newDate;
-													});
-												} }
-												size="small"
-												variant={ year === renderDate.getFullYear() ? "raised" : new Date().getFullYear() === year ? "outlined" : "flat" }>{ year }</Button>
-										);
-									}) } */ }
-
-						{ Array(10).fill(null).map((_, row, { length }) => {
-							return (
-								<div className="grid grid-cols-4" key={ row }>
-
-									{ Array(4).fill(null).map((_, col, { length }) => {
-										return (
-											<div className="grid grid-cols-4" key={ col }>
-
-												{ col }
-                                                 
-											</div>
-										);
-									}) }
-                                                 
+								<div
+									className="absolute top-0 left-0 w-full py-1"
+									key={ yearBase }
+									style={{
+										height: `${ virtualItem.size }px`,
+										transform: `translateY(${ virtualItem.start }px)`,
+									}}>
+									<div className="px-4 gap-2 grid grid-cols-4">
+										{ Array(4).fill(null).map(function(_, col) {
+											const year = yearBase + col;
+											return (
+												<Button
+													{ ...{ "data-value": year } }
+													className="rounded-full !shadow-none"
+													color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? "primary" : "neutral" }
+													key={ year }
+													onClick={ function() {
+														setRenderDate(function(date) {
+															const newDate = new Date(date);
+															newDate.setFullYear(year);
+															return newDate;
+														});
+													} }
+													size="small"
+													variant={ year === renderDate.getFullYear() ? "raised" : "flat" }>{ year.toString().padStart(4, "0") }</Button>
+											);
+										}) }
+									</div>
 								</div>
 							);
 						}) }
-
-						{ /* </div> */ }
-						{ /* ); */ }
-						{ /* }) } */ }
 
 					</div>
 

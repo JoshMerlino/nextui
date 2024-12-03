@@ -2,6 +2,7 @@
 	"name": "nextui",
 	"dependencies": {
 		"@react-input/mask": "^2.0.3",
+		"@tanstack/react-virtual": "^3.10.9",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.0",
 		"framer-motion": "^11.12.0",

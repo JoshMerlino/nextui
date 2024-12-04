@@ -166,10 +166,14 @@ export function Calendar({
 		const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
 		const [ currStart, currEnd ] = Array.isArray(value) ? value : [ value, null ] as const;
 		const [ prevStart, preEnd ] = Array.isArray(previousSelectionRef.current) ? previousSelectionRef.current : [ previousSelectionRef.current, null ] as const;
-		if (!dayjs(prevStart).isSame(currStart, "day") || !dayjs(preEnd).isSame(currEnd, "day")) {
-			previousSelectionRef.current = value;
-			onSelect?.(value);
-		}
+		
+		// If selectiono is differetn
+		if (dayjs(prevStart).isSame(currStart, "day") && dayjs(preEnd).isSame(currEnd, "day")) return;
+		if (!value) return;
+
+		previousSelectionRef.current = value;
+		onSelect?.(value);
+
 	}, [ selectionStartDate, selectionEndDate, onSelect ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
@@ -300,7 +304,7 @@ export function Calendar({
 						hidden: { opacity: 1, top: 0 },
 					}}>
 					
-					<div className="flex flex-col grow">
+					<div className="flex flex-col grow select-none">
 						
 						{ /* Days of week */ }
 						<div className="grid grid-cols-7 mx-2 pt-3 -mb-1">

@@ -107,6 +107,9 @@ export function Calendar({
 	const [ selectionStartDate, setSelectionStart ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
 	const [ selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
 	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
+	
+	// Store thee last reender date
+	const lastRenderDate = useRef(renderDate);
 
 	// Auto scroll to the current year
 	useEffect(function() {
@@ -119,6 +122,13 @@ export function Calendar({
 				behavior: "smooth",
 			});
 		});
+
+		console.log(lastRenderDate.current.getFullYear(), renderDate.getFullYear());
+
+		if (lastRenderDate.current.getFullYear() === renderDate.getFullYear()) return;
+		lastRenderDate.current = renderDate;
+		setTimeout(() => setYearPicker(false), 500);
+
 	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
 	
 	// Day of week of first day of month
@@ -157,15 +167,8 @@ export function Calendar({
 		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
 		setDirection(direction);
 		setRenderDate(next);
+		
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
-	
-	// // On selection date change, call the onSelect callback
-	// const previousSelectionRef = useRef(selection);
-
-	// useEffect(function() {
-	// 	const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
-	// 	onSelect?.(value);
-	// }, [ selectionStartDate, selectionEndDate, onSelect ]);
 
 	const previousSelection = useRef("");
 	useEffect(function() {

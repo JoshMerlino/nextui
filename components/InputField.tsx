@@ -18,7 +18,6 @@ export const masks = {
 	date: (format: string) => new Mask({
 		mask: format.replace(/[a-zA-Z]/g, "_"),
 		showMask: true,
-		separate: true,
 		replacement: { _: /[0-9]/ }
 	})
 
@@ -223,7 +222,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			.map(date => dayjs(date).toDate());
 		return dateRange.length === 1 ? dateRange[0] : dateRange as [Date, Date];
 	}());
-	
+
 	useLayoutEffect(function() {
 		if (props.type !== "date") return;
 		const date = new Date("1000-10-20");

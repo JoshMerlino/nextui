@@ -171,6 +171,9 @@ export function Calendar({
 			onSelect?.(value);
 		}
 	}, [ selectionStartDate, selectionEndDate, onSelect ]);
+	
+	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
+	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);
 
 	return (
 		<Card
@@ -196,7 +199,7 @@ export function Calendar({
 					<IconButton
 						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "year")) || (dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "year")) }
 						icon={ MdChevronLeft }
-						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() - 1))) }
+						onClick={ () => updateRenderDate(new Date(prevPageDate)) }
 						size="medium" />
 					
 					{ /* Go to today button */ }
@@ -210,7 +213,7 @@ export function Calendar({
 					<IconButton
 						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) || (dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) }
 						icon={ MdChevronRight }
-						onClick={ () => updateRenderDate(new Date(new Date(renderDate).setMonth(renderDate.getMonth() + 1))) }
+						onClick={ () => updateRenderDate(new Date(nextPageDate)) }
 						size="medium" />
 					
 				</div>

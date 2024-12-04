@@ -272,6 +272,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				console.log("Setting date value", dateRange);
 				internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
 				internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+				_setDateValue(end ? [ start, end ] : start);
 
 				// @ts-expect-error - This looks dumb but i assure you it is necessary
 				props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));

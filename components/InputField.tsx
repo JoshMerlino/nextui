@@ -14,10 +14,12 @@ import { IconButton } from "./IconButton";
 import { Popover } from "./Popover";
 
 export const masks = {
-	
+
 	date: (format: string) => new Mask({
 		mask: format.replace(/[a-zA-Z]/g, "_"),
-		replacement: "_"
+		showMask: true,
+		separate: true,
+		replacement: { _: /[0-9]/ }
 	})
 
 };
@@ -215,14 +217,15 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 	
 	// Date specific state
 	const [ format, setFormat ] = useState("");
+	const [ dateValue, setDateValue ] = useState<Date | readonly [Date, Date] | null>(null);
 	useLayoutEffect(function() {
 		if (props.type !== "date") return;
 		const date = new Date("1000-10-20");
 		const format = date
 			.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
-			.replace(/\d{4}/, "yyyy")
-			.replace((date.getMonth() + 1).toString(), "mm")
-			.replace(date.getDate().toString(), "dd");
+			.replace(/\d{4}/, "YYYY")
+			.replace((date.getMonth() + 1).toString(), "MM")
+			.replace(date.getDate().toString(), "DD");
 		setFormat(format);
 	}, [ props.type ]);
 
@@ -246,10 +249,44 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 			// Determine if the value is a valid date
 			case "date":
-				const date = new Date(target.value);
-				const isValid = !isNaN(date.getTime()) || target.value.toString().trim().length === 0;
+
+				// const date = new Date(target.value);
+				const dateRange = target.value.split(" - ")
+					.map(date => dayjs(date).toDate());
+				const [ start, end = null ] = dateRange;
+				
+				const isValid = (!isNaN(start.getTime()) && (!end || !isNaN(end.getTime()))) || (target.value.replace(/[^0-9]/g, "").length === 0);
 				target.setCustomValidity(isValid ? "" : "Invalid date");
 				setIsValid(isValid);
+
+				if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
+
+				const value = dateRange[1] ? dateRange : dateRange[0];
+				
+				// const isValid = !isNaN(date.getTime()) || target.value.toString().trim().length === 0;
+				// target.setCustomValidity(isValid ? "" : "Invalid date");
+				// setIsValid(isValid);
+
+				// if (!isValid) return;
+				// if (target.value.toString().trim().length === 0) return;
+
+				// useEffect(function() {
+				// 	const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
+				// 	const [ currStart, currEnd ] = Array.isArray(value) ? value : [ value, null ] as const;
+				// 	const [ prevStart, preEnd ] = Array.isArray(previousSelectionRef.current) ? previousSelectionRef.current : [ previousSelectionRef.current, null ] as const;
+		
+				// 	// If selectiono is differetn
+				// 	if (dayjs(prevStart).isSame(currStart, "day") && dayjs(preEnd).isSame(currEnd, "day")) return;
+				// 	if (!value) return;
+
+				// 	previousSelectionRef.current = value;
+				// 	onSelect?.(value);
+
+				// }, [ selectionStartDate, selectionEndDate, onSelect ]);
+
+				// setDateValue(date);
+				// console.log({ value });
+
 				break;
 
 		}
@@ -306,22 +343,22 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
+						{ /* <pre>{ JSON.stringify(dateValue, null, 2) }</pre> */ }
 						<Calendar
 							className="cursor-default"
 							onSelect={ date => {
-								if (!internalRef.current || !date) return;
-								const [ startDate ] = (Array.isArray(date) ? date : [ date, null ]) as [ Date, Date | null ];
+								if (!internalRef.current) return;
 								
-								// Format the date
-								const formatted = dayjs(startDate).format(format.toUpperCase());
-								const current = internalRef.current.value;
-								if (current === formatted) return;
+								if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
+								if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
+								
+								// console.log("onSelectCalled", date, dateValue);
 
-								internalRef.current.value = formatted;
-								setPopoverOpen(false);
-
+								// setPopoverOpen(false);
+								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+								setDateValue(date);
 							} }
-							selection={ props.defaultValue ? new Date(props.defaultValue.toString()) : undefined } />
+							selection={ dateValue } />
 					</Popover>
 					
 				</div> }

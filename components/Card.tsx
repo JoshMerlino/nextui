@@ -4,7 +4,7 @@ import { forwardRef, type HTMLAttributes } from "react";
 
 export const classes = {
 
-	card: cva("relative isolate rounded-lg p-4", {
+	card: cva("relative isolate rounded-lg p-4 text-gray-700 dark:text-gray-200", {
 		variants: {
 			variant: {
 				popover: "bg-white dark:bg-gray-800 shadow-lg after:absolute after:inset-0 after:content-[''] after:bg-gray-100/50 after:dark:bg-gray-700/50 overflow-hidden after:-z-10 border border-gray-200 dark:border-gray-700",

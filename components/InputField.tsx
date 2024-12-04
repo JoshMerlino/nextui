@@ -192,6 +192,12 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 	 */
 	icon: IconType | ReactElement;
 
+	/**
+	 * The color of the input
+	 * @default "primary"
+	 */
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
 }>>>(function({ className, children, label, icon: Icon, ...props }, ref) {
 
 	// Combine forwarded ref with internal ref
@@ -216,7 +222,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 	
 	// Date specific state
 	const [ format, setFormat ] = useState("");
-	const [ dateValue, setDateValue ] = useState<Date | readonly [Date, Date] | null>(function() {
+	const [ dateValue, _setDateValue ] = useState<Date | readonly [Date, Date] | null>(function() {
 		if (!props.defaultValue) return null;
 		const dateRange = props.defaultValue.toString().split(" - ")
 			.map(date => dayjs(date).toDate());
@@ -263,13 +269,16 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				setIsValid(isValid);
 
 				if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
+				console.log("Setting date value", dateRange);
+				internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
+				internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 
-				const value = dateRange[1] ? dateRange as [Date, Date] : dateRange[0];
-				setDateValue(value);
+				// @ts-expect-error - This looks dumb but i assure you it is necessary
+				props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
 				break;
 
 		}
-	}, [ props.type ]);
+	}, [ format, props ]);
 
 	return (
 		<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }>
@@ -306,6 +315,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				{ /* Password visibility toggle */ }
 				{ props.type === "password" && <IconButton
 					className={ cn(classes.button(props as VariantProps<typeof classes.button>), "hidden", hasContents && "group-focus-within/inputfield:inline-flex") }
+					disabled={ props.disabled }
 					icon={ plainText ? IoMdEyeOff : IoMdEye }
 					onClick={ () => setPlainText(!plainText) }
 					size={ props.size === "dense" ? "small" : "medium" } /> }
@@ -314,6 +324,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				{ props.type === "date" && <div className="relative">
 					<IconButton
 						className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+						disabled={ props.disabled }
 						icon={ props.multiple ? MdDateRange : IoMdCalendar }
 						onClick={ () => setPopoverOpen(!popoverOpen) }
 						onMouseDown={ event => event.stopPropagation() }
@@ -324,13 +335,14 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
 						<Calendar
 							className="cursor-default"
+							color={ props.color }
 							onSelect={ date => {
 								if (!internalRef.current) return;
 								if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
 								if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
 								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 								setPopoverOpen(false);
-								setDateValue(date);
+								internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 							} }
 							selection={ dateValue } />
 					</Popover>

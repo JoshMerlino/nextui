@@ -105,7 +105,7 @@ export function Calendar({
 
 	// State for the current page of the calendar
 	const [ selectionStartDate, setSelectionStart ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
-	const [ selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
+	const [ _selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
 	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
 	
 	// Auto scroll to the current year
@@ -310,7 +310,7 @@ export function Calendar({
 					<div className="flex flex-col grow select-none">
 						
 						{ /* Days of week */ }
-						<div className="grid grid-cols-7 mx-2 pt-3 -mb-1">
+						<div className="grid grid-cols-7 mx-1.5 pt-3 -mb-1">
 							{ [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ].map(function(day) {
 								return (
 									<div

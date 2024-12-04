@@ -247,10 +247,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		if (!internalRef.current) return;
 		switch (props.type) {
 
-			// Determine if the value is a valid date
+			// Determine if the value is a valid date and sync with the calendar
 			case "date":
-
-				// const date = new Date(target.value);
 				const dateRange = target.value.split(" - ")
 					.map(date => dayjs(date).toDate());
 				const [ start, end = null ] = dateRange;
@@ -261,32 +259,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 				if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
 
-				const value = dateRange[1] ? dateRange : dateRange[0];
-				
-				// const isValid = !isNaN(date.getTime()) || target.value.toString().trim().length === 0;
-				// target.setCustomValidity(isValid ? "" : "Invalid date");
-				// setIsValid(isValid);
-
-				// if (!isValid) return;
-				// if (target.value.toString().trim().length === 0) return;
-
-				// useEffect(function() {
-				// 	const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
-				// 	const [ currStart, currEnd ] = Array.isArray(value) ? value : [ value, null ] as const;
-				// 	const [ prevStart, preEnd ] = Array.isArray(previousSelectionRef.current) ? previousSelectionRef.current : [ previousSelectionRef.current, null ] as const;
-		
-				// 	// If selectiono is differetn
-				// 	if (dayjs(prevStart).isSame(currStart, "day") && dayjs(preEnd).isSame(currEnd, "day")) return;
-				// 	if (!value) return;
-
-				// 	previousSelectionRef.current = value;
-				// 	onSelect?.(value);
-
-				// }, [ selectionStartDate, selectionEndDate, onSelect ]);
-
-				// setDateValue(date);
-				// console.log({ value });
-
+				const value = dateRange[1] ? dateRange as [Date, Date] : dateRange[0];
+				setDateValue(value);
 				break;
 
 		}
@@ -343,19 +317,15 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
-						{ /* <pre>{ JSON.stringify(dateValue, null, 2) }</pre> */ }
+						<pre>{ JSON.stringify(dateValue, null, 2) }</pre>
 						<Calendar
 							className="cursor-default"
 							onSelect={ date => {
 								if (!internalRef.current) return;
-								
 								if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
 								if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
-								
-								// console.log("onSelectCalled", date, dateValue);
-
-								// setPopoverOpen(false);
 								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+								setPopoverOpen(false);
 								setDateValue(date);
 							} }
 							selection={ dateValue } />

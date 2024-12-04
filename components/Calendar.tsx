@@ -104,8 +104,8 @@ export function Calendar({
 	});
 
 	// State for the current page of the calendar
-	const [ selectionStartDate, setSelectedDate ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
-	const [ selectionEndDate ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
+	const [ selectionStartDate, setSelectionStart ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
+	const [ selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
 	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
 
 	// Auto scroll to the current year
@@ -159,22 +159,31 @@ export function Calendar({
 		setRenderDate(next);
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 	
-	// On selection date change, call the onSelect callback
-	const previousSelectionRef = useRef(selection);
+	// // On selection date change, call the onSelect callback
+	// const previousSelectionRef = useRef(selection);
 
+	// useEffect(function() {
+	// 	const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
+	// 	onSelect?.(value);
+	// }, [ selectionStartDate, selectionEndDate, onSelect ]);
+
+	const previousSelection = useRef("");
 	useEffect(function() {
-		const value = (selectionEndDate && selectionStartDate) ? [ selectionStartDate, selectionEndDate ] as const : selectionStartDate ?? null;
-		const [ currStart, currEnd ] = Array.isArray(value) ? value : [ value, null ] as const;
-		const [ prevStart, preEnd ] = Array.isArray(previousSelectionRef.current) ? previousSelectionRef.current : [ previousSelectionRef.current, null ] as const;
 		
-		// If selectiono is differetn
-		if (dayjs(prevStart).isSame(currStart, "day") && dayjs(preEnd).isSame(currEnd, "day")) return;
-		if (!value) return;
+		// Recompute the start and end selection
+		const selectionStartDate: Date | null = Array.isArray(selection) ? selection[0] : selection;
+		const selectionEndDate: Date | null = Array.isArray(selection) ? selection[1] : null;
 
-		previousSelectionRef.current = value;
-		onSelect?.(value);
+		const hashed = JSON.stringify({ selectionStartDate, selectionEndDate }, null, 2);
+		if (hashed === previousSelection.current) return;
+		previousSelection.current = hashed;
 
-	}, [ selectionStartDate, selectionEndDate, onSelect ]);
+		if (!selectionStartDate) return;
+		setSelectionStart(selectionStartDate);
+		setSelectionEnd(selectionEndDate);
+		setRenderDate(selectionStartDate);
+		onSelect?.(selection);
+	}, [ onSelect, selection ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
 	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);
@@ -366,7 +375,7 @@ export function Calendar({
 													className="rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer shadow-none hover:shadow-none active:shadow-none"
 													color={ (isSelected || isToday) ? color : "neutral" }
 													key={ date.toISOString() }
-													onClick={ () => setSelectedDate(new Date(date.setMonth(renderDate.getMonth()))) }
+													onClick={ () => onSelect?.(date) }
 													ripple={{ emitFromCenter: true }}
 													type="button"
 													variant={ isSelected ? "raised" : "flat" }>

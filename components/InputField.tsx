@@ -217,7 +217,13 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 	
 	// Date specific state
 	const [ format, setFormat ] = useState("");
-	const [ dateValue, setDateValue ] = useState<Date | readonly [Date, Date] | null>(null);
+	const [ dateValue, setDateValue ] = useState<Date | readonly [Date, Date] | null>(function() {
+		if (!props.defaultValue) return null;
+		const dateRange = props.defaultValue.toString().split(" - ")
+			.map(date => dayjs(date).toDate());
+		return dateRange.length === 1 ? dateRange[0] : dateRange as [Date, Date];
+	}());
+	
 	useLayoutEffect(function() {
 		if (props.type !== "date") return;
 		const date = new Date("1000-10-20");
@@ -317,7 +323,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					{ /* Date picker calendar popover */ }
 					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
-						<pre>{ JSON.stringify(dateValue, null, 2) }</pre>
 						<Calendar
 							className="cursor-default"
 							onSelect={ date => {

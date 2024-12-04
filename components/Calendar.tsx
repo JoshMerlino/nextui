@@ -123,8 +123,6 @@ export function Calendar({
 			});
 		});
 
-		console.log(lastRenderDate.current.getFullYear(), renderDate.getFullYear());
-
 		if (lastRenderDate.current.getFullYear() === renderDate.getFullYear()) return;
 		lastRenderDate.current = renderDate;
 		setTimeout(() => setYearPicker(false), 500);

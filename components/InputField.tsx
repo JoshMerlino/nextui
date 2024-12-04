@@ -341,8 +341,10 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								if (!internalRef.current) return;
 								if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
 								if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
-								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 								setPopoverOpen(false);
+								const current = internalRef.current.value;
+								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+								if (current === internalRef.current.value) return;
 								internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 							} }
 							selection={ dateValue } />

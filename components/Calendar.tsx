@@ -108,9 +108,6 @@ export function Calendar({
 	const [ selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
 	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
 	
-	// Store thee last reender date
-	const lastRenderDate = useRef(renderDate);
-
 	// Auto scroll to the current year
 	useEffect(function() {
 		if (!yearPicker) return;
@@ -122,10 +119,6 @@ export function Calendar({
 				behavior: "smooth",
 			});
 		});
-
-		if (lastRenderDate.current.getFullYear() === renderDate.getFullYear()) return;
-		lastRenderDate.current = renderDate;
-		setTimeout(() => setYearPicker(false), 500);
 
 	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
 	
@@ -165,7 +158,7 @@ export function Calendar({
 		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
 		setDirection(direction);
 		setRenderDate(next);
-		
+
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 
 	const previousSelection = useRef("");

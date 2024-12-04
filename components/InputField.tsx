@@ -269,7 +269,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				setIsValid(isValid);
 
 				if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
-				console.log("Setting date value", dateRange);
 				internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
 				internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 				_setDateValue(end ? [ start, end ] : start);

@@ -332,7 +332,9 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						size={ props.size === "dense" ? "small" : "medium" } />
 					
 					{ /* Date picker calendar popover */ }
-					<Popover state={ [ popoverOpen, setPopoverOpen ] }>
+					<Popover
+						screenMargin={ 16 }
+						state={ [ popoverOpen, setPopoverOpen ] }>
 						<Calendar
 							className="cursor-default"
 							color={ props.color }

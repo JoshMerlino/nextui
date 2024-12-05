@@ -347,6 +347,12 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 								if (current === internalRef.current.value) return;
 								internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+
+								// @ts-expect-error - This looks dumb but i assure you it is necessary
+								props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
+								_setDateValue(date);
+								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+
 							} }
 							selection={ dateValue } />
 					</Popover>

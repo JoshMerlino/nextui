@@ -1,25 +1,22 @@
 "use client";
 
+import { merge } from "lodash";
 import { AdjustableHeight } from "nextui/AdjustableHeight";
 import { Button as NextUIButton } from "nextui/Button";
 import { useEvent } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { useCallback, useEffect, useRef, useState, type HTMLAttributes, type MouseEventHandler } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type MouseEventHandler } from "react";
 import { MdChevronLeft } from "react-icons/md";
-import { Tooltip } from "../../src/renderer/components/Tooltip";
 
 function ToggleButton({ isExpanded, onClick }: { isExpanded: boolean, onClick: MouseEventHandler<HTMLButtonElement> }) {
 	return (
-		<Tooltip
-			tooltip={ isExpanded ? "Collapse" : "Show all" }>
-			<NextUIButton
-				className="w-12 h-12 rounded-full text-2xl"
-				color="primary:pastel"
-				onClick={ onClick }
-				type="button">
-				<MdChevronLeft className={ cn("transition-transform shrink-0", isExpanded ? "rotate-90" : "-rotate-90") } />
-			</NextUIButton>
-		</Tooltip>
+		<NextUIButton
+			className="w-12 h-12 rounded-full text-2xl"
+			color="primary:pastel"
+			onClick={ onClick }
+			type="button">
+			<MdChevronLeft className={ cn("transition-transform shrink-0", isExpanded ? "rotate-90" : "-rotate-90") } />
+		</NextUIButton>
 	);
 }
 
@@ -27,13 +24,13 @@ export default function ExpandableGroup({
 	button: Button = ToggleButton,
 	children,
 	defaultHeight = 300,
-	gap = 16,
+	shadowSize = 64,
 	className,
 	...props
 }: HTMLAttributes<HTMLDivElement> & Partial<{
 	button?: (props: { isExpanded: boolean; onClick: () => void; }) => JSX.Element,
 	defaultHeight?: number,
-	gap?: number
+	shadowSize?: number,
 }>) {
 	const [ height, setHeight ] = useState<number | undefined>(defaultHeight);
 	const [ buttonHidden, setButtonHidden ] = useState(false);
@@ -75,23 +72,25 @@ export default function ExpandableGroup({
 
 	return (
 		<div className={ cn("flex flex-col bg-inherit", className) } { ...props }>
-			<div className={ cn("relative bg-inherit transition-[padding,margin]", !buttonHidden && "fade-b-16", isExpanded || "overflow-y-hidden") }
-				style={{
-					paddingBottom: !buttonHidden ? 52 : 0,
-					marginBottom: (!buttonHidden && !isExpanded) ? -52 : 0,
-				}}>
+			<div className={ cn("relative bg-inherit transition-[padding]", isExpanded || "overflow-y-hidden") }
+				style={ merge({ paddingBottom: !buttonHidden ? shadowSize : 0 },
+					buttonHidden || {
+						WebkitMaskImage: `-webkit-linear-gradient(top, black 0%, black calc(100% - ${ shadowSize }px), transparent 100%)`,
+						maskImage: `linear-gradient(top, black 0%, black calc(100% - ${ shadowSize }px), transparent 100%)`,
+					} satisfies CSSProperties) }>
 				<AdjustableHeight deps={ [ height ] }>
 					<div
 						ref={ ref }
 						style={{ maxHeight: buttonHidden ? "auto" : height }}>{ children }</div>
 				</AdjustableHeight>
 			</div>
-			<div className={ cn("flex justify-center transition-[margin,padding,opacity] z-10", buttonHidden && "pointer-events-none") }
-				style={{
-					marginTop: (isExpanded || buttonHidden) ? -48 : 0,
-					paddingTop: (isExpanded || buttonHidden) ? 32 : 0,
-					opacity: buttonHidden ? 0 : 1
-				}}>
+			<div
+				className={ cn("flex justify-center transition-[margin,transform,opacity] z-10", {
+					"pointer-events-none opacity-0": buttonHidden,
+					"-translate-y-1/2": !isExpanded && !buttonHidden,
+					"sticky bottom-12 xl:bottom-12": isExpanded
+				}) }
+				style={{ marginTop: (isExpanded || buttonHidden) ? -shadowSize / 2 : 0 }}>
 				<Button
 					isExpanded={ isExpanded }
 					onClick={ toggle } />

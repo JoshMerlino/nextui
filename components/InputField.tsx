@@ -283,12 +283,13 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			}
 		}, [ format, props ]);
 	
-		useFocusLost(wrapperRef, function() {
-			if (props.type === "select") setPopoverOpen(false);
-		});
+		// Close the popover when the input loses focus
+		useFocusLost(wrapperRef, () => (props.type === "select" && setPopoverOpen(false)));
 
 		return (
-			<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) } ref={ wrapperRef }>
+			<label
+				className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }
+				ref={ wrapperRef }>
 
 				{ props.type !== "select" && children }
 	

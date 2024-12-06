@@ -1,19 +1,27 @@
 import { useCallback, useEffect, type RefObject } from "react";
 
-export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback: (event: MouseEvent | TouchEvent) => unknown) {
+export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback: (event: MouseEvent | TouchEvent | FocusEvent) => unknown) {
 
 	const handleClickOutside = useCallback(function(event: MouseEvent | TouchEvent) {
 		if (ref.current && !ref.current.contains(event.target as Node)) callback(event);
 	}, [ ref, callback ]);
+	
+	const handleFocusShift = useCallback(function(event: FocusEvent) {
+		if (ref.current && !ref.current.contains(event.relatedTarget as Node)) callback(event);
+	}, [ ref, callback ]);
 
 	useEffect(function() {
+		const element = ref.current;
+		if (!element) return;
 		document.addEventListener("mousedown", handleClickOutside);
 		document.addEventListener("touchstart", handleClickOutside);
+		element.addEventListener("focusout", handleFocusShift);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 			document.removeEventListener("touchstart", handleClickOutside);
+			element.removeEventListener("focusout", handleFocusShift);
 		};
-	}, [ ref, callback, handleClickOutside ]);
+	}, [ ref, callback, handleClickOutside, handleFocusShift ]);
 }
 
 type Keybind = string | { key: string, ctrl?: boolean, shift?: boolean, alt?: boolean, meta?: boolean };

@@ -11,7 +11,7 @@ import { MdChevronLeft } from "react-icons/md";
 function ToggleButton({ isExpanded, onClick }: { isExpanded: boolean, onClick: MouseEventHandler<HTMLButtonElement> }) {
 	return (
 		<NextUIButton
-			className="w-12 h-12 rounded-full text-2xl"
+			className="w-12 h-12 rounded-full text-2xl pointer-events-auto"
 			color="primary:pastel"
 			onClick={ onClick }
 			type="button">
@@ -85,8 +85,8 @@ export default function ExpandableGroup({
 				</AdjustableHeight>
 			</div>
 			<div
-				className={ cn("flex justify-center transition-[margin,transform,opacity] z-10", {
-					"pointer-events-none opacity-0": buttonHidden,
+				className={ cn("flex justify-center transition-[margin,transform,opacity] z-10 pointer-events-none", {
+					"opacity-0": buttonHidden,
 					"-translate-y-1/2": !isExpanded && !buttonHidden,
 					"sticky bottom-12 xl:bottom-12": isExpanded
 				}) }

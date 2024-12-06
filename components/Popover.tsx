@@ -9,7 +9,7 @@ import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttribut
 export const classes = {
 
 	popover: cva([
-		"absolute bg-transparent overflow-visible focus:outline-0 m-0",
+		"fixed bg-transparent overflow-visible focus:outline-0 m-0 z-50",
 		"backdrop:bg-transparent backdrop:hidden backdrop:pointer-events-none"
 	], {
 		defaultVariants: {
@@ -46,7 +46,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
     /**
      * The open state of the dialog.
      */
-    state: Stateable<boolean>;
+	state: Stateable<boolean>;
 
 } & Partial<{
 
@@ -72,9 +72,21 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
      * The margin to keep the popover from the edge of the screen.
      * @default 8
      */
-    screenMargin: number;
+	screenMargin: number;
+	
+	/**
+	 * Whether the popover should be a modal dialog.
+	 * @default false
+	 */
+	useModal: boolean;
 
-}>>>(function({ children, screenMargin = 8, position, state: [ isOpen, setOpen ], closeOnBlur = true, closeOnEscape = true, ...props }, ref) {
+	/**
+	 * The animation duration of the popover.
+	 * @default 200
+	 */
+	duration: number;
+
+}>>>(function({ children, screenMargin = 8, position, state: [ isOpen, setOpen ], duration = 200, closeOnBlur = true, useModal = false, closeOnEscape = true, ...props }, ref) {
 
 	// Open animation state
 	const [ isVisible, setIsVisible ] = useState(false);
@@ -92,7 +104,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	const reposition = useCallback(function() {
 		const ref = internalRef.current;
 		if (!ref) return;
-		const wrapper = ref?.parentNode as HTMLElement;
+		const wrapper = (ref.closest(".group\\/popover-limit") || ref?.parentNode) as HTMLElement;
 		if (!isOpen) return;
 
 		switch (position) {
@@ -122,6 +134,12 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			}
 		}
 
+		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
+		if (wrapper.classList.contains("group/popover-limit")) {
+			const limit = wrapper.getBoundingClientRect();
+			ref.style.width = `${ limit.width + screenMargin * 2 }px`;
+		}
+
 		// Ensure popover stays on screen
 		const rect = ref.getBoundingClientRect();
 		if (rect.left < screenMargin) ref.style.left = `${ parseFloat(ref.style.left) - rect.left + screenMargin }px`;
@@ -137,15 +155,16 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		setTimeout(() => {
 			setOpen(false);
 			internalRef.current?.close();
-		}, 200);
-	}, [ setOpen ]);
+		}, duration);
+	}, [ duration, setOpen ]);
 
 	// Open the dialog with animation
 	const open = useCallback(function() {
-		internalRef.current?.showModal();
+		if (useModal) internalRef.current?.showModal();
+		else internalRef.current?.show();
 		reposition();
 		setIsVisible(true);
-	}, [ reposition ]);
+	}, [ reposition, useModal ]);
 
 	// Close on blur and escape
 	useFocusLost(internalRef, () => closeOnBlur && isOpen && close());
@@ -168,12 +187,14 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			{ ...props }
 			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>)) }
 			ref={ internalRef }>
-			<div className={ cn(
-				"transition-[opacity,transform]",
-				isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
-				"duration-200", // Match animation duration
-				classes.animation({ position })
-			) }>
+			<div
+				className={ cn(
+					"transition-[opacity,transform]",
+					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
+					"duration-200", // Match animation duration
+					classes.animation({ position })
+				) }
+				style={{ transitionDuration: `${ duration }ms` }}>
 				{ children }
 			</div>
 		</dialog>

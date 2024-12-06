@@ -4,12 +4,14 @@ import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
 import { isFunction, merge, omit } from "lodash";
+import { useFocusLost } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement, type ReactNode } from "react";
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { MdDateRange } from "react-icons/md";
+import { MdChevronLeft, MdDateRange } from "react-icons/md";
 import { Calendar } from "./Calendar";
+import { Card } from "./Card";
 import { IconButton } from "./IconButton";
 import { Popover } from "./Popover";
 
@@ -162,7 +164,7 @@ export const classes = {
 	
 };
 
-export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> & { type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
+export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> &({ type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } | { type: "select", children?: ReactNode, options?: unknown }) & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
 	 * The text to display in the floating label
@@ -200,168 +202,207 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 }>>>(function({ className, children, label, icon: Icon, ...props }, ref) {
 
-	// Combine forwarded ref with internal ref
-	const internalRef = useRef<HTMLInputElement>(null);
+		// Combine forwarded ref with internal ref
+		const internalRef = useRef<HTMLInputElement>(null);
+		const wrapperRef = useRef<HTMLLabelElement>(null);
 	
-	useEffect(() => {
-		const currentRef = internalRef.current;
-		if (ref && typeof ref === "function") ref(currentRef);
-		else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = currentRef;
-	}, [ internalRef, ref ]);
+		useEffect(() => {
+			const currentRef = internalRef.current;
+			if (ref && typeof ref === "function") ref(currentRef);
+			else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = currentRef;
+		}, [ internalRef, ref ]);
 
-	// Hook the input value to determine if it has contents
-	const [ hasContents, setHasContents ] = useState(false);
-	useEffect(() => setHasContents(!!internalRef.current?.value), [ internalRef ]);
+		// Hook the input value to determine if it has contents
+		const [ hasContents, setHasContents ] = useState(false);
+		useEffect(() => setHasContents(!!internalRef.current?.value), [ internalRef ]);
 	
-	// Hook the input value to determine if it is invalid
-	const [ isValid, setIsValid ] = useState(false);
-	useEffect(() => setIsValid(internalRef.current?.validity.valid || false), [ internalRef ]);
+		// Hook the input value to determine if it is invalid
+		const [ isValid, setIsValid ] = useState(false);
+		useEffect(() => setIsValid(internalRef.current?.validity.valid || false), [ internalRef ]);
 	
-	// Password specific state
-	const [ plainText, setPlainText ] = useState(props.type !== "password");
+		// Password specific state
+		const [ plainText, setPlainText ] = useState(props.type !== "password");
 	
-	// Date specific state
-	const [ format, setFormat ] = useState("");
-	const [ dateValue, _setDateValue ] = useState<Date | readonly [Date, Date] | null>(function() {
-		if (!props.defaultValue) return null;
-		const dateRange = props.defaultValue.toString().split(" - ")
-			.map(date => dayjs(date).toDate());
-		return dateRange.length === 1 ? dateRange[0] : dateRange as [Date, Date];
-	}());
+		// Date specific state
+		const [ format, setFormat ] = useState("");
+		const [ dateValue, _setDateValue ] = useState<Date | readonly [Date, Date] | null>(function() {
+			if (!props.defaultValue) return null;
+			const dateRange = props.defaultValue.toString().split(" - ")
+				.map(date => dayjs(date).toDate());
+			return dateRange.length === 1 ? dateRange[0] : dateRange as [Date, Date];
+		}());
 
-	useLayoutEffect(function() {
-		if (props.type !== "date") return;
-		const date = new Date("1000-10-20");
-		const format = date
-			.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
-			.replace(/\d{4}/, "YYYY")
-			.replace((date.getMonth() + 1).toString(), "MM")
-			.replace(date.getDate().toString(), "DD");
-		setFormat(format);
-	}, [ props.type ]);
+		useLayoutEffect(function() {
+			if (props.type !== "date") return;
+			const date = new Date("1000-10-20");
+			const format = date
+				.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
+				.replace(/\d{4}/, "YYYY")
+				.replace((date.getMonth() + 1).toString(), "MM")
+				.replace(date.getDate().toString(), "DD");
+			setFormat(format);
+		}, [ props.type ]);
 
-	// Popover specific state
-	const [ popoverOpen, setPopoverOpen ] = useState(false);
+		// Popover specific state
+		const [ popoverOpen, setPopoverOpen ] = useState(false);
 
-	// Apply the mask if it exists
-	useEffect(function() {
-		if (!format) return;
-		if (masks[props.type as keyof typeof masks]) {
+		// Apply the mask if it exists
+		useEffect(function() {
+			if (!format) return;
+			if (masks[props.type as keyof typeof masks]) {
+				if (!internalRef.current) return;
+				const mask = masks[props.type as keyof typeof masks](format);
+				mask.register(internalRef.current);
+			}
+		}, [ format, internalRef, props.type ]);
+	
+		// A function to coerce the value of the input
+		const coerceValue = useCallback(function({ target }: ChangeEvent<HTMLInputElement>) {
 			if (!internalRef.current) return;
-			const mask = masks[props.type as keyof typeof masks](format);
-			mask.register(internalRef.current);
-		}
-	}, [ format, internalRef, props.type ]);
-	
-	// A function to coerce the value of the input
-	const coerceValue = useCallback(function({ target }: ChangeEvent<HTMLInputElement>) {
-		if (!internalRef.current) return;
-		switch (props.type) {
+			switch (props.type) {
 
-			// Determine if the value is a valid date and sync with the calendar
-			case "date":
-				const dateRange = target.value.split(" - ")
-					.map(date => dayjs(date).toDate());
-				const [ start, end = null ] = dateRange;
+				// Determine if the value is a valid date and sync with the calendar
+				case "date":
+					const dateRange = target.value.split(" - ")
+						.map(date => dayjs(date).toDate());
+					const [ start, end = null ] = dateRange;
 				
-				const isValid = (!isNaN(start.getTime()) && (!end || !isNaN(end.getTime()))) || (target.value.replace(/[^0-9]/g, "").length === 0);
-				target.setCustomValidity(isValid ? "" : "Invalid date");
-				setIsValid(isValid);
+					const isValid = (!isNaN(start.getTime()) && (!end || !isNaN(end.getTime()))) || (target.value.replace(/[^0-9]/g, "").length === 0);
+					target.setCustomValidity(isValid ? "" : "Invalid date");
+					setIsValid(isValid);
 
-				if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
-				internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
-				internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
-				_setDateValue(end ? [ start, end ] : start);
+					if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
+					internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
+					internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+					_setDateValue(end ? [ start, end ] : start);
 
-				// @ts-expect-error - This looks dumb but i assure you it is necessary
-				props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
-				break;
+					// @ts-expect-error - This looks dumb but i assure you it is necessary
+					props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
+					break;
 
-		}
-	}, [ format, props ]);
-
-	return (
-		<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }>
-
-			{ children }
+			}
+		}, [ format, props ]);
 	
-			{ /* Leading icon */ }
-			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+		useFocusLost(wrapperRef, function() {
+			if (props.type === "select") setPopoverOpen(false);
+		});
 
-			{ /* Input wrapper */ }
-			<div className="flex relative h-full grow items-center" onBlur={ () => setPlainText(false) }>
+		return (
+			<label className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) } ref={ wrapperRef }>
 
-				{ /* Input */ }
-				<input
-					{ ...omit(props, "size") }
-					className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
-					onChange={ event => [
-						props.onChange?.(event),
-						setHasContents(event.target.value.length > 0),
-						setIsValid(event.target.validity.valid),
-						coerceValue(event),
-					] }
-					placeholder={ props.type === "date" ? format : props.placeholder }
-					ref={ internalRef }
-					type={ props.type === "password" ? (plainText ? "text" : "password")
-						: props.type === "date" ? "text"
-							: props.type || "text" } />
+				{ props.type !== "select" && children }
+	
+				{ /* Leading icon */ }
+				{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+
+				{ /* Input wrapper */ }
+				<div className={ cn("flex relative h-full grow items-center", props.type === "select" && "group/popover-limit") } onBlur={ () => setPlainText(false) }>
+
+					{ /* Input */ }
+					<input
+						{ ...omit(props, "size") }
+						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+						onChange={ event => [
+							props.onChange?.(event),
+							setHasContents(event.target.value.length > 0),
+							setIsValid(event.target.validity.valid),
+							coerceValue(event),
+						] }
+						onClick={ event => [
+							props.onClick?.(event),
+							props.type === "select" && setPopoverOpen(true)
+						] }
+						onFocus={ event => [
+							props.onFocus?.(event),
+							props.type === "select" && setPopoverOpen(true)
+						] }
+						placeholder={ props.type === "date" ? format : props.placeholder }
+						readOnly={ props.type === "select" || props.readOnly }
+						ref={ internalRef }
+						type={ props.type === "password" ? (plainText ? "text" : "password")
+							: props.type === "date" ? "text"
+								: props.type || "text" } />
 			
-				{ /* Floating label */ }
-				{ label && <p
-					className={ cn(classes.label(props as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
-					style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
+					{ /* Floating label */ }
+					{ label && <p
+						className={ cn(classes.label(props as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
+						style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
 
-				{ /* Password visibility toggle */ }
-				{ props.type === "password" && <IconButton
-					className={ cn(classes.button(props as VariantProps<typeof classes.button>), "hidden", hasContents && "group-focus-within/inputfield:inline-flex") }
-					disabled={ props.disabled }
-					icon={ plainText ? IoMdEyeOff : IoMdEye }
-					onClick={ () => setPlainText(!plainText) }
-					size={ props.size === "dense" ? "small" : "medium" } /> }
-				
-				{ /* Date picker icon calendar */ }
-				{ props.type === "date" && <div className="relative">
-					<IconButton
-						className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+					{ /* Password visibility toggle */ }
+					{ props.type === "password" && <IconButton
+						className={ cn(classes.button(props as VariantProps<typeof classes.button>), "hidden", hasContents && "group-focus-within/inputfield:inline-flex") }
 						disabled={ props.disabled }
-						icon={ props.multiple ? MdDateRange : IoMdCalendar }
-						onClick={ () => setPopoverOpen(!popoverOpen) }
-						onMouseDown={ event => event.stopPropagation() }
-						onTouchStart={ event => event.stopPropagation() }
-						size={ props.size === "dense" ? "small" : "medium" } />
+						icon={ plainText ? IoMdEyeOff : IoMdEye }
+						onClick={ () => setPlainText(!plainText) }
+						size={ props.size === "dense" ? "small" : "medium" } /> }
+				
+					{ /* Date picker icon calendar */ }
+					{ props.type === "date" && <div className="relative">
+						<IconButton
+							className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+							disabled={ props.disabled }
+							icon={ props.multiple ? MdDateRange : IoMdCalendar }
+							onClick={ () => setPopoverOpen(!popoverOpen) }
+							onMouseDown={ event => event.stopPropagation() }
+							onTouchStart={ event => event.stopPropagation() }
+							size={ props.size === "dense" ? "small" : "medium" } />
 					
-					{ /* Date picker calendar popover */ }
-					<Popover
-						screenMargin={ 16 }
-						state={ [ popoverOpen, setPopoverOpen ] }>
-						<Calendar
-							className="cursor-default"
-							color={ props.color }
-							onSelect={ date => {
-								if (!internalRef.current) return;
-								if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
-								if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
-								setPopoverOpen(false);
-								const current = internalRef.current.value;
-								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
-								if (current === internalRef.current.value) return;
-								internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+						{ /* Date picker calendar popover */ }
+						<Popover
+							screenMargin={ 16 }
+							state={ [ popoverOpen, setPopoverOpen ] }>
+							<Calendar
+								className="cursor-default"
+								color={ props.color }
+								onSelect={ date => {
+									if (!internalRef.current) return;
+									if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
+									if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
+									setPopoverOpen(false);
+									const current = internalRef.current.value;
+									internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+									if (current === internalRef.current.value) return;
+									internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 
-								// @ts-expect-error - This looks dumb but i assure you it is necessary
-								props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
-								_setDateValue(date);
-								internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+									// @ts-expect-error - This looks dumb but i assure you it is necessary
+									props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
+									_setDateValue(date);
+									internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 
-							} }
-							selection={ dateValue } />
-					</Popover>
+								} }
+								selection={ dateValue } />
+						</Popover>
 					
-				</div> }
+					</div> }
+
+					{ /* Date picker icon calendar */ }
+					{ props.type === "select" && <div>
+						<IconButton
+							className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
+							disabled={ props.disabled }
+							icon={ <MdChevronLeft className={ cn("transition-transform", popoverOpen ? "rotate-90" : "-rotate-90") } /> }
+							onClick={ () => setPopoverOpen(!popoverOpen) }
+							onMouseDown={ event => event.stopPropagation() }
+							onTouchStart={ event => event.stopPropagation() }
+							size={ props.size === "dense" ? "small" : "medium" } />
 					
-			</div>
+						{ /* Date picker calendar popover */ }
+						<Popover
+							closeOnBlur={ false }
+							duration={ 50 }
+							screenMargin={ 16 }
+							state={ [ popoverOpen, setPopoverOpen ] }
+							useModal={ false }>
+							<Card className="px-0 py-2" variant="popover">
+								{ children }
+							</Card>
+						</Popover>
+					
+					</div> }
+					
+				</div>
 
-		</label>
-	);
+			</label>
+		);
 
-});
+	});

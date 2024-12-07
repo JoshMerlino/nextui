@@ -166,7 +166,8 @@ export const classes = {
 
 export const SelectionContext = createContext({
 	isFocused: false,
-	isSelected: false
+	isSelected: false,
+	setSelected: () => {},
 });
 
 export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> &({ type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } | { type: "select", children?: ReactNode, options?: unknown }) & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
@@ -454,7 +455,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 												ref={ el => (itemsRef.current[index] = el) }>
 												<SelectionContext.Provider value={{
 													isFocused: focused === index,
-													isSelected: selected === index
+													isSelected: selected === index,
+													setSelected: () => setSelected(index)
 												}}>
 													{ child }
 												</SelectionContext.Provider>

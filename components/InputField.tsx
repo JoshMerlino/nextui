@@ -326,14 +326,25 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			if (!sel || !ref || !labelField) return;
 			const value = sel.querySelector("option")?.getAttribute("value") || sel.textContent as string;
 			const label = sel.querySelector("option")?.getAttribute("label") || sel.textContent;
+
+			if (ref.value === value) return;
+
 			ref.value = value;
 			labelField.value = label || value;
 			setFocused(selected);
 			shouldIgnoreOpenEvent.current = true;
 			setPopoverOpen(false);
-			ref.dispatchEvent(new Event("change", { bubbles: true }));
+			
 			setTimeout(() => shouldIgnoreOpenEvent.current = false, 75);
-		}, [ selected ]);
+
+			// @ts-expect-error - This looks dumb but i assure you its necessary
+			const event = new Event("change", { bubbles: true, target: ref });
+			
+			// @ts-expect-error - This looks dumb but i assure you its necessary
+			props.onChange?.(event as ChangeEvent<HTMLInputElement>);
+			ref.dispatchEvent(event);
+
+		}, [ props, selected ]);
 	
 		return (
 			<label
@@ -358,7 +369,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 							props.onChange?.(event),
 							setHasContents(event.target.value.length > 0),
 							setIsValid(event.target.validity.valid),
-							coerceValue(event),
+							coerceValue(event)
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
 						readOnly={ props.type === "select" || props.readOnly }
@@ -368,6 +379,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								: props.type || "text" } />
 					
 					{ props.type === "select" && (<input
+						{ ...omit(props, "size") }
 						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
 						onClick={ event => [
 							props.onClick?.(event),

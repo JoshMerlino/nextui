@@ -10,7 +10,7 @@ export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback:
 		if (!ref.current) return;
 		if (ref.current.contains(event.relatedTarget as Node)) return;
 		if (ref.current === event.relatedTarget) return;
-		if (ref.current.contains(event.target as Node)) return;
+		if (ref.current === event.target) return;
 		callback(event);
 	}, [ ref, callback ]);
 

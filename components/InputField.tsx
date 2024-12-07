@@ -342,7 +342,9 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 				{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
 
 				{ /* Input wrapper */ }
-				<div className={ cn("flex relative h-full grow items-center", props.type === "select" && "group/popover-limit") } onBlur={ () => setPlainText(false) }>
+				<div
+					className={ cn("flex relative h-full grow items-center", props.type === "select" && "group/popover-limit") }
+					onBlur={ () => setPlainText(false) }>
 
 					{ /* Input */ }
 					<input
@@ -449,8 +451,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 												key={ index }
 												onClick={ () => [ setSelected(index), setFocused(index) ] }
 												onMouseMove={ () => setFocused(index) }
-												ref={ el => (itemsRef.current[index] = el) }
-												tabIndex={ 0 }>
+												ref={ el => (itemsRef.current[index] = el) }>
 												<SelectionContext.Provider value={{
 													isFocused: focused === index,
 													isSelected: selected === index

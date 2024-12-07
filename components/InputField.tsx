@@ -166,7 +166,10 @@ export const classes = {
 
 export const SelectionContext = createContext({
 	isFocused: false,
+	currentSelected: -1,
+	currentIndex: -1,
 	isSelected: false,
+	defaultValue: undefined as undefined | string,
 	setSelected: () => {},
 });
 
@@ -456,7 +459,10 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 												<SelectionContext.Provider value={{
 													isFocused: focused === index,
 													isSelected: selected === index,
-													setSelected: () => setSelected(index)
+													currentSelected: selected,
+													currentIndex: index,
+													setSelected: () => setSelected(index),
+													defaultValue: props.defaultValue?.toString()
 												}}>
 													{ child }
 												</SelectionContext.Provider>

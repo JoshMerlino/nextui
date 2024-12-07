@@ -4,9 +4,9 @@ import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
 import { isFunction, merge, omit } from "lodash";
-import { useFocusLost } from "nextui/hooks";
+import { useFocusLost, useKeybind } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement, type ReactNode } from "react";
+import { Children, createContext, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement, type ReactNode } from "react";
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdChevronLeft, MdDateRange } from "react-icons/md";
@@ -164,6 +164,11 @@ export const classes = {
 	
 };
 
+export const SelectionContext = createContext({
+	isFocused: false,
+	isSelected: false
+});
+
 export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> &({ type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } | { type: "select", children?: ReactNode, options?: unknown }) & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
@@ -275,9 +280,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
 					internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 					_setDateValue(end ? [ start, end ] : start);
-
-					// @ts-expect-error - This looks dumb but i assure you it is necessary
-					props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
 					break;
 
 			}
@@ -286,6 +288,49 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		// Close the popover when the input loses focus
 		useFocusLost(wrapperRef, () => (props.type === "select" && setPopoverOpen(false)));
 
+		// On escape, blur the input
+		useKeybind("Escape", () => internalRef.current?.blur());
+	
+		const onDatePickerSelect = useCallback(function(date: Date | readonly [Date, Date] | null) {
+			if (!internalRef.current) return;
+			if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
+			if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
+			setPopoverOpen(false);
+			const current = internalRef.current.value;
+			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+			if (current === internalRef.current.value) return;
+			internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+			_setDateValue(date);
+			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+		}, [ dateValue, format ]);
+	
+		// Select specific state
+		const [ focused, setFocused ] = useState(-1);
+		const [ selected, setSelected ] = useState(-1);
+	
+		const itemsRef = useRef<Array<HTMLLIElement | null>>([]);
+		const shouldIgnoreOpenEvent = useRef(false);
+		const selectWrapperRef = useRef<HTMLDivElement>(null);
+		const labelRef = useRef<HTMLInputElement>(null);
+
+		useEffect(() => void (focused >= 0 && focused < itemsRef.current.length && itemsRef.current[focused]?.focus()), [ focused ]);
+    
+		useEffect(function() {
+			const sel = selectWrapperRef.current?.children[0].children[selected];
+			const ref = internalRef.current;
+			const labelField = labelRef.current;
+			if (!sel || !ref || !labelField) return;
+			const value = sel.querySelector("option")?.getAttribute("value") || sel.textContent as string;
+			const label = sel.querySelector("option")?.getAttribute("label") || sel.textContent;
+			ref.value = value;
+			labelField.value = label || value;
+			setFocused(selected);
+			shouldIgnoreOpenEvent.current = true;
+			setPopoverOpen(false);
+			ref.dispatchEvent(new Event("change", { bubbles: true }));
+			setTimeout(() => shouldIgnoreOpenEvent.current = false, 75);
+		}, [ selected ]);
+	
 		return (
 			<label
 				className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }
@@ -302,20 +347,12 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					{ /* Input */ }
 					<input
 						{ ...omit(props, "size") }
-						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+						className={ cn(classes.input(props as VariantProps<typeof classes.input>), props.type === "select" && "hidden") }
 						onChange={ event => [
 							props.onChange?.(event),
 							setHasContents(event.target.value.length > 0),
 							setIsValid(event.target.validity.valid),
 							coerceValue(event),
-						] }
-						onClick={ event => [
-							props.onClick?.(event),
-							props.type === "select" && setPopoverOpen(true)
-						] }
-						onFocus={ event => [
-							props.onFocus?.(event),
-							props.type === "select" && setPopoverOpen(true)
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
 						readOnly={ props.type === "select" || props.readOnly }
@@ -323,6 +360,21 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						type={ props.type === "password" ? (plainText ? "text" : "password")
 							: props.type === "date" ? "text"
 								: props.type || "text" } />
+					
+					{ props.type === "select" && (<input
+						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+						onClick={ event => [
+							props.onClick?.(event),
+							setPopoverOpen(true),
+						] }
+						onFocus={ event => [
+							props.onFocus?.(event),
+							shouldIgnoreOpenEvent.current || setPopoverOpen(true),
+						] }
+						placeholder={ props.type === "date" ? format : props.placeholder }
+						readOnly
+						ref={ labelRef }
+						type="text" />) }
 			
 					{ /* Floating label */ }
 					{ label && <p
@@ -355,29 +407,14 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 							<Calendar
 								className="cursor-default"
 								color={ props.color }
-								onSelect={ date => {
-									if (!internalRef.current) return;
-									if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
-									if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
-									setPopoverOpen(false);
-									const current = internalRef.current.value;
-									internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
-									if (current === internalRef.current.value) return;
-									internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
-
-									// @ts-expect-error - This looks dumb but i assure you it is necessary
-									props.onChange?.(new Event("change", { bubbles: true, target: internalRef.current }));
-									_setDateValue(date);
-									internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
-
-								} }
+								onSelect={ date => onDatePickerSelect(date) }
 								selection={ dateValue } />
 						</Popover>
 					
 					</div> }
 
 					{ /* Date picker icon calendar */ }
-					{ props.type === "select" && <div>
+					{ props.type === "select" && <>
 						<IconButton
 							className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
 							disabled={ props.disabled }
@@ -391,15 +428,43 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						<Popover
 							closeOnBlur={ false }
 							duration={ 50 }
-							screenMargin={ 16 }
+							resumeFocus={ false }
+							screenMargin={ props.size === "dense" ? 14 : 18 }
 							state={ [ popoverOpen, setPopoverOpen ] }
 							useModal={ false }>
-							<Card className="px-0 py-2" variant="popover">
-								{ children }
+							<Card className="p-0" variant="popover">
+								<div
+									className="py-2 overflow-auto max-h-[calc(100vh-32px)] cursor-default"
+									onClick={ e => e.stopPropagation() }
+									ref={ selectWrapperRef }
+									style={{
+										scrollbarWidth: "thin",
+										WebkitMaskImage: "linear-gradient(#0005, #000 8px, #000 calc(100% - 8px), #0005)",
+										maskImage: "linear-gradient(#0005, #000 8px, #000 calc(100% - 8px), #0005)"
+									}}>
+									<ul className="flex flex-col">
+										{ Children.map(children, function(child, index) {
+											return <li
+												className="focus:outline-none"
+												key={ index }
+												onClick={ () => [ setSelected(index), setFocused(index) ] }
+												onMouseMove={ () => setFocused(index) }
+												ref={ el => (itemsRef.current[index] = el) }
+												tabIndex={ 0 }>
+												<SelectionContext.Provider value={{
+													isFocused: focused === index,
+													isSelected: selected === index
+												}}>
+													{ child }
+												</SelectionContext.Provider>
+											</li>;
+										}) }
+									</ul>
+								</div>
 							</Card>
 						</Popover>
 					
-					</div> }
+					</> }
 					
 				</div>
 

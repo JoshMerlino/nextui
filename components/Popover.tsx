@@ -86,10 +86,28 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	duration: number;
 
-}>>>(function({ children, screenMargin = 8, position, state: [ isOpen, setOpen ], duration = 200, closeOnBlur = true, useModal = false, closeOnEscape = true, ...props }, ref) {
+	/**
+	 * Whether the popover restores focus to the target when closed.
+	 * @default true
+	 */
+	resumeFocus: boolean;
+
+}>>>(function({
+	children,
+	screenMargin = 8,
+	position,
+	state: [ isOpen, setOpen ],
+	duration = 200,
+	closeOnBlur = true,
+	useModal = false,
+	resumeFocus = true,
+	closeOnEscape = true,
+	...props
+}, ref) {
 
 	// Open animation state
 	const [ isVisible, setIsVisible ] = useState(false);
+	const [ isStable, setIsStable ] = useState(false);
 
 	// Combine forwarded ref with internal ref
 	const internalRef = useRef<HTMLDialogElement>(null);
@@ -142,6 +160,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 		// Ensure popover stays on screen
 		const rect = ref.getBoundingClientRect();
+		ref.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
 		if (rect.left < screenMargin) ref.style.left = `${ parseFloat(ref.style.left) - rect.left + screenMargin }px`;
 		if (rect.right > window.innerWidth - screenMargin) ref.style.left = `${ parseFloat(ref.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
 		if (rect.top < screenMargin) ref.style.top = `${ parseFloat(ref.style.top) - rect.top + screenMargin }px`;
@@ -152,6 +171,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	// Close the dialog with animation
 	const close = useCallback(function() {
 		setIsVisible(false);
+		setIsStable(false);
 		setTimeout(() => {
 			setOpen(false);
 			internalRef.current?.close();
@@ -160,11 +180,13 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 	// Open the dialog with animation
 	const open = useCallback(function() {
+		setIsStable(false);
 		if (useModal) internalRef.current?.showModal();
 		else internalRef.current?.show();
 		reposition();
 		setIsVisible(true);
-	}, [ reposition, useModal ]);
+		setTimeout(() => setIsStable(true), duration);
+	}, [ duration, reposition, useModal ]);
 
 	// Close on blur and escape
 	useFocusLost(internalRef, () => closeOnBlur && isOpen && close());
@@ -181,17 +203,16 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			close();
 		}
 	}, [ close, isOpen, open ]);
-
+	
 	return (
 		<dialog
 			{ ...props }
-			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>)) }
+			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
 			ref={ internalRef }>
 			<div
 				className={ cn(
 					"transition-[opacity,transform]",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
-					"duration-200", // Match animation duration
 					classes.animation({ position })
 				) }
 				style={{ transitionDuration: `${ duration }ms` }}>

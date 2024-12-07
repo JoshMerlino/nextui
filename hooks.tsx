@@ -7,7 +7,11 @@ export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback:
 	}, [ ref, callback ]);
 	
 	const handleFocusShift = useCallback(function(event: FocusEvent) {
-		if (ref.current && !ref.current.contains(event.relatedTarget as Node)) callback(event);
+		if (!ref.current) return;
+		if (ref.current.contains(event.relatedTarget as Node)) return;
+		if (ref.current === event.relatedTarget) return;
+		if (ref.current.contains(event.target as Node)) return;
+		callback(event);
 	}, [ ref, callback ]);
 
 	useEffect(function() {
@@ -16,10 +20,12 @@ export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback:
 		document.addEventListener("mousedown", handleClickOutside);
 		document.addEventListener("touchstart", handleClickOutside);
 		element.addEventListener("focusout", handleFocusShift);
+		window.addEventListener("blur", callback);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 			document.removeEventListener("touchstart", handleClickOutside);
 			element.removeEventListener("focusout", handleFocusShift);
+			window.removeEventListener("blur", callback);
 		};
 	}, [ ref, callback, handleClickOutside, handleFocusShift ]);
 }

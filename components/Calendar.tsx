@@ -285,11 +285,14 @@ export function Calendar({
 										{ Array(4).fill(null).map(function(_, col) {
 											const year = yearBase + col;
 											if (year > yearPickerEnd) return null;
+											if (year < yearPickerStart) return null;
+											const disabled = (!allowFuture && year > new Date().getFullYear()) || (!allowPast && year < new Date().getFullYear());
 											return (
 												<Button
 													{ ...{ "data-value": year } }
 													className="rounded-full !shadow-none"
 													color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? color : "neutral" }
+													disabled={ disabled }
 													key={ year }
 													onClick={ function() {
 														setRenderDate(function(date) {

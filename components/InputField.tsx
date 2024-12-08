@@ -264,9 +264,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			setFormat(format);
 		}, [ props.type ]);
 
-		// Popover specific state
-		const [ popoverOpen, setPopoverOpen ] = useState(false);
-
 		// Apply the mask if it exists
 		useEffect(function() {
 			if (!format) return;
@@ -312,23 +309,38 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		// On escape, blur the input
 		useKeybind("Escape", () => internalRef.current?.blur());
 	
+		// Popover specific state
+		const popoverState = useRef(false); // Use useRef to retain state across renders
+		const [ popoverOpen, setPopoverOpenState ] = useState(false);
+
+		const setPopoverOpen = useCallback((open: boolean) => {
+			popoverState.current = open;
+			setPopoverOpenState(open);
+		}, []);
+
+		// Rest of the component logic remains unchanged...
+
 		const onDatePickerSelect = useCallback(function(date: Date | readonly [Date, Date] | null) {
 			if (!internalRef.current) return;
+
+			// Prevent duplicate selections
 			if (date instanceof Date && dateValue instanceof Date && date.getTime() === dateValue.getTime()) return;
 			if (Array.isArray(date) && Array.isArray(dateValue) && date[0].getTime() === dateValue[0].getTime() && date[1].getTime() === dateValue[1].getTime()) return;
-			setPopoverOpen(false);
+
+			setPopoverOpen(false); // Close popover
 			const current = internalRef.current.value;
-			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+			internalRef.current.value = date instanceof Date
+				? dayjs(date).format(format)
+				: date?.map(date => dayjs(date).format(format)).join(" - ") || "";
+
 			if (current === internalRef.current.value) return;
 			_setDateValue(date);
-			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 
-			// @ts-expect-error - This looks dumb but i assure you its necessary
-			const event = new Event("change", { bubbles: true, target: internalRef.current });
+			// Dispatch change event
+			const event = new Event("change", { bubbles: true, target: internalRef.current } as EventInit);
 			internalRef.current.dispatchEvent(event);
 			props.onChange?.(event as unknown as ChangeEvent<HTMLInputElement>);
-			
-		}, [ dateValue, format, props ]);
+		}, [ dateValue, format, props, setPopoverOpen ]);
 	
 		// Select specific state
 		const [ focused, setFocused ] = useState(-1);
@@ -367,7 +379,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			ref.dispatchEvent(event);
 			labelField.focus();
 
-		}, [ props, selected ]);
+		}, [ props, selected, setPopoverOpen ]);
 	
 		// Attach keyboard events to the select input
 		useKeybind("ArrowDown", function() {

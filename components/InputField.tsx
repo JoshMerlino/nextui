@@ -313,6 +313,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		const [ selected, setSelected ] = useState(-1);
 	
 		const itemsRef = useRef<Array<HTMLLIElement | null>>([]);
+		const shouldIgnoreOpenEvent = useRef(false);
 		const selectWrapperRef = useRef<HTMLDivElement>(null);
 		const labelRef = useRef<HTMLInputElement>(null);
 
@@ -331,14 +332,18 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			ref.value = value;
 			labelField.value = label || value;
 			setFocused(selected);
+			shouldIgnoreOpenEvent.current = true;
 			setPopoverOpen(false);
 			
+			setTimeout(() => shouldIgnoreOpenEvent.current = false, 75);
+
 			// @ts-expect-error - This looks dumb but i assure you its necessary
 			const event = new Event("change", { bubbles: true, target: ref });
 			
 			// @ts-expect-error - This looks dumb but i assure you its necessary
 			props.onChange?.(event as ChangeEvent<HTMLInputElement>);
 			ref.dispatchEvent(event);
+			labelField.focus();
 
 		}, [ props, selected ]);
 	
@@ -354,8 +359,10 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		});
 	
 		useKeybind("Enter", function() {
-			if (props.type !== "select" || !popoverOpen) return;
-			setSelected(focused);
+			if (props.type !== "select") return;
+			if (popoverOpen) return setSelected(focused);
+			if (document.activeElement !== labelRef.current) return;
+			setPopoverOpen(true);
 		});
 	
 		return (
@@ -399,7 +406,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						] }
 						onFocus={ event => [
 							props.onFocus?.(event),
-							setPopoverOpen(true),
+							shouldIgnoreOpenEvent.current || setPopoverOpen(true),
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
 						readOnly

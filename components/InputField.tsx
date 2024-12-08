@@ -313,7 +313,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 		const [ selected, setSelected ] = useState(-1);
 	
 		const itemsRef = useRef<Array<HTMLLIElement | null>>([]);
-		const shouldIgnoreOpenEvent = useRef(false);
 		const selectWrapperRef = useRef<HTMLDivElement>(null);
 		const labelRef = useRef<HTMLInputElement>(null);
 
@@ -332,11 +331,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			ref.value = value;
 			labelField.value = label || value;
 			setFocused(selected);
-			shouldIgnoreOpenEvent.current = true;
 			setPopoverOpen(false);
 			
-			setTimeout(() => shouldIgnoreOpenEvent.current = false, 75);
-
 			// @ts-expect-error - This looks dumb but i assure you its necessary
 			const event = new Event("change", { bubbles: true, target: ref });
 			
@@ -345,6 +341,22 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			ref.dispatchEvent(event);
 
 		}, [ props, selected ]);
+	
+		// Attach keyboard events to the select input
+		useKeybind("ArrowDown", function() {
+			if (props.type !== "select" || !popoverOpen) return;
+			setFocused(focused => (focused + 1) % itemsRef.current.length);
+		});
+	
+		useKeybind("ArrowUp", function() {
+			if (props.type !== "select" || !popoverOpen) return;
+			setFocused(focused => (focused - 1 + itemsRef.current.length) % itemsRef.current.length);
+		});
+	
+		useKeybind("Enter", function() {
+			if (props.type !== "select" || !popoverOpen) return;
+			setSelected(focused);
+		});
 	
 		return (
 			<label
@@ -387,7 +399,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						] }
 						onFocus={ event => [
 							props.onFocus?.(event),
-							shouldIgnoreOpenEvent.current || setPopoverOpen(true),
+							setPopoverOpen(true),
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
 						readOnly
@@ -431,7 +443,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 					
 					</div> }
 
-					{ /* Date picker icon calendar */ }
+					{ /* Select dropdown and menu */ }
 					{ props.type === "select" && <>
 						<IconButton
 							className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
@@ -441,8 +453,6 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 							onMouseDown={ event => event.stopPropagation() }
 							onTouchStart={ event => event.stopPropagation() }
 							size={ props.size === "dense" ? "small" : "medium" } />
-					
-						{ /* Date picker calendar popover */ }
 						<Popover
 							closeOnBlur={ false }
 							duration={ 50 }

@@ -26,69 +26,19 @@ export const classes = {
 };
 
 export function Calendar({
-	className,
-	yearPickerStart = 1900,
-	yearPickerEnd = 2099,
-	color = "primary",
-	yearPicker: _yearPicker = false,
-	openToDate: _defaultRenderDate,
 	allowFuture = true,
 	allowPast = true,
-	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
-	selection = null,
+	className,
+	color = "primary",
 	onSelect,
+	openToDate: _defaultRenderDate,
+	selected: _selected,
+	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
+	yearPicker: _yearPicker = false,
+	yearPickerEnd = 2099,
+	yearPickerStart = 1900,
 	...props
 }: Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> & Partial<{
-
-	/**
-	 * The starting range for the year picker
-	 * @default 1900
-	 */
-	yearPickerStart: number;
-
-	/**
-	 * The ending range for the year picker
-	 * @default 2099
-	 */
-	yearPickerEnd: number;
-
-	/**
-	 * Whether to show the year picker by default
-	 * @default false
-	 */
-	yearPicker: boolean;
-
-	/**
-	 * The format for the year picker
-	 * @default (date: Date) => dayjs(date).format("MMM YYYY")
-	 * @param date The date to format
-	 * @returns The formatted date
-	 */
-	yearFormat: (date: Date) => string;
-
-	/**
-	 * The color to use for the selection
-	 * @default "primary"
-	 */
-	color: "primary" | "success" | "warning" | "error" | "primary:pastel" | "success:pastel" | "warning:pastel" | "error:pastel" | "neutral";
-
-	/**
-	 * A callback for when a date is selected
-	 * @param date The selected date
-	 */
-	onSelect: (date: Date | readonly [Date, Date] | null) => unknown;
-
-	/**
-	 * The date to open the calendar to
-	 * @default selection | new Date
-	 */
-	openToDate: Date;
-
-	/**
-	 * The selected date
-	 * @default null
-	 */
-	selection: Date | readonly [Date, Date] | null;
 
 	/**
 	 * Whether to allow future dates to be selected
@@ -101,6 +51,56 @@ export function Calendar({
 	 * @default true
 	 */
 	allowPast: boolean;
+
+	/**
+	 * The color to use for the selection
+	 * @default "primary"
+	 */
+	color: "primary" | "success" | "warning" | "error" | "primary:pastel" | "success:pastel" | "warning:pastel" | "error:pastel" | "neutral";
+
+	/**
+	 * A callback for when a date is selected
+	 * @param date The selected date
+	 */
+	onSelect: (date: Date | null) => unknown;
+
+	/**
+	 * The date to open the calendar to
+	 * @default selection | new Date
+	 */
+	openToDate: Date;
+
+	/**
+	 * The selected date
+	 * @default null
+	 */
+	selected: Date | null;
+
+	/**
+	 * The format for the year picker
+	 * @default (date: Date) => dayjs(date).format("MMM YYYY")
+	 * @param date The date to format
+	 * @returns The formatted date
+	 */
+	yearFormat: (date: Date) => string;
+
+	/**
+	 * Whether to show the year picker by default
+	 * @default false
+	 */
+	yearPicker: boolean;
+
+	/**
+	 * The ending range for the year picker
+	 * @default 2099
+	 */
+	yearPickerEnd: number;
+	
+	/**
+	 * The starting range for the year picker
+	 * @default 1900
+	 */
+	yearPickerStart: number;
 	
 }>) {
 
@@ -118,9 +118,8 @@ export function Calendar({
 	});
 
 	// State for the current page of the calendar
-	const [ selectionStartDate, setSelectionStart ] = useState<Date | null>((Array.isArray(selection) ? selection[0] : selection));
-	const [ _selectionEndDate, setSelectionEnd ] = useState<Date | null>((Array.isArray(selection) ? selection[1] : null));
-	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectionStartDate || new Date);
+	const [ selectedDate, setSelectedDate ] = useState<Date | null>(_selected || null);
+	const [ renderDate, setRenderDate ] = useState<Date>(_defaultRenderDate || selectedDate || new Date);
 	
 	// Auto scroll to the current year
 	useEffect(function() {
@@ -175,28 +174,15 @@ export function Calendar({
 
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 
-	const previousSelection = useRef("");
+	// Sync the selected date from props
 	useEffect(function() {
-		
-		// Recompute the start and end selection
-		const selectionStartDate: Date | null = Array.isArray(selection) ? selection[0] : selection;
-		const selectionEndDate: Date | null = Array.isArray(selection) ? selection[1] : null;
-
-		const hashed = JSON.stringify({ selectionStartDate, selectionEndDate }, null, 2);
-		if (hashed === previousSelection.current) return;
-		previousSelection.current = hashed;
-
-		if (!selectionStartDate) return;
-		setSelectionStart(selectionStartDate);
-		setSelectionEnd(selectionEndDate);
-		setRenderDate(selectionStartDate);
-
-		onSelect?.(selection);
-	}, [ onSelect, selection ]);
+		if (!_selected) return;
+		setSelectedDate(_selected);
+		setRenderDate(_selected);
+	}, [ _selected ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
 	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);
-	
 	const disablePreviousButton = useMemo(() => (dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "month") || dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "month")) || (!allowPast && dayjs(prevPageDate).isBefore(dayjs(), "month")), [ renderDate, yearPickerStart, prevPageDate, allowPast ]);
 	const disableNextButton = useMemo(() => (dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "month") || dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "month")) || (!allowFuture && dayjs(nextPageDate).isAfter(dayjs(), "month")), [ renderDate, yearPickerEnd, nextPageDate, allowFuture ]);
 	const disableCurrentButton = useMemo(() => dayjs(renderDate).isSame(dayjs(), "month"), [ renderDate ]);
@@ -375,25 +361,18 @@ export function Calendar({
 											date.setDate(index + 1);
 
 											// Check if the current cell is selected
-											const isSelected = dayjs(date).isSame(dayjs(selectionStartDate), "day");
+											const isSelected = dayjs(date).isSame(dayjs(selectedDate), "day");
 
 											// Check if the current cell is today
 											const isToday = dayjs(date).isSame(dayjs(), "day");
 											const isPast = dayjs(date).isBefore(dayjs(), "day");
 											const isFuture = dayjs(date).isAfter(dayjs(), "day");
 
-											if ((isPast && !allowPast) || (isFuture && !allowFuture)) return (
-												<div
-													className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"
-													key={ date.toISOString() }>
-													{ date.getDate() }
-												</div>
-											);
-
 											return (
 												<Button
 													className="rounded-full aspect-square flex items-center justify-center relative overflow-hidden cursor-pointer shadow-none hover:shadow-none active:shadow-none"
 													color={ (isSelected || isToday) ? color : "neutral" }
+													disabled={ (isPast && !allowPast) || (isFuture && !allowFuture) }
 													key={ date.toISOString() }
 													onClick={ () => onSelect?.(date) }
 													ripple={{ emitFromCenter: true }}
@@ -435,6 +414,7 @@ export function Calendar({
 				</motion.div>
 
 			</div>
+
 		</Card>
 	);
 }

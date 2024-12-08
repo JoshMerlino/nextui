@@ -11,7 +11,7 @@ export const classes = {
 	icon: cva([
 		"rounded-full select-none p-0.5 shrink-0 overflow-hidden aspect-square relative inline-flex items-center justify-center",
 		"hover:bg-black/5 dark:hover:bg-white/5 focus:outline-0 focus:bg-black/5 dark:focus:bg-white/5",
-		"disabled:opacity-50 disabled:pointer-events-none disabled:bg-transparent disabled:dark:bg-transparent"
+		"disabled:opacity-50 disabled:pointer-events-none disabled:bg-transparent disabled:dark:bg-transparent",
 	], {
 		defaultVariants: {
 			size: "large"
@@ -44,7 +44,7 @@ export const IconButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTM
 			ref={ ref }
 			type="button"
 			{ ...props }>
-			{ props.disabled || <Ripple className="bg-black/20 dark:bg-white/20" emitFromCenter /> }
+			{ props.disabled || <Ripple emitFromCenter /> }
 			{ Icon && typeof Icon === "function" ? <Icon /> : Icon }
 		</button>
 	);

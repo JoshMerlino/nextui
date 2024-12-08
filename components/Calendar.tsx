@@ -32,6 +32,8 @@ export function Calendar({
 	color = "primary",
 	yearPicker: _yearPicker = false,
 	openToDate: _defaultRenderDate,
+	allowFuture = true,
+	allowPast = true,
 	yearFormat = (date: Date) => dayjs(date).format("MMM YYYY"),
 	selection = null,
 	onSelect,
@@ -87,6 +89,18 @@ export function Calendar({
 	 * @default null
 	 */
 	selection: Date | readonly [Date, Date] | null;
+
+	/**
+	 * Whether to allow future dates to be selected
+	 * @default true
+	 */
+	allowFuture: boolean;
+
+	/**
+	 * Whether to allow past dates to be selected
+	 * @default true
+	 */
+	allowPast: boolean;
 	
 }>) {
 
@@ -176,11 +190,16 @@ export function Calendar({
 		setSelectionStart(selectionStartDate);
 		setSelectionEnd(selectionEndDate);
 		setRenderDate(selectionStartDate);
+
 		onSelect?.(selection);
 	}, [ onSelect, selection ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
 	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);
+	
+	const disablePreviousButton = useMemo(() => (dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "month") || dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "month")) || (!allowPast && dayjs(prevPageDate).isBefore(dayjs(), "month")), [ renderDate, yearPickerStart, prevPageDate, allowPast ]);
+	const disableNextButton = useMemo(() => (dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "month") || dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "month")) || (!allowFuture && dayjs(nextPageDate).isAfter(dayjs(), "month")), [ renderDate, yearPickerEnd, nextPageDate, allowFuture ]);
+	const disableCurrentButton = useMemo(() => dayjs(renderDate).isSame(dayjs(), "month"), [ renderDate ]);
 
 	return (
 		<Card
@@ -204,21 +223,21 @@ export function Calendar({
 
 					{ /* Go to previous month */ }
 					<IconButton
-						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerStart, 0, 1)), "year")) || (dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "month") && dayjs(renderDate).isBefore(dayjs(new Date(yearPickerStart, 0, 1)), "year")) }
+						disabled={ disablePreviousButton }
 						icon={ MdChevronLeft }
 						onClick={ () => updateRenderDate(new Date(prevPageDate)) }
 						size="medium" />
 					
 					{ /* Go to today button */ }
 					<IconButton
-						disabled={ dayjs(renderDate).isSame(dayjs(), "month") && dayjs(renderDate).isSame(dayjs(), "year") }
+						disabled={ disableCurrentButton }
 						icon={ MdToday }
 						onClick={ () => updateRenderDate(new Date) }
 						size="medium" />
 
 					{ /* Go to next month */ }
 					<IconButton
-						disabled={ (dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isSame(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) || (dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "month") && dayjs(renderDate).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)), "year")) }
+						disabled={ disableNextButton }
 						icon={ MdChevronRight }
 						onClick={ () => updateRenderDate(new Date(nextPageDate)) }
 						size="medium" />
@@ -353,16 +372,20 @@ export function Calendar({
 											date.setDate(index + 1);
 
 											// Check if the current cell is selected
-											const isSelected =
-												dayjs(date).isSame(dayjs(selectionStartDate), "day") &&
-												dayjs(date).isSame(dayjs(renderDate), "month") &&
-												dayjs(date).isSame(dayjs(selectionStartDate), "year");
+											const isSelected = dayjs(date).isSame(dayjs(selectionStartDate), "day");
 
 											// Check if the current cell is today
-											const isToday =
-												dayjs(date).isSame(dayjs(), "day") &&
-												dayjs(date).isSame(dayjs(renderDate), "month") &&
-												dayjs(date).isSame(dayjs(), "year");
+											const isToday = dayjs(date).isSame(dayjs(), "day");
+											const isPast = dayjs(date).isBefore(dayjs(), "day");
+											const isFuture = dayjs(date).isAfter(dayjs(), "day");
+
+											if ((isPast && !allowPast) || (isFuture && !allowFuture)) return (
+												<div
+													className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"
+													key={ date.toISOString() }>
+													{ date.getDate() }
+												</div>
+											);
 
 											return (
 												<Button

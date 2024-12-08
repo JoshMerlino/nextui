@@ -86,22 +86,15 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	duration: number;
 
-	/**
-	 * Whether the popover restores focus to the target when closed.
-	 * @default true
-	 */
-	resumeFocus: boolean;
-
 }>>>(function({
 	children,
-	screenMargin = 8,
-	position,
-	state: [ isOpen, setOpen ],
-	duration = 200,
 	closeOnBlur = true,
-	useModal = false,
-	resumeFocus = true,
 	closeOnEscape = true,
+	duration = 200,
+	position,
+	screenMargin = 8,
+	state: [ isOpen, setOpen ],
+	useModal = true,
 	...props
 }, ref) {
 
@@ -197,11 +190,8 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 	// Bind modal state to open prop
 	useEffect(function() {
-		if (isOpen && !internalRef.current?.open) {
-			open();
-		} else if (!isOpen && internalRef.current?.open) {
-			close();
-		}
+		if (isOpen && !internalRef.current?.open) open();
+		else if (!isOpen && internalRef.current?.open) close();
 	}, [ close, isOpen, open ]);
 	
 	return (

@@ -3,7 +3,7 @@
 import { Mask } from "@react-input/mask";
 import { cva, type VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
-import { isFunction, merge, omit } from "lodash";
+import { isFunction, merge, omit, pick } from "lodash";
 import { useFocusLost, useKeybind } from "nextui/hooks";
 import { cn } from "nextui/util";
 import { Children, createContext, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type HTMLInputTypeAttribute, type InputHTMLAttributes, type MutableRefObject, type PropsWithChildren, type ReactElement, type ReactNode } from "react";
@@ -173,7 +173,19 @@ export const SelectionContext = createContext({
 	setSelected: () => {},
 });
 
-export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> &({ type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } | { type: "select", children?: ReactNode, options?: unknown }) & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
+export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> &({ type: Exclude<HTMLInputTypeAttribute, "button" | "checkbox" | "radio"> } | (
+	| {
+		type: "select",
+		children?: ReactNode,
+		options?: unknown
+	}
+	| {
+		type: "date",
+		defaultValue?: Date | string | null,
+		allowFuture?: boolean,
+		allowPast?: boolean
+	}
+)) & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
 	 * The text to display in the floating label
@@ -282,8 +294,13 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 					if (!isValid || target.value.replace(/[^0-9]/g, "").length === 0) return;
 					internalRef.current.value = dateRange instanceof Date ? dayjs(dateRange).format(format) : dateRange?.map(date => dayjs(date).format(format)).join(" - ") || "";
-					internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+
+					// @ts-expect-error - This looks dumb but i assure you its necessary
+					const event = new Event("change", { bubbles: true, target: internalRef.current });
+					internalRef.current.dispatchEvent(event);
 					_setDateValue(end ? [ start, end ] : start);
+					props.onChange?.(event as unknown as ChangeEvent<HTMLInputElement>);
+					
 					break;
 
 			}
@@ -303,10 +320,15 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 			const current = internalRef.current.value;
 			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
 			if (current === internalRef.current.value) return;
-			internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
 			_setDateValue(date);
 			internalRef.current.value = date instanceof Date ? dayjs(date).format(format) : date?.map(date => dayjs(date).format(format)).join(" - ") || "";
-		}, [ dateValue, format ]);
+
+			// @ts-expect-error - This looks dumb but i assure you its necessary
+			const event = new Event("change", { bubbles: true, target: internalRef.current });
+			internalRef.current.dispatchEvent(event);
+			props.onChange?.(event as unknown as ChangeEvent<HTMLInputElement>);
+			
+		}, [ dateValue, format, props ]);
 	
 		// Select specific state
 		const [ focused, setFocused ] = useState(-1);
@@ -382,13 +404,14 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 
 					{ /* Input */ }
 					<input
-						{ ...omit(props, "size") }
+						{ ...omit(props, "size", "allowPast", "allowFuture") }
 						className={ cn(classes.input(props as VariantProps<typeof classes.input>), props.type === "select" && "hidden") }
 						onChange={ event => [
 							props.onChange?.(event),
 							setHasContents(event.target.value.length > 0),
 							setIsValid(event.target.validity.valid),
-							coerceValue(event)
+							coerceValue(event),
+							props.type === "date" && _setDateValue
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
 						readOnly={ props.type === "select" || props.readOnly }
@@ -398,14 +421,19 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								: props.type || "text" } />
 					
 					{ props.type === "select" && (<input
-						{ ...omit(props, "size") }
+						{ ...omit(props, "size", "allowPast", "allowFuture") }
 						className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+						onChange={ event => [
+							props.onChange?.(event),
+							setHasContents(event.target.value.length > 0),
+						] }
 						onClick={ event => [
 							props.onClick?.(event),
 							setPopoverOpen(true),
 						] }
 						onFocus={ event => [
 							props.onFocus?.(event),
+							setHasContents(event.target.value.length > 0),
 							shouldIgnoreOpenEvent.current || setPopoverOpen(true),
 						] }
 						placeholder={ props.type === "date" ? format : props.placeholder }
@@ -442,9 +470,10 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 							screenMargin={ 16 }
 							state={ [ popoverOpen, setPopoverOpen ] }>
 							<Calendar
+								{ ...pick(props, [ "allowFuture", "allowPast" ]) }
 								className="cursor-default"
 								color={ props.color }
-								onSelect={ date => onDatePickerSelect(date) }
+								onSelect={ onDatePickerSelect }
 								selection={ dateValue } />
 						</Popover>
 					
@@ -463,10 +492,8 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 						<Popover
 							closeOnBlur={ false }
 							duration={ 50 }
-							resumeFocus={ false }
 							screenMargin={ props.size === "dense" ? 14 : 18 }
-							state={ [ popoverOpen, setPopoverOpen ] }
-							useModal={ false }>
+							state={ [ popoverOpen, setPopoverOpen ] }>
 							<Card className="p-0" variant="popover">
 								<div
 									className="py-2 overflow-auto max-h-[calc(100vh-32px)] cursor-default"

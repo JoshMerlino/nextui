@@ -1,8 +1,8 @@
 {
 	"name": "nextui",
 	"dependencies": {
-		"@react-input/mask": "^2.0.3",
-		"@tanstack/react-virtual": "^3.10.9",
+		"@react-input/mask": "^2.0.4",
+		"@tanstack/react-virtual": "^3.11.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.13",

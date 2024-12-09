@@ -1,15 +1,18 @@
 import type { VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
-import { pick } from "lodash";
+import { omit, pick } from "lodash";
 import { Calendar } from "nextui/Calendar";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
 import { Popover } from "nextui/Popover";
 import { cn } from "nextui/util";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { IoMdCalendar } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
 import BaseInput, { classes } from "./BaseInput";
+
+// Props to pass to the calendar
+const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
 
 export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, "yearFormat" | "yearPicker" | "yearPickerEnd" | "yearPickerStart" | "allowFuture" | "allowPast" | "openToDate">>(function(props, forwarded) {
     
@@ -19,10 +22,15 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	// Initialize the state
 	const [ popoverOpen, setPopoverOpen ] = useState(false);
 	const [ dateValue, setDateValue ] = useState<Date | null>(null);
+	
+	// Skip value coercion on backspace
+	const shouldSkipValueCoercion = useRef(false);
     
 	// On date value change, update the input value
 	useEffect(function() {
 		if (!dateValue || !ref.current) return;
+		const date = dayjs(dateValue).toDate();
+		if (date.toString() === "Invalid Date") return;
 		const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
 		nativeInputValueSetter?.call(ref.current, dateValue.toLocaleDateString());
 		const event = new Event("input", { bubbles: true });
@@ -31,12 +39,26 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	// Add event listeners
 	useEventMap(ref, {
-		input: event => setDateValue(dayjs(event.target?.value).toDate()),
+		input(event) {
+			event.stopImmediatePropagation();
+			const date = dayjs(event.target?.value).toDate();
+			if (date.toString() === "Invalid Date") return setDateValue(null);
+			setDateValue(date);
+		},
+		change(event) {
+			event.stopImmediatePropagation();
+		}
 	});
+
+	// On date select, update the date value
+	const onSelect = useCallback(function(date: Date | null) {
+		if (shouldSkipValueCoercion.current) return shouldSkipValueCoercion.current = false;
+		setDateValue(date);
+	}, []);
 
 	return (
 		<BaseInput
-			{ ...props }
+			{ ...omit(props, CALENDAR_PROPS) }
 			ref={ ref }
 			type="text">
 			<div className="relative">
@@ -54,9 +76,9 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 					useModal={ false }>
 					<Calendar
 						className="cursor-default"
-						onSelect={ date => setDateValue(date) }
+						onSelect={ onSelect }
 						selected={ dateValue }
-						{ ...pick(props, "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate") } />
+						{ ...pick(props, CALENDAR_PROPS) } />
 				</Popover>
 			</div>
 		</BaseInput>

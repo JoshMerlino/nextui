@@ -135,13 +135,13 @@ export function Calendar({
 	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
 	
 	// Day of week of first day of month
-	const firstDay = useMemo(() => dayjs(renderDate).startOf("month").day(), [ renderDate ]);
+	const firstDay = useMemo(() => dayjs(renderDate).startOf("month").day() || 0, [ renderDate ]);
 
 	// Last day of last month (number of days in the previous month)
-	const lastDayOfLastMonth = useMemo(() => dayjs(renderDate).subtract(1, "month").daysInMonth(), [ renderDate ]);
+	const lastDayOfLastMonth = useMemo(() => dayjs(renderDate).subtract(1, "month").daysInMonth() || 0, [ renderDate ]);
 
 	// Number of days in the current month
-	const daysInMonth = useMemo(() => dayjs(renderDate).daysInMonth(), [ renderDate ]);
+	const daysInMonth = useMemo(() => dayjs(renderDate).daysInMonth() || 0, [ renderDate ]);
 	
 	// Date selection
 	const [ direction, setDirection ] = useState<"left" | "right">("right");
@@ -149,19 +149,20 @@ export function Calendar({
 	// Update the render date
 	const updateRenderDate = useCallback(function(next: Date) {
 		const current = new Date(renderDate);
+		if (dayjs(next).toDate().toString() === "Invalid Date") return;
 		if (dayjs(next).isBefore(dayjs(new Date(yearPickerStart, 0, 1)))) return;
 		if (dayjs(next).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)))) return;
+		if (dayjs(next).isSame(dayjs(current), "day")) return;
 		setDirection(dayjs(next).isAfter(dayjs(current)) ? "right" : "left");
 		setRenderDate(next);
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
-
+	
 	// Sync the selected date from props
 	useEffect(function() {
+		setSelectedDate(_selected || null);
 		if (!_selected) return;
 		setRenderDate(_selected);
-		if (dayjs(_selected).isSame(dayjs(selectedDate), "day")) return;
-		setSelectedDate(_selected);
-	}, [ _selected, selectedDate ]);
+	}, [ _selected ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
 	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);

@@ -177,7 +177,6 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 	// Close on blur and escape
 	useKeybind("Escape", () => closeOnEscape && isOpen && close());
-
 	useFocusLost(ref, () => closeOnBlur && isOpen && close());
 
 	// On resize, reposition the dialog

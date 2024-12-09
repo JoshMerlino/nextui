@@ -325,7 +325,7 @@ export function Calendar({
 									<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
 						
 										{ /* Blank days of week */ }
-										{ Array(firstDay).fill(null).map(function(_, index, { length }) {
+										{ Array(firstDay || 0).fill(null).map(function(_, index, { length }) {
 											return (
 												<div
 													className="flex items-center justify-center aspect-square text-gray-300 dark:text-gray-600"

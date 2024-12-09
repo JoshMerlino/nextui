@@ -1,12 +1,12 @@
 import type { VariantProps } from "class-variance-authority";
-import { pick } from "lodash";
+import { omit, pick } from "lodash";
 import { Card } from "nextui/Card";
 import { useConvergedRef, useEventMap, useFocusLost } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
 import type { Option } from "nextui/Option";
 import { Popover } from "nextui/Popover";
 import { cn } from "nextui/util";
-import React, { Children, createContext, forwardRef, useEffect, useImperativeHandle, useState, type ReactElement } from "react";
+import React, { Children, createContext, forwardRef, useEffect, useImperativeHandle, useState, type ReactElement, type RefObject } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { classes, POPOVER_PROPS } from ".";
 import BaseInput from "./BaseInput";
@@ -16,7 +16,7 @@ export const SelectProvider = createContext({
 	/**
 	 * The ref of the input element
 	 */
-	ref: null as React.RefObject<HTMLInputElement | null> | null,
+	ref: null as RefObject<HTMLInputElement | null> | null,
 
 	/**
 	 * Whether the input is focused
@@ -50,7 +50,9 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const [ popoverOpen, setPopoverOpen ] = useState(false);
 
 	// Open the popover when the input is focused
-	useEventMap(ref, { focus: () => setPopoverOpen(true) });
+	useEventMap(ref, {
+		focus: () => setPopoverOpen(true),
+	});
 	
 	// Close the popover when the focus is lost
 	useFocusLost(wrapperRef, () => setPopoverOpen(false));
@@ -135,7 +137,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	return (
 		<BaseInput
-			{ ...props }
+			{ ...omit(props, POPOVER_PROPS) }
 			className={ cn("group/popover-constraint", className) }
 			readOnly
 			ref={ ref }
@@ -156,7 +158,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				useModal={ false }
 				{ ...pick(props, POPOVER_PROPS) }>
 				<Card
-					className="p-0 -mx-px mt-px"
+					className="p-0 -mx-px mt-px border-0"
 					variant="popover">
 					<ul className="flex flex-col py-2">
 

@@ -9,12 +9,8 @@ import { cn } from "nextui/util";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { IoMdCalendar } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
-import { classes } from ".";
+import { CALENDAR_PROPS, classes, POPOVER_PROPS } from ".";
 import BaseInput from "./BaseInput";
-
-// Props to pass to the calendar
-const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
-const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;
 
 type AdditionalProps = {
 

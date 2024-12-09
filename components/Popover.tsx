@@ -109,7 +109,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	const reposition = useCallback(function() {
 		const el = ref.current;
 		if (!el) return;
-		const wrapper = (el.closest(".group\\/popover-limit") || el?.parentNode) as HTMLElement;
+		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
 
 		switch (position) {
@@ -140,9 +140,9 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		}
 
 		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
-		if (wrapper.classList.contains("group/popover-limit")) {
+		if (wrapper.classList.contains("group/popover-constraint")) {
 			const limit = wrapper.getBoundingClientRect();
-			el.style.width = `${ limit.width + screenMargin * 2 }px`;
+			el.style.width = `${ limit.width }px`;
 		}
 
 		// Ensure popover stays on screen

@@ -1,14 +1,18 @@
-import { forwardRef } from "react";
+"use client";
 
 import { cva } from "class-variance-authority";
+import { forwardRef } from "react";
+
 import BaseInput from "./BaseInput";
 import DateInput from "./DateInput";
 import PasswordInput from "./PasswordInput";
+import SelectInput from "./SelectInput";
 
 type InputFieldTypes = {
     text: ExtractProps<typeof BaseInput>;
     password: ExtractProps<typeof PasswordInput>;
-    date: ExtractProps<typeof DateInput>;
+	date: ExtractProps<typeof DateInput>;
+	select: ExtractProps<typeof SelectInput>;
 };
 
 type InputFactoryProps<T extends keyof InputFieldTypes> = { type: T } & InputFieldTypes[T];
@@ -17,6 +21,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 	switch (props.type) {
 		default: return <BaseInput { ...props } ref={ ref } />;
 		case "date": return <DateInput { ...props } ref={ ref } />;
+		case "select" : return <SelectInput { ...props } ref={ ref } />;
 		case "password": return <PasswordInput { ...props } ref={ ref } />;
 	}
 });
@@ -157,3 +162,7 @@ export const classes = {
 		}
 	})
 };
+
+// Props to pass to the calendar
+export const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
+export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;

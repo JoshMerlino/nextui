@@ -22,7 +22,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
     
 	// Initialize the state
 	const [ popoverOpen, setPopoverOpen ] = useState(false);
-	const [ dateValue, setDateValue ] = useState<Date | null>(null);
+	const [ dateValue, setDateValue ] = useState<Date | null>(typeof props.defaultValue === "string" ? dayjs(props.defaultValue).toDate() : props.defaultValue instanceof Date ? props.defaultValue : null);
 	
 	// Selection range ref
 	const selectionRange = useRef<{ start: number | null, end: number | null } | null>(null);

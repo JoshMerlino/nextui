@@ -62,7 +62,7 @@ export function Calendar({
 	 * A callback for when a date is selected
 	 * @param date The selected date
 	 */
-	onSelect: (date: Date | null) => unknown;
+	onSelect: (date: Date | null) => void | unknown;
 
 	/**
 	 * The date to open the calendar to

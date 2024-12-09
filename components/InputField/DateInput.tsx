@@ -1,5 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
+import { pick } from "lodash";
 import { Calendar } from "nextui/Calendar";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
@@ -10,7 +11,7 @@ import { IoMdCalendar } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
 import BaseInput, { classes } from "./BaseInput";
 
-export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & ExtractProps<typeof Calendar>>(function(props, forwarded) {
+export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, "yearFormat" | "yearPicker" | "yearPickerEnd" | "yearPickerStart" | "allowFuture" | "allowPast" | "openToDate">>(function(props, forwarded) {
     
 	// Initialize the refs
 	const ref = useConvergedRef(forwarded);
@@ -52,9 +53,9 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Ext
 					state={ [ popoverOpen, setPopoverOpen ] }>
 					<Calendar
 						className="cursor-default"
-						onSelect={ setDateValue }
+						onSelect={ date => setDateValue(date) }
 						selected={ dateValue }
-						{ ...props } />
+						{ ...pick(props, "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate") } />
 				</Popover>
 			</div>
 		</BaseInput>

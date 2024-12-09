@@ -136,26 +136,13 @@ export function Calendar({
 	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
 	
 	// Day of week of first day of month
-	const firstDay = useMemo(() => {
-		const date = new Date(renderDate);
-		date.setDate(1);
-		return date.getDay();
-	}, [ renderDate ]);
-	
-	// Last day of last month
-	const lastDayOfLastMonth = useMemo(() => {
-		const date = new Date(renderDate);
-		date.setDate(0);
-		return date.getDate();
-	}, [ renderDate ]);
-	
-	// Get the number of days in the month
-	const daysInMonth = useMemo(() => {
-		const date = new Date(renderDate);
-		date.setMonth(date.getMonth() + 1);
-		date.setDate(0);
-		return date.getDate();
-	}, [ renderDate ]);
+	const firstDay = useMemo(() => dayjs(renderDate).startOf("month").day(), [ renderDate ]);
+
+	// Last day of last month (number of days in the previous month)
+	const lastDayOfLastMonth = useMemo(() => dayjs(renderDate).subtract(1, "month").daysInMonth(), [ renderDate ]);
+
+	// Number of days in the current month
+	const daysInMonth = useMemo(() => dayjs(renderDate).daysInMonth(), [ renderDate ]);
 	
 	// Date selection
 	const [ direction, setDirection ] = useState<"left" | "right">("right");
@@ -163,15 +150,10 @@ export function Calendar({
 	// Update the render date
 	const updateRenderDate = useCallback(function(next: Date) {
 		const current = new Date(renderDate);
-
-		// Make sure next is within the range
 		if (dayjs(next).isBefore(dayjs(new Date(yearPickerStart, 0, 1)))) return;
 		if (dayjs(next).isAfter(dayjs(new Date(yearPickerEnd, 11, 31)))) return;
-
-		const direction = dayjs(next).isAfter(dayjs(current)) ? "right" : "left";
-		setDirection(direction);
+		setDirection(dayjs(next).isAfter(dayjs(current)) ? "right" : "left");
 		setRenderDate(next);
-
 	}, [ renderDate, yearPickerEnd, yearPickerStart ]);
 
 	// Sync the selected date from props

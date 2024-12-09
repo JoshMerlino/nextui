@@ -4,7 +4,8 @@ import { IconButton } from "nextui/IconButton";
 import { cn } from "nextui/util";
 import { forwardRef, useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import BaseInput, { classes } from "./BaseInput";
+import { classes } from ".";
+import BaseInput from "./BaseInput";
 
 export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput>>(function({ type, wrapper, ...props }, forwarded) {
     

@@ -20,6 +20,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 		case "password": return <PasswordInput { ...props } ref={ ref } />;
 	}
 });
+
 export const classes = {
 	wrapper: cva([
 		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
@@ -144,7 +145,7 @@ export const classes = {
 		}
 	}),
 
-	button: cva("shrink-0", {
+	button: cva("shrink-0 !w-auto aspect-square", {
 		variants: {
 			size: {
 				dense: "-mr-1.5",

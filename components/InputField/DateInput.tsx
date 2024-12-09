@@ -14,8 +14,9 @@ import BaseInput from "./BaseInput";
 
 // Props to pass to the calendar
 const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
+const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;
 
-export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, "yearFormat" | "yearPicker" | "yearPickerEnd" | "yearPickerStart" | "allowFuture" | "allowPast" | "openToDate">>(function(props, forwarded) {
+export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, typeof CALENDAR_PROPS[number]> & Pick<ExtractProps<typeof Popover>, typeof POPOVER_PROPS[number]>>(function(props, forwarded) {
     
 	// Initialize the refs
 	const ref = useConvergedRef(forwarded);
@@ -64,7 +65,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	return (
 		<BaseInput
-			{ ...omit(props, CALENDAR_PROPS) }
+			{ ...omit(props, CALENDAR_PROPS, POPOVER_PROPS) }
 			ref={ ref }
 			type="text">
 			<div className="relative">
@@ -79,9 +80,10 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				<Popover
 					screenMargin={ 16 }
 					state={ [ popoverOpen, setPopoverOpen ] }
-					useModal={ false }>
+					{ ...pick(props, POPOVER_PROPS) }>
 					<Calendar
 						className="cursor-default"
+						color={ props.color }
 						onSelect={ setDateValue }
 						selected={ dateValue }
 						{ ...pick(props, CALENDAR_PROPS) } />

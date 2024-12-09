@@ -54,7 +54,7 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 	const wrapperRef = useConvergedRef(wrapper);
     
 	// Initialize the state
-	const [ hasContents, setHasContents ] = useState(false);
+	const [ hasContents, setHasContents ] = useState(((props.defaultValue || props.value || props.placeholder)?.toString().length ?? 0) > 0);
 	const [ isValid ] = useState(false);
     
 	// Add event listeners

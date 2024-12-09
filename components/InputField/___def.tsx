@@ -10,10 +10,10 @@ import { Children, createContext, forwardRef, useCallback, useEffect, useLayoutE
 import type { IconType } from "react-icons";
 import { IoMdCalendar, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { MdChevronLeft, MdDateRange } from "react-icons/md";
-import { Calendar } from "./Calendar";
-import { Card } from "./Card";
-import { IconButton } from "./IconButton";
-import { Popover } from "./Popover";
+import { Calendar } from "../Calendar";
+import { Card } from "../Card";
+import { IconButton } from "../IconButton";
+import { Popover } from "../Popover";
 
 export const masks = {
 
@@ -486,7 +486,7 @@ export const InputField = forwardRef<HTMLInputElement, PropsWithChildren<Omit<In
 								className="cursor-default"
 								color={ props.color }
 								onSelect={ onDatePickerSelect }
-								selection={ dateValue } />
+								selected={ dateValue } />
 						</Popover>
 					
 					</div> }

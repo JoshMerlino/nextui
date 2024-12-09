@@ -1,5 +1,5 @@
 "use client";
-import { SelectionContext } from "nextui/InputField";
+import { SelectionContext } from "nextui/InputField/___def";
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
 import { type HTMLAttributes, type OptionHTMLAttributes, useContext, useEffect } from "react";

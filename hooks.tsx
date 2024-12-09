@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type RefObject } from "react";
+import { useCallback, useEffect, useRef, type RefObject } from "react";
 
 export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback: (event: MouseEvent | TouchEvent | FocusEvent) => unknown) {
 
@@ -62,3 +62,27 @@ export function useEvent<T extends keyof WindowEventMap>(event: T, callback: (ev
 	}, [ event, handleEvent ]);
 
 }
+
+export function useConvergedRef<T>(ref?: React.Ref<T>) {
+	const internalRef = useRef<T>(null);
+	useEffect(() => {
+		const currentRef = internalRef.current;
+		if (ref && typeof ref === "function") ref(currentRef);
+		else if (ref) ref.current = currentRef;
+	}, [ internalRef, ref ]);
+	return internalRef;
+}
+
+export function useEventMap<T extends HTMLElement | null>(ref: RefObject<T>, customEvents: Partial<{
+    [K in keyof HTMLElementEventMap]: (this: Exclude<T, null>, event: HTMLElementEventMap[K] & { target: T; }) => void;
+}> = {}) {
+	useEffect(function() {
+		const current = ref.current;
+		if (!current) return;
+		for (const [ event, handler ] of Object.entries(customEvents)) current.addEventListener(event as keyof HTMLElementEventMap, handler as EventListener);
+		return () => {
+			for (const [ event, handler ] of Object.entries(customEvents)) current.removeEventListener(event as keyof HTMLElementEventMap, handler as EventListener);
+		};
+	}, [ ref, customEvents ]);
+}
+

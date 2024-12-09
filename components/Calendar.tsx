@@ -132,7 +132,6 @@ export function Calendar({
 				behavior: "smooth",
 			});
 		});
-
 	}, [ renderDate, rowVirtualizer, yearPicker, yearPickerStart ]);
 	
 	// Day of week of first day of month
@@ -159,9 +158,10 @@ export function Calendar({
 	// Sync the selected date from props
 	useEffect(function() {
 		if (!_selected) return;
-		setSelectedDate(_selected);
 		setRenderDate(_selected);
-	}, [ _selected ]);
+		if (dayjs(_selected).isSame(dayjs(selectedDate), "day")) return;
+		setSelectedDate(_selected);
+	}, [ _selected, selectedDate ]);
 	
 	const nextPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() + 1), [ renderDate, yearPicker ]);
 	const prevPageDate = useMemo(() => new Date(renderDate)[yearPicker ? "setFullYear" : "setMonth"](renderDate[yearPicker ? "getFullYear" : "getMonth"]() - 1), [ renderDate, yearPicker ]);

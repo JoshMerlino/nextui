@@ -6,7 +6,7 @@ import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
 import { Popover } from "nextui/Popover";
 import { cn } from "nextui/util";
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { IoMdCalendar } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
 import { classes } from ".";
@@ -24,8 +24,8 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const [ popoverOpen, setPopoverOpen ] = useState(false);
 	const [ dateValue, setDateValue ] = useState<Date | null>(null);
 	
-	// Skip value coercion on backspace
-	const shouldSkipValueCoercion = useRef(false);
+	// Selection range ref
+	const selectionRange = useRef<{ start: number | null, end: number | null } | null>(null);
     
 	// On date value change, update the input value
 	useEffect(function() {
@@ -33,29 +33,34 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		const date = dayjs(dateValue).toDate();
 		if (date.toString() === "Invalid Date") return;
 		const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-		nativeInputValueSetter?.call(ref.current, dateValue.toLocaleDateString());
+
+		// Set the value
+		const value = dateValue.toLocaleDateString();
+		nativeInputValueSetter?.call(ref.current, value);
+
+		// Set the selection range
+		const { start } = selectionRange.current || { start: null, end: null };
+		ref.current.setSelectionRange(start || 0, value.length);
+
+		// Dispatch the input event
 		const event = new Event("input", { bubbles: true });
 		ref.current.dispatchEvent(event);
+
 	}, [ dateValue, props, ref ]);
 
 	// Add event listeners
 	useEventMap(ref, {
+		change: event => event.stopImmediatePropagation(),
 		input(event) {
 			event.stopImmediatePropagation();
 			const date = dayjs(event.target?.value).toDate();
 			if (date.toString() === "Invalid Date") return setDateValue(null);
+			const sel = event.target?.selectionStart || null;
+			const len = event.target?.value.length || null;
+			selectionRange.current = { start: sel, end: len };
 			setDateValue(date);
-		},
-		change(event) {
-			event.stopImmediatePropagation();
 		}
 	});
-
-	// On date select, update the date value
-	const onSelect = useCallback(function(date: Date | null) {
-		if (shouldSkipValueCoercion.current) return shouldSkipValueCoercion.current = false;
-		setDateValue(date);
-	}, []);
 
 	return (
 		<BaseInput
@@ -77,7 +82,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 					useModal={ false }>
 					<Calendar
 						className="cursor-default"
-						onSelect={ onSelect }
+						onSelect={ setDateValue }
 						selected={ dateValue }
 						{ ...pick(props, CALENDAR_PROPS) } />
 				</Popover>

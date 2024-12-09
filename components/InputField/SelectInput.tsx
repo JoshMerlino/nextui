@@ -3,12 +3,42 @@ import { pick } from "lodash";
 import { Card } from "nextui/Card";
 import { useConvergedRef, useEventMap, useFocusLost } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
+import type { Option } from "nextui/Option";
 import { Popover } from "nextui/Popover";
 import { cn } from "nextui/util";
-import { forwardRef, useState } from "react";
+import React, { Children, createContext, forwardRef, useEffect, useState, type ReactElement } from "react";
 import { MdChevronLeft } from "react-icons/md";
 import { classes, POPOVER_PROPS } from ".";
 import BaseInput from "./BaseInput";
+
+export const SelectProvider = createContext({
+
+	/**
+	 * The ref of the input element
+	 */
+	ref: null as React.RefObject<HTMLInputElement | null> | null,
+
+	/**
+	 * Whether the input is focused
+	 */
+	isFocused: false,
+
+	/**
+	 * Whether the input is selected
+	 */
+	isSelected: false,
+
+	/**
+	 * Set the current input as focused
+	 */
+	setFocused: (() => void 0) as React.Dispatch<React.SetStateAction<void>>,
+		
+	/**
+	 * Set the current input as selected
+	 */
+	setSelected: (() => void 0) as React.Dispatch<React.SetStateAction<void>>,
+
+});
 
 export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Popover>, typeof POPOVER_PROPS[number]>>(function({ wrapper, children, className, ...props }, forwarded) {
     
@@ -29,13 +59,38 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		setPopoverOpen(false);
 	} });
 
-	// const [ selectedIndex, setSelectedIndex ] = useState(-1);
-	// Change the value behavior when getting and setting
-	// useImperativeHandle(ref, () => merge(ref.current as HTMLInputElement, {
-	// 	get value() {
-	// 		return `Processed: ${ ref.current?.value }`;
-	// 	},
-	// }));
+	// useImperativeHandle(forwarded, function() {
+	// 	return {
+	// 		get value() {
+	// 			return `Processed: ${ ref.current?.value }`;
+	// 		},
+	// 	};
+	// } as () => HTMLInputElement, [ ref ]);
+
+	// Dropdown specific state
+	const [ selected, setSelected ] = useState(-1);
+	const [ focused, setFocused ] = useState(-1);
+	
+	// On selection change, update the input value
+	useEffect(function() {
+		const current = ref.current;
+		if (!current) return;
+		
+		// Get the selected option
+		const selectedOption = Children.toArray(children)[selected] as ReactElement<ExtractProps<typeof Option>>;
+		if (!selectedOption) return;
+
+		const value = selectedOption.props.value;
+		if (value === undefined) return;
+
+		// Set the value of the input
+		current.value = value.toString();
+
+		// Dispatch the input event
+		const event = new Event("input", { bubbles: true });
+		ref.current?.dispatchEvent(event);
+
+	}, [ children, ref, selected ]);
 
 	return (
 		<BaseInput
@@ -48,7 +103,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 			<IconButton
 				className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
 				disabled={ props.disabled }
-				icon={ <MdChevronLeft className={ cn("transition-transform rotate-90 -scale-x-100", popoverOpen && "scale-x-100") } /> }
+				icon={ <MdChevronLeft className={ cn("transition-transform duration-50 rotate-90", popoverOpen || "-scale-x-100") } /> }
 				onClick={ () => setPopoverOpen(!popoverOpen) }
 				size={ props.size === "dense" ? "small" : "medium" } />
 			<Popover
@@ -62,9 +117,25 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				<Card
 					className="p-0 -mx-px mt-px"
 					variant="popover">
-					
-					{ children }
+					<ul className="flex flex-col py-2">
 
+						{ /* Iterate over children and provide the select context */ }
+						{ Children.map(children, (child, key) => (
+							<SelectProvider key={ key }
+								value={{
+									ref,
+									isFocused: focused === key,
+									isSelected: selected === key,
+									setFocused: () => setFocused(key),
+									setSelected: () => setSelected(key),
+								}}>
+
+								{ child }
+
+							</SelectProvider>
+						)) }
+
+					</ul>
 				</Card>
 			</Popover>
 		</BaseInput>

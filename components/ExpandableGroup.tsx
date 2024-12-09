@@ -5,7 +5,7 @@ import { AdjustableHeight } from "nextui/AdjustableHeight";
 import { Button as NextUIButton } from "nextui/Button";
 import { useEvent } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type MouseEventHandler } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type JSX, type MouseEventHandler } from "react";
 import { MdChevronLeft } from "react-icons/md";
 
 function ToggleButton({ isExpanded, onClick }: { isExpanded: boolean, onClick: MouseEventHandler<HTMLButtonElement> }) {

@@ -2,7 +2,7 @@ import { type VariantProps } from "class-variance-authority";
 import { isFunction, merge, omit } from "lodash";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useState, type InputHTMLAttributes, type ReactElement, type RefObject } from "react";
+import { forwardRef, useEffect, useState, type InputHTMLAttributes, type ReactElement, type RefObject } from "react";
 import type { IconType } from "react-icons";
 import { classes } from ".";
 
@@ -20,7 +20,13 @@ type BaseInputProps =
         /**
          * The icon to display in the input
          */
-        icon: IconType | ReactElement;
+		icon: IconType | ReactElement;
+		
+		/**
+		 * Whether the input is invalid
+		 * @default false
+		 */
+		invalid: boolean;
 
         /**
          * The text to display in the floating label
@@ -36,7 +42,7 @@ type BaseInputProps =
         /**
          * The ref to the wrapper element
          */
-        wrapper: RefObject<HTMLLabelElement | null>;
+		wrapper: RefObject<HTMLLabelElement | null>;
         
     }>;
 
@@ -45,6 +51,7 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 	className,
 	icon: Icon,
 	label,
+	invalid = false,
 	wrapper,
 	...props
 }, ref) {
@@ -55,12 +62,13 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
     
 	// Initialize the state
 	const [ hasContents, setHasContents ] = useState(((props.defaultValue || props.value || props.placeholder)?.toString().length ?? 0) > 0);
-	const [ isValid ] = useState(false);
-    
+	const [ isValid, setIsValid ] = useState(!invalid);
+	
 	// Add event listeners
 	useEventMap(inputRef, {
 		input() {
 			setHasContents(this.value.length > 0);
+			setIsValid(this.checkValidity());
 		}
 	});
     
@@ -69,6 +77,9 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 			if (event.target === wrapperRef.current) inputRef.current?.focus();
 		}
 	});
+
+	// Sync  props with state
+	useEffect(() => setIsValid(!invalid), [ invalid ]);
 
 	return (
 		<label

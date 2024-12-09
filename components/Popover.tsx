@@ -2,9 +2,9 @@
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { merge } from "lodash";
-import { useEvent, useFocusLost, useKeybind } from "nextui/hooks";
+import { useConvergedRef, useEvent, useFocusLost, useKeybind } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type MutableRefObject, type PropsWithChildren } from "react";
+import { forwardRef, useCallback, useEffect, useState, type HTMLAttributes, type PropsWithChildren } from "react";
 
 export const classes = {
 
@@ -76,7 +76,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	
 	/**
 	 * Whether the popover should be a modal dialog.
-	 * @default false
+	 * @default true
 	 */
 	useModal: boolean;
 
@@ -96,51 +96,45 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	state: [ isOpen, setOpen ],
 	useModal = true,
 	...props
-}, ref) {
+}, forwarded) {
 
 	// Open animation state
 	const [ isVisible, setIsVisible ] = useState(false);
 	const [ isStable, setIsStable ] = useState(false);
 
 	// Combine forwarded ref with internal ref
-	const internalRef = useRef<HTMLDialogElement>(null);
-
-	useEffect(() => {
-		const currentRef = internalRef.current;
-		if (ref && typeof ref === "function") ref(currentRef);
-		else if (ref) (ref as MutableRefObject<HTMLDialogElement | null>).current = currentRef;
-	}, [ internalRef, ref ]);
+	const ref = useConvergedRef(forwarded);
 
 	// Reposition the dialog
 	const reposition = useCallback(function() {
-		const ref = internalRef.current;
-		if (!ref) return;
-		const wrapper = (ref.closest(".group\\/popover-limit") || ref?.parentNode) as HTMLElement;
+		const el = ref.current;
+		if (!el) return;
+		const wrapper = (el.closest(".group\\/popover-limit") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
 
 		switch (position) {
 			default:
 			case "bottom": {
-				ref.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				ref.style.top = `${ wrapper.getBoundingClientRect().bottom }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().bottom }px`;
 				break;
 			}
 
 			case "top": {
-				ref.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				ref.style.top = `${ wrapper.getBoundingClientRect().top - ref.offsetHeight }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top - el.offsetHeight }px`;
 				break;
 			}
 
 			case "left": {
-				ref.style.left = `${ wrapper.getBoundingClientRect().left - ref.offsetWidth }px`;
-				ref.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().left - el.offsetWidth }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
 				break;
 			}
 
 			case "right": {
-				ref.style.left = `${ wrapper.getBoundingClientRect().right }px`;
-				ref.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().right }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
 				break;
 			}
 		}
@@ -148,18 +142,18 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
 		if (wrapper.classList.contains("group/popover-limit")) {
 			const limit = wrapper.getBoundingClientRect();
-			ref.style.width = `${ limit.width + screenMargin * 2 }px`;
+			el.style.width = `${ limit.width + screenMargin * 2 }px`;
 		}
 
 		// Ensure popover stays on screen
-		const rect = ref.getBoundingClientRect();
-		ref.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
-		if (rect.left < screenMargin) ref.style.left = `${ parseFloat(ref.style.left) - rect.left + screenMargin }px`;
-		if (rect.right > window.innerWidth - screenMargin) ref.style.left = `${ parseFloat(ref.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
-		if (rect.top < screenMargin) ref.style.top = `${ parseFloat(ref.style.top) - rect.top + screenMargin }px`;
-		if (rect.bottom > window.innerHeight - screenMargin) ref.style.top = `${ parseFloat(ref.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
+		const rect = el.getBoundingClientRect();
+		el.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
+		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - rect.left + screenMargin }px`;
+		if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
+		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - rect.top + screenMargin }px`;
+		if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
 
-	}, [ position, isOpen, screenMargin ]);
+	}, [ ref, isOpen, position, screenMargin ]);
 
 	// Close the dialog with animation
 	const close = useCallback(function() {
@@ -167,44 +161,45 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		setIsStable(false);
 		setTimeout(() => {
 			setOpen(false);
-			internalRef.current?.close();
+			ref.current?.close();
 		}, duration);
-	}, [ duration, setOpen ]);
+	}, [ duration, ref, setOpen ]);
 
 	// Open the dialog with animation
 	const open = useCallback(function() {
 		setIsStable(false);
-		if (useModal) internalRef.current?.showModal();
-		else internalRef.current?.show();
+		if (useModal) ref.current?.showModal();
+		else ref.current?.show();
 		reposition();
 		setIsVisible(true);
 		setTimeout(() => setIsStable(true), duration);
-	}, [ duration, reposition, useModal ]);
+	}, [ duration, ref, reposition, useModal ]);
 
 	// Close on blur and escape
-	useFocusLost(internalRef, () => closeOnBlur && isOpen && close());
 	useKeybind("Escape", () => closeOnEscape && isOpen && close());
+
+	useFocusLost(ref, () => closeOnBlur && isOpen && close());
 
 	// On resize, reposition the dialog
 	useEvent("resize", () => reposition());
 
 	// Bind modal state to open prop
 	useEffect(function() {
-		if (isOpen && !internalRef.current?.open) open();
-		else if (!isOpen && internalRef.current?.open) close();
-	}, [ close, isOpen, open ]);
+		if (isOpen && !ref.current?.open) open();
+		else if (!isOpen && ref.current?.open) close();
+	}, [ close, isOpen, open, ref ]);
 	
 	return (
 		<dialog
 			{ ...props }
 			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
-			ref={ internalRef }>
+			ref={ ref }>
 			<div
-				className={ cn(
+				className={ cn([
 					"transition-[opacity,transform]",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					classes.animation({ position })
-				) }
+				]) }
 				style={{ transitionDuration: `${ duration }ms` }}>
 				{ children }
 			</div>

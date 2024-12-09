@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 
-export function useFocusLost<T extends HTMLElement>(ref: RefObject<T>, callback: (event: MouseEvent | TouchEvent | FocusEvent) => unknown) {
+export function useFocusLost<T extends HTMLElement>(ref: RefObject<T | null>, callback: (event: MouseEvent | TouchEvent | FocusEvent) => unknown) {
 
 	const handleClickOutside = useCallback(function(event: MouseEvent | TouchEvent) {
 		if (ref.current && !ref.current.contains(event.target as Node)) callback(event);
 	}, [ ref, callback ]);
 	
 	const handleFocusShift = useCallback(function(event: FocusEvent) {
+		if ((event.target as HTMLButtonElement).disabled) return;
 		if (!ref.current) return;
 		if (ref.current.contains(event.relatedTarget as Node)) return;
 		if (ref.current === event.relatedTarget) return;
+		if (ref.current.contains(event.target as Node)) return;
 		if (ref.current === event.target) return;
 		callback(event);
 	}, [ ref, callback ]);

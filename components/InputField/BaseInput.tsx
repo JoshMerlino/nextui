@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { isFunction, merge } from "lodash";
+import { isFunction, merge, omit } from "lodash";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { cn } from "nextui/util";
 import { forwardRef, useState, type InputHTMLAttributes, type ReactElement, type RefObject } from "react";
@@ -145,7 +145,7 @@ export const classes = {
 };
 
 type BaseInputProps =
-    InputHTMLAttributes<HTMLInputElement> &
+    Omit<InputHTMLAttributes<HTMLInputElement>, "size"> &
     VariantProps<typeof classes[keyof typeof classes]> &
     Partial<{
 
@@ -221,7 +221,7 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 
 				{ /* Input */ }
 				<input
-					{ ...props }
+					{ ...omit(props, "size") }
 					className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
 					ref={ inputRef } />
 			

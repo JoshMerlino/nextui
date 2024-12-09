@@ -50,7 +50,8 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 					size={ props.size === "dense" ? "small" : "medium" } />
 				<Popover
 					screenMargin={ 16 }
-					state={ [ popoverOpen, setPopoverOpen ] }>
+					state={ [ popoverOpen, setPopoverOpen ] }
+					useModal={ false }>
 					<Calendar
 						className="cursor-default"
 						onSelect={ date => setDateValue(date) }

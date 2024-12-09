@@ -6,7 +6,7 @@ import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
 import { Popover } from "nextui/Popover";
 import { cn } from "nextui/util";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { IoMdCalendar } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
 import { classes } from ".";
@@ -16,7 +16,17 @@ import BaseInput from "./BaseInput";
 const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
 const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;
 
-export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, typeof CALENDAR_PROPS[number]> & Pick<ExtractProps<typeof Popover>, typeof POPOVER_PROPS[number]>>(function(props, forwarded) {
+type AdditionalProps = {
+
+	/**
+	 * If the popover should close on calendar select
+	 * @default true
+	 */
+	closeOnCalendarSelect?: boolean;
+
+};
+
+export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pick<ExtractProps<typeof Calendar>, typeof CALENDAR_PROPS[number]> & Pick<ExtractProps<typeof Popover>, typeof POPOVER_PROPS[number]> & Partial<AdditionalProps>>(function({ closeOnCalendarSelect = true, ...props }, forwarded) {
     
 	// Initialize the refs
 	const ref = useConvergedRef(forwarded);
@@ -63,6 +73,11 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		}
 	});
 
+	const onSelect = useCallback(function(date: Date | null) {
+		setDateValue(date);
+		if (closeOnCalendarSelect) setPopoverOpen(false);
+	}, [ closeOnCalendarSelect ]);
+
 	return (
 		<BaseInput
 			{ ...omit(props, CALENDAR_PROPS, POPOVER_PROPS) }
@@ -84,7 +99,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 					<Calendar
 						className="cursor-default"
 						color={ props.color }
-						onSelect={ setDateValue }
+						onSelect={ onSelect }
 						selected={ dateValue }
 						{ ...pick(props, CALENDAR_PROPS) } />
 				</Popover>

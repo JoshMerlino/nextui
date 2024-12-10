@@ -21,9 +21,9 @@ export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & 
 				{
 					"bg-gray-200/50 dark:bg-gray-700/50": isFocused,
 					"bg-gray-200/75 dark:bg-gray-700/75": isSelected,
+					"active:bg-gray-200 dark:active:bg-gray-700": !isSelected,
 					"bg-gray-200 dark:bg-gray-700": isSelected && isFocused
 				},
-				!isSelected && "active:bg-gray-200 dark:active:bg-gray-700",
 				className
 			]) }
 			ref={ ref }>

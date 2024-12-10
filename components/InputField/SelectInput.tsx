@@ -46,6 +46,10 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const ref = useConvergedRef(forwarded);
 	const wrapperRef = useConvergedRef(wrapper);
 
+	// Get the options
+	const options = (Children.toArray(children) as ReactElement<ExtractProps<typeof Option>>[])
+		.map(({ props }) => ({ value: props.value, label: Children.toArray(props.children).join("") || null }));
+
 	// Initialize the state
 	const [ popoverOpen, setPopoverOpen ] = useState(false);
 
@@ -141,6 +145,11 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		if (!wrapperRef.current?.contains(document.activeElement)) return;
 		if (!popoverOpen) setPopoverOpen(true);
 	});
+
+	useEffect(function() {
+		if (selected !== -1 || !(props.defaultValue || props.value)) return;
+		setSelected(options.findIndex(({ value }) => value?.toString() === (props.defaultValue || props.value)?.toString()));
+	}, [ options, props.defaultValue, props.value, selected ]);
 
 	return (
 		<BaseInput

@@ -1,15 +1,19 @@
 "use client";
+import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
-import { type HTMLAttributes, type OptionHTMLAttributes, useContext } from "react";
+import { forwardRef, type HTMLAttributes, type OptionHTMLAttributes, useContext } from "react";
 import { SelectProvider } from "./InputField/SelectInput";
 
-export function Option({ children, className, value, ...props }: HTMLAttributes<HTMLLIElement> & Pick<OptionHTMLAttributes<HTMLOptionElement>, "value">) {
-	
+export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & Pick<OptionHTMLAttributes<HTMLOptionElement>, "value">>(function({ children, className, value, ...props }, fref) {
+	const ref = useConvergedRef(fref);
 	const { isFocused, isSelected, setSelected, setFocused } = useContext(SelectProvider);
 
-	// useEffect(() => void (defaultChecked && currentSelected === -1 && setSelected()), [ currentSelected, defaultChecked, setSelected ]);
-	// useEffect(() => void (defaultValue && currentSelected === -1 && value?.toString() === defaultValue.toString() && setSelected()), [ value, setSelected, defaultValue, currentSelected ]);
+	useEventMap(ref, {
+		mousemove: () => setFocused(),
+		click: () => setSelected(),
+	});
+
 	return (
 		<li { ...props }
 			className={ cn([
@@ -22,10 +26,9 @@ export function Option({ children, className, value, ...props }: HTMLAttributes<
 				!isSelected && "active:bg-gray-200 dark:active:bg-gray-700",
 				className
 			]) }
-			onClick={ () => setSelected() }
-			onMouseEnter={ () => setFocused() }>
+			ref={ ref }>
 			<Ripple className="opacity-10" />
 			<option value={ value }>{ children }</option>
 		</li>
 	);
-}
+});

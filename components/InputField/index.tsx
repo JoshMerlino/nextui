@@ -34,7 +34,7 @@ export const classes = {
 	], {
 		defaultVariants: {
 			variant: "outlined",
-			color: "primary"
+			color: "primary",
 		},
 		variants: {
 			size: {

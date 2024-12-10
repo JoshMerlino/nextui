@@ -1,7 +1,7 @@
 import type { VariantProps } from "class-variance-authority";
 import { omit, pick } from "lodash";
 import { Card } from "nextui/Card";
-import { useConvergedRef, useEventMap, useFocusLost } from "nextui/hooks";
+import { useConvergedRef, useEventMap, useFocusLost, useKeybind } from "nextui/hooks";
 import { IconButton } from "nextui/IconButton";
 import type { Option } from "nextui/Option";
 import { Popover } from "nextui/Popover";
@@ -52,6 +52,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	// Open the popover when the input is focused
 	useEventMap(ref, {
 		focus: () => setPopoverOpen(true),
+		click: () => setPopoverOpen(true),
 	});
 	
 	// Close the popover when the focus is lost
@@ -129,10 +130,16 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				case "Enter":
 					event.preventDefault();
 					setSelected(focused);
+					ref.current?.focus();
 					break;
 
 			}
 		}
+	});
+
+	useKeybind("Enter", function() {
+		if (!wrapperRef.current?.contains(document.activeElement)) return;
+		if (!popoverOpen) setPopoverOpen(true);
 	});
 
 	return (
@@ -170,7 +177,10 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 								isFocused: focused === key,
 								isSelected: selected === key,
 								setFocused: () => setFocused(key),
-								setSelected: () => setSelected(key),
+								setSelected: () => {
+									setSelected(key);
+									setPopoverOpen(false);
+								},
 							}}>
 							{ child }
 						</SelectProvider>) }

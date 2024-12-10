@@ -84,7 +84,7 @@ export default function ExpandableGroup({
 				</AdjustableHeight>
 			</div>
 			<div
-				className={ cn("flex justify-center transition-[margin,transform,opacity] z-10 pointer-events-none", {
+				className={ cn("flex justify-center transition-[margin,transform,opacity] pointer-events-none", {
 					"opacity-50 pointer-events-none -z-10 hidden": buttonHidden,
 					"-translate-y-1/2": !isExpanded && !buttonHidden,
 					"sticky bottom-12 xl:bottom-12": isExpanded

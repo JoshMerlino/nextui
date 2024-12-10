@@ -5,15 +5,14 @@ import { AdjustableHeight } from "nextui/AdjustableHeight";
 import { Button as NextUIButton } from "nextui/Button";
 import { useEvent } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type JSX, type MouseEventHandler } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type JSX } from "react";
 import { MdChevronLeft } from "react-icons/md";
 
-function ToggleButton({ isExpanded, onClick }: { isExpanded: boolean, onClick: MouseEventHandler<HTMLButtonElement> }) {
+function ToggleButton({ isExpanded }: { isExpanded: boolean }) {
 	return (
 		<NextUIButton
-			className="w-12 h-12 rounded-full text-2xl pointer-events-auto"
+			className="w-12 h-12 rounded-full text-2xl"
 			color="primary:pastel"
-			onClick={ onClick }
 			type="button">
 			<MdChevronLeft className={ cn("transition-transform shrink-0", isExpanded ? "rotate-90" : "-rotate-90") } />
 		</NextUIButton>
@@ -28,7 +27,7 @@ export default function ExpandableGroup({
 	className,
 	...props
 }: HTMLAttributes<HTMLDivElement> & Partial<{
-	button?: (props: { isExpanded: boolean; onClick: () => void; }) => JSX.Element,
+	button?: (props: { isExpanded: boolean }) => JSX.Element,
 	defaultHeight?: number,
 	shadowSize?: number,
 }>) {
@@ -86,14 +85,14 @@ export default function ExpandableGroup({
 			</div>
 			<div
 				className={ cn("flex justify-center transition-[margin,transform,opacity] z-10 pointer-events-none", {
-					"opacity-0": buttonHidden,
+					"opacity-50 pointer-events-none -z-10 hidden": buttonHidden,
 					"-translate-y-1/2": !isExpanded && !buttonHidden,
 					"sticky bottom-12 xl:bottom-12": isExpanded
 				}) }
 				style={{ marginTop: (isExpanded || buttonHidden) ? -shadowSize / 2 : 0 }}>
-				<Button
-					isExpanded={ isExpanded }
-					onClick={ toggle } />
+				<div onClick={ toggle }>
+					<Button isExpanded={ isExpanded } />
+				</div>
 			</div>
 		</div>
 	);

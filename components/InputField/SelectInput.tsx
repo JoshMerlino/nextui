@@ -55,8 +55,14 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	// Open the popover when the input is focused
 	useEventMap(ref, {
-		focus: () => setPopoverOpen(true),
-		click: () => setPopoverOpen(true),
+		focus: () => {
+			ref.current?.blur();
+			setPopoverOpen(true);
+		},
+		click: () => {
+			ref.current?.blur();
+			setPopoverOpen(true);
+		},
 	});
 	
 	// Close the popover when the focus is lost
@@ -171,12 +177,11 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				duration={ 50 }
 				screenMargin={ 16 }
 				state={ [ popoverOpen, setPopoverOpen ] }
-				useModal={ false }
 				{ ...pick(props, POPOVER_PROPS) }>
 				<Card
 					className="p-0 -mx-px mt-px border-0"
 					variant="popover">
-					<ul className="flex flex-col py-2">
+					<ul className={ cn("flex flex-col py-2 group/select", props.size === "dense" && "size-dense") }>
 
 						{ /* Iterate over children and provide the select context */ }
 						{ Children.map(children, (child, key) => <SelectProvider

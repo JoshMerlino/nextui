@@ -137,9 +137,16 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 					setFocused(focused => (focused - 1 + Children.count(children)) % Children.count(children));
 					break;
 				
+				case " ":
+					event.preventDefault();
+					setSelected(focused);
+					ref.current?.focus();
+					break;
+				
 				case "Enter":
 					event.preventDefault();
 					setSelected(focused);
+					setPopoverOpen(false);
 					ref.current?.focus();
 					break;
 

@@ -213,7 +213,13 @@ export const classes = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof classes.button> & Partial<{
-	
+
+	/**
+	 * The color of the input
+	 * @default "primary"
+	 */
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
 	/**
 	 * Weather or not to show the ripple effect
 	 * @default true

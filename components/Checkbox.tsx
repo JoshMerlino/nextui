@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ClassValue } from "clsx";
+import { omit } from "lodash";
 import { useConvergedRef } from "nextui/hooks";
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
@@ -108,6 +109,12 @@ export const classes = {
 export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
+	 * The color of the input
+	 * @default "primary"
+	 */
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
+	/**
 	 * Whether the checkbox is indeterminate
 	 * @default false
 	 */
@@ -150,7 +157,7 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 				className={ cn(classes.checkbox(props as VariantProps<typeof classes.checkbox>), className) }
 				ref={ ref }
 				type="checkbox"
-				{ ...props } />
+				{ ...omit(props, "indeterminate") } />
 			
 			<div className={ cn(classes.icon(props as VariantProps<typeof classes.icon>)) }>
 				{ indeterminate ? <MdRemove /> : <MdCheck /> }

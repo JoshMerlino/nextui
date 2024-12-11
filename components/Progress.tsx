@@ -37,6 +37,12 @@ export const Progress = forwardRef<HTMLProgressElement, HTMLAttributes<HTMLProgr
 	 * @example 0.5
 	 */
 	value?: number;
+
+	/**
+	 * The color of the input
+	 * @default "primary"
+	 */
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
 	
 }>>(function({ className, ...props }, fref) {
 	const ref = useConvergedRef(fref);

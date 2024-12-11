@@ -45,6 +45,12 @@ export const Spinner = forwardRef<SVGSVGElement, HTMLAttributes<SVGSVGElement> &
 	 */
 	speed: string | number;
 
+	/**
+	 * The color of the input
+	 * @default "primary"
+	 */
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
 }>>(function({ className, speed = 2000, rounded, style, ...props }, ref) {
 	return (
 		<svg

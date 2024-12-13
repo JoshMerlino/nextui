@@ -33,15 +33,15 @@ export const classes = {
 				vercel: "px-3 h-8",
 			},
 			color: {
-				primary: "[&.selected]:text-primary hover:text-primary",
-				"primary:pastel": "[&.selected]:text-primary-pastel dark:[&.selected]:text-primary-300 hover:text-primary-pastel dark:hover:text-primary-300",
-				error: "[&.selected]:text-error hover:text-error",
-				"error:pastel": "[&.selected]:text-error-pastel dark:[&.selected]:text-error-300 hover:text-error-pastel dark:hover:text-error-300",
-				success: "[&.selected]:text-success hover:text-success",
-				"success:pastel": "[&.selected]:text-success-pastel dark:[&.selected]:text-success-300 hover:text-success-pastel dark:hover:text-success-300",
-				warning: "[&.selected]:text-warning hover:text-warning",
-				"warning:pastel": "[&.selected]:text-warning-pastel dark:[&.selected]:text-warning-300 hover:text-warning-pastel dark:hover:text-warning-300",
-				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 hover:text-gray-800 dark:hover:text-gray-200",
+				primary: "[&.selected]:text-primary [&.hovered]:text-primary",
+				"primary:pastel": "[&.selected]:text-primary-pastel dark:[&.selected]:text-primary-300 [&.hovered]:text-primary-pastel dark:[&.hovered]:text-primary-300",
+				error: "[&.selected]:text-error [&.hovered]:text-error",
+				"error:pastel": "[&.selected]:text-error-pastel dark:[&.selected]:text-error-300 [&.hovered]:text-error-pastel dark:[&.hovered]:text-error-300",
+				success: "[&.selected]:text-success [&.hovered]:text-success",
+				"success:pastel": "[&.selected]:text-success-pastel dark:[&.selected]:text-success-300 [&.hovered]:text-success-pastel dark:[&.hovered]:text-success-300",
+				warning: "[&.selected]:text-warning [&.hovered]:text-warning",
+				"warning:pastel": "[&.selected]:text-warning-pastel dark:[&.selected]:text-warning-300 [&.hovered]:text-warning-pastel dark:[&.hovered]:text-warning-300",
+				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.hovered]:text-gray-800 dark:[&.hovered]:text-gray-200",
 			}
 		},
 	}),
@@ -226,7 +226,7 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 }>>(function({ children, defaultChecked, className, ripple, ...props }, fref) {
 
 	const ref = useConvergedRef(fref);
-	const { isSelected, setSelected, setHovered } = useContext(TabContext);
+	const { isHovered, isSelected, setSelected, setHovered } = useContext(TabContext);
 	useEffect(() => void (defaultChecked && setSelected()), [ defaultChecked, setSelected ]);
 
 	useEventMap(ref, {
@@ -238,7 +238,10 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 	return (
 		<button
 			{ ...props }
-			className={ cn(classes.tab(props as VariantProps<typeof classes.tab>), className, isSelected && "selected") }
+			className={ cn(classes.tab(props as VariantProps<typeof classes.tab>), {
+				"selected": isSelected,
+				"hovered": isHovered
+			}, className) }
 			ref={ ref }
 			tabIndex={ 0 }>
 

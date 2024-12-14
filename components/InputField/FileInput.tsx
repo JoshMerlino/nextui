@@ -49,8 +49,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 			<Button
 				{ ...pick(props, BUTTON_PROPS) }
 				className="-mr-1.5"
-				onClick={ () => ref.current?.click() }
-				size={ props.size === "dense" ? "small" : "medium" }>
+				onClick={ () => ref.current?.click() }>
 				Browse
 			</Button>
 			<input

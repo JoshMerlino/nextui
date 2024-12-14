@@ -9,7 +9,7 @@ import { classes } from ".";
 type BaseInputProps =
     Omit<InputHTMLAttributes<HTMLInputElement>, "size"> &
     VariantProps<typeof classes[keyof typeof classes]> &
-    Partial<{
+	Partial<{
 
         /**
          * The color of the input

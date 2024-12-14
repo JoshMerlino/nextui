@@ -5,14 +5,16 @@ import { forwardRef } from "react";
 
 import BaseInput from "./BaseInput";
 import DateInput from "./DateInput";
+import FileInput from "./FileInput";
 import PasswordInput from "./PasswordInput";
 import SelectInput from "./SelectInput";
 
 type InputFieldTypes = {
-    text: ExtractProps<typeof BaseInput>;
-    password: ExtractProps<typeof PasswordInput>;
+	text: ExtractProps<typeof BaseInput>;
 	date: ExtractProps<typeof DateInput>;
+	file: ExtractProps<typeof FileInput>;
 	select: ExtractProps<typeof SelectInput>;
+    password: ExtractProps<typeof PasswordInput>;
 };
 
 type InputFactoryProps<T extends keyof InputFieldTypes> = { type: T } & InputFieldTypes[T];
@@ -21,8 +23,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 	switch (props.type) {
 		default: return <BaseInput { ...props } ref={ ref } />;
 		case "date": return <DateInput { ...props } ref={ ref } />;
-		case "select" : return <SelectInput { ...props } ref={ ref } />;
+		case "file": return <FileInput { ...props } ref={ ref } />;
 		case "password": return <PasswordInput { ...props } ref={ ref } />;
+		case "select" : return <SelectInput { ...props } ref={ ref } />;
 	}
 });
 
@@ -64,7 +67,7 @@ export const classes = {
 	}),
 
 	input: cva([
-		"peer bg-transparent cursor-text outline-0 border-0 shrink grow inline-flex w-0 min-w-0",
+		"peer bg-transparent cursor-text outline-0 border-0 shrink grow inline-flex w-0 min-w-0 appearance-none",
 		"placeholder:text-gray-500 placeholder:dark:text-gray-400",
 		"disabled:select-none"
 	], {
@@ -164,5 +167,6 @@ export const classes = {
 };
 
 // Props to pass to the calendar
-export const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate" ] as const;
+export const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate", "color" ] as const;
 export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;
+export const BUTTON_PROPS = [ "color", "variant", "disabled" ] as const;

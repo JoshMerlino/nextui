@@ -76,7 +76,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	return (
 		<BaseInput
-			{ ...omit(props, CALENDAR_PROPS, POPOVER_PROPS) }
+			{ ...omit(props, omit(CALENDAR_PROPS, "color"), POPOVER_PROPS) }
 			ref={ ref }
 			type="text">
 			<div className="relative">

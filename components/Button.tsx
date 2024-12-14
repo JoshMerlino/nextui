@@ -14,7 +14,7 @@ export const classes = {
 		
 		defaultVariants: {
 			color: "primary",
-			size: "medium",
+			size: "default",
 			variant: "raised",
 		},
 
@@ -26,8 +26,8 @@ export const classes = {
 			},
 
 			size: {
-				"small": "px-3 h-7 py-0.5 text-xs",
-				"medium": "px-4 h-9 py-1 text-sm",
+				"dense": "px-3 h-7 py-0.5 text-xs",
+				"default": "px-4 h-9 py-1 text-sm",
 				"large": "px-6 h-11 py-2 text-base",
 				"md:large": "px-4 h-9 py-1 text-sm md:px-6 md:h-11 md:py-2 md:text-base",
 			},
@@ -200,13 +200,13 @@ export const classes = {
 		variants: {
 			size: {
 				"large": "w-6 -ml-2",
-				"small": "w-4",
-				"medium": "w-5",
+				"dense": "w-4",
+				"default": "w-5",
 				"md:large": "w-5 md:w-6 md:-ml-2 "
 			}
 		},
 		defaultVariants: {
-			size: "medium"
+			size: "default"
 		}
 	})
 
@@ -293,15 +293,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
 				["WebkitFocusRingColor" as keyof CSSProperties]: "transparent"
 			} satisfies CSSProperties) }>
 			
-			{ /* Ripple */ }
-			{ (props.disabled || (typeof ripple === "boolean" && !ripple)) || <Ripple { ...typeof ripple === "boolean" ? {} : ripple } /> }
-			
 			{ /* Spinner */ }
 			{ !!loading && <Spinner
 				{ ...(typeof loading === "boolean" ? {} : loading) }
 				className={ cn(classes.spinner(props as VariantProps<typeof classes.spinner>), typeof loading === "boolean" ? "" : loading.className) } /> }
 			
 			{ children }
+			
+			{ /* Ripple */ }
+			{ (props.disabled || (typeof ripple === "boolean" && !ripple)) || <Ripple { ...typeof ripple === "boolean" ? {} : ripple } /> }
 			
 		</button>
 	);

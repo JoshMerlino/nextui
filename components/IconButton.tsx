@@ -44,8 +44,11 @@ export const IconButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTM
 			ref={ ref }
 			type="button"
 			{ ...props }>
-			{ props.disabled || <Ripple emitFromCenter /> }
+			
 			{ Icon && typeof Icon === "function" ? <Icon /> : Icon }
+			
+			{ props.disabled || <Ripple emitFromCenter /> }
+			
 		</button>
 	);
 });

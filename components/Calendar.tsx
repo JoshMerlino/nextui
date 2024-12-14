@@ -270,7 +270,7 @@ export function Calendar({
 															return newDate;
 														});
 													} }
-													size="small"
+													size="dense"
 													variant={ year === renderDate.getFullYear() ? "raised" : "flat" }>
 													{ year.toString().padStart(4, "0") }
 												</Button>

@@ -19,13 +19,14 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 			setFiles(files);
 		}
 	});
-
+	
 	useEventMap(wrapperRef, {
 		drop(event) {
 			event.preventDefault();
 			event.stopPropagation();
 			if (!event.dataTransfer) return;
 			const { files } = event.dataTransfer;
+			if (!files) return;
 			setFiles(files);
 		}
 	});
@@ -42,6 +43,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		<BaseInput
 			{ ...props }
 			onClick={ () => ref.current?.click() }
+			placeholder="No file selected"
 			readOnly
 			type="text"
 			value={ files?.length ? files.length === 1 ? files[0].name : `${ files.length } files` : "" }
@@ -53,7 +55,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				Browse
 			</Button>
 			<input
-				{ ...omit(props, "size") }
+				{ ...omit(props, "size", "value", "defaultValue") }
 				className="hidden"
 				ref={ ref }
 				type="file" />

@@ -140,14 +140,14 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				case " ":
 					event.preventDefault();
 					setSelected(focused);
-					ref.current?.focus();
+					requestAnimationFrame(() => ref.current?.focus());
 					break;
-				
+					
 				case "Enter":
 					event.preventDefault();
 					setSelected(focused);
 					setPopoverOpen(false);
-					ref.current?.focus();
+					requestAnimationFrame(() => ref.current?.focus());
 					break;
 
 			}
@@ -184,6 +184,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				duration={ 50 }
 				screenMargin={ 16 }
 				state={ [ popoverOpen, setPopoverOpen ] }
+				useModal={ false }
 				{ ...pick(props, POPOVER_PROPS) }>
 				<Card
 					className="p-0 -mx-px mt-px border-0"

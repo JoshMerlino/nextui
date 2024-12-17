@@ -4,8 +4,8 @@ import { Children, createContext, useCallback, useEffect, useRef, useState, type
 export { Tab } from "./Tab";
 
 export const TabsContext = createContext<{
-	indicator: RefObject<HTMLDivElement> | null,
-	background: RefObject<HTMLDivElement> | null,
+	indicator: RefObject<HTMLDivElement | null> | null,
+	background: RefObject<HTMLDivElement | null> | null,
 	selected: number,
 	setSelected: Dispatch<SetStateAction<number>>
 }>({

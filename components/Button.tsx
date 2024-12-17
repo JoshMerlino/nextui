@@ -70,7 +70,7 @@ export const classes = {
 			{
 				variant: "raised",
 				color: "primary:pastel",
-				className: "text-primary-950 bg-primary-300 hover:bg-primary-400 focus:bg-primary-400 active:bg-primary-500"
+				className: "text-white bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800 dark:text-primary-950 dark:bg-primary-300 dark:hover:bg-primary-400 dark:focus:bg-primary-400 dark:active:bg-primary-500"
 			}, {
 				variant: "flat",
 				color: "primary:pastel",
@@ -112,7 +112,7 @@ export const classes = {
 			{
 				variant: "raised",
 				color: "error:pastel",
-				className: "text-error-950 bg-error-300 hover:bg-error-400 focus:bg-error-400 active:bg-error-500"
+				className: "text-white bg-error-600 hover:bg-error-700 focus:bg-error-700 active:bg-error-800 dark:text-error-950 dark:bg-error-300 dark:hover:bg-error-400 dark:focus:bg-error-400 dark:active:bg-error-500"
 			}, {
 				variant: "flat",
 				color: "error:pastel",
@@ -140,7 +140,7 @@ export const classes = {
 			{
 				variant: "raised",
 				color: "success:pastel",
-				className: "text-success-950 bg-success-300 hover:bg-success-400 focus:bg-success-400 active:bg-success-500"
+				className: "text-white bg-success-600 hover:bg-success-700 focus:bg-success-700 active:bg-success-800 dark:text-success-950 dark:bg-success-300 dark:hover:bg-success-400 dark:focus:bg-success-400 dark:active:bg-success-500"
 			}, {
 				variant: "flat",
 				color: "success:pastel",
@@ -168,7 +168,7 @@ export const classes = {
 			{
 				variant: "raised",
 				color: "warning:pastel",
-				className: "text-warning-950 bg-warning-300 hover:bg-warning-400 focus:bg-warning-400 active:bg-warning-500"
+				className: "text-white bg-warning-600 hover:bg-warning-700 focus:bg-warning-700 active:bg-warning-800 dark:text-warning-950 dark:bg-warning-300 dark:hover:bg-warning-400 dark:focus:bg-warning-400 dark:active:bg-warning-500"
 			}, {
 				variant: "flat",
 				color: "warning:pastel",

@@ -10,7 +10,7 @@ import { MdCheck, MdRemove } from "react-icons/md";
 export const classes = {
 
 	checkbox: cva([
-		"appearance-none -translate-y-px border-2 border-gray-500 w-4 h-4 aspect-square rounded-[2px] peer checked:border-[8px] transition-[border-color,border-width]"
+		"appearance-none -translate-y-px border-2 border-gray-500 w-4 h-4 aspect-square rounded-[2px] peer checked:border-[8px] transition-[border-color,border-width] cursor-pointer z-50"
 	], {
 		defaultVariants: {
 			color: "primary",
@@ -55,7 +55,7 @@ export const classes = {
 		}
 	}),
 
-	ripple: cva(null, {
+	ripple: cva("cursor-pointer", {
 		defaultVariants: {
 			disabled: false,
 			color: "primary"
@@ -144,14 +144,14 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 	const ref = useConvergedRef(fref);
 
 	if (children) return (
-		<label className={ cn("flex items-center gap-4 group/checkbox cursor-pointer", className) }>
+		<label className={ cn("flex items-center gap-4 group/checkbox", className) }>
 			<Checkbox { ...props } />
 			{ children }
 		</label>
 	);
 
 	return (
-		<div className="relative h-4 w-4 isolate">
+		<label className="relative h-4 w-4 isolate group/checkbox">
 			
 			<input
 				className={ cn(classes.checkbox(props as VariantProps<typeof classes.checkbox>), className) }
@@ -170,7 +170,7 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 				</div>
 			) }
 			
-		</div>
+		</label>
 	);
 
 });

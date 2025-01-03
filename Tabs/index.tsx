@@ -1,6 +1,7 @@
 "use client";
 
-import { Children, createContext, useCallback, useEffect, useRef, useState, type Dispatch, type PropsWithChildren, type RefObject, type SetStateAction } from "react";
+import { useResize } from "nextui/hooks";
+import { Children, createContext, useCallback, useEffect, useLayoutEffect, useRef, useState, type Dispatch, type PropsWithChildren, type RefObject, type SetStateAction } from "react";
 export { Tab } from "./Tab";
 
 export const TabsContext = createContext<{
@@ -35,7 +36,7 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 		}, { once: true });
 	}, []);
 
-	useEffect(function() {
+	const redraw = useCallback(function() {
 		if (!indicator.current || !items.current) return;
 		const slider = indicator.current;
 		const target = items.current.querySelector(":nth-child(" + (selected + 1) + ")") as HTMLLIElement;
@@ -46,6 +47,9 @@ export function Tabs({ children, defaultSelected = -1 }: PropsWithChildren<{ def
 			slider.style.opacity = "1";
 		}, { once: true });
 	}, [ selected ]);
+
+	useLayoutEffect(() => void requestAnimationFrame(redraw), [ redraw, selected, children ]);
+	useResize(redraw);
 	
 	useEffect(() => setSelected(defaultSelected), [ defaultSelected ]);
 

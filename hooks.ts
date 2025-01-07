@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type DependencyList } from "react";
 
-export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement) {
+export function useScroll(container: React.RefObject<HTMLElement> | HTMLElement | null) {
 	
 	const element = useMemo(() => container && "current" in container ? container.current : container, [ container ]);
 	

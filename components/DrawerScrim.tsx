@@ -135,7 +135,6 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 		$drawer.style.transition = "transform 200ms ease-in-out";
 		$drawer.style.transitionProperty = "transform, opacity";
-		console.log("close");
 		$drawer.style.setProperty("--tw-translate-x", open ? "0" : "-100%");
 
 		// Set scrim properties if not dragging

@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ClassValue } from "clsx";
 import { omit } from "lodash";
 import { useConvergedRef } from "nextui/hooks";
 import { Ripple } from "nextui/Ripple";
@@ -123,7 +122,7 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
         /**
          * Custom class overrides
          */
-        className: string | ClassValue;
+        className: string;
 
         /**
          * Whether or not the ripple is disabled

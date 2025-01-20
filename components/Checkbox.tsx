@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ClassValue } from "clsx";
 import { omit } from "lodash";
 import { useConvergedRef } from "nextui/hooks";
 import { Ripple } from "nextui/Ripple";
@@ -129,7 +128,7 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 		/**
 		 * Custom class overrides
 		 */
-		className: string | ClassValue;
+		className: string;
 
 		/**
 		 * Weather or not the ripple is disabled

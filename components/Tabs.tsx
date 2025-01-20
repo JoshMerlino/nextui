@@ -1,7 +1,6 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ClassValue } from "clsx";
 import { useConvergedRef, useEventMap, useFocusLost } from "nextui/hooks";
 import { cn } from "nextui/util";
 import { Children, createContext, type Dispatch, forwardRef, type HTMLAttributes, type InputHTMLAttributes, useContext, useEffect, useRef, useState } from "react";
@@ -213,7 +212,7 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 		/**
 		 * Custom class overrides
 		 */
-		className: string | ClassValue;
+		className: string;
 
 		/**
 		 * Weather or not the ripple is disabled

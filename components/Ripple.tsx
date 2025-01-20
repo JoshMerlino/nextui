@@ -1,6 +1,5 @@
 "use client";
 
-import { ClassValue } from "clsx";
 import { useCallback, useEffect, useRef } from "react";
 import { cn } from "../util";
 
@@ -10,12 +9,12 @@ export function Ripple({ emitFromCenter, className, disabled, duration = 500 }: 
 	 * Weather or not to emit the ripple from the center of the element
 	 * @default false
 	 */
-	emitFromCenter?: boolean;
+	emitFromCenter: boolean;
 
 	/**
 	 * Custom class overrides
 	 */
-	className?: string | ClassValue;
+	className: string;
 
 	/**
 	 * Weather or not the ripple is disabled
@@ -104,15 +103,15 @@ export function Ripple({ emitFromCenter, className, disabled, duration = 500 }: 
 		const ripple = ref.current;
 		if (!ripple) return;
 
+		// Create the abort signal
+		const controller = new AbortController();
+
 		// Add event listeners
-		ripple.addEventListener("mousedown", createRipple);
-		ripple.addEventListener("mouseleave", clear);
+		ripple.addEventListener("mousedown", createRipple, { signal: controller.signal });
+		ripple.addEventListener("mouseleave", clear, { signal: controller.signal });
 
 		// Cleanup on unmount
-		return () => {
-			ripple?.removeEventListener("mousedown", createRipple);
-			ripple?.removeEventListener("mouseleave", clear);
-		};
+		return () => controller.abort();
 
 	}, [ className, clear, createRipple, emitFromCenter, ref ]);
 

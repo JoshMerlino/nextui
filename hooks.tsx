@@ -19,16 +19,12 @@ export function useFocusLost<T extends HTMLElement>(ref: RefObject<T | null>, ca
 	useEffect(function() {
 		const element = ref.current;
 		if (!element) return;
-		document.addEventListener("mousedown", handleClickOutside);
-		document.addEventListener("touchstart", handleClickOutside);
-		element.addEventListener("focusout", handleFocusShift);
-		window.addEventListener("blur", callback);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-			document.removeEventListener("touchstart", handleClickOutside);
-			element.removeEventListener("focusout", handleFocusShift);
-			window.removeEventListener("blur", callback);
-		};
+		const controller = new AbortController();
+		document.addEventListener("mousedown", handleClickOutside, { signal: controller.signal });
+		document.addEventListener("touchstart", handleClickOutside, { signal: controller.signal });
+		element.addEventListener("focusout", handleFocusShift, { signal: controller.signal });
+		window.addEventListener("blur", callback, { signal: controller.signal });
+		return () => controller.abort();
 	}, [ ref, callback, handleClickOutside, handleFocusShift ]);
 }
 
@@ -53,16 +49,12 @@ export function useKeybind(bind: Keybind, callback: (event: KeyboardEvent) => un
 }
 
 export function useEvent<T extends keyof WindowEventMap>(event: T, callback: (event: WindowEventMap[T]) => unknown) {
-
-	const handleEvent = useCallback(function(event: WindowEventMap[T]) {
-		callback(event);
-	}, [ callback ]);
-
+	const handleEvent = useCallback((event: WindowEventMap[T]) => callback(event), [ callback ]);
 	useEffect(function() {
-		window.addEventListener(event, handleEvent);
-		return () => window.removeEventListener(event, handleEvent);
+		const controller = new AbortController();
+		window.addEventListener(event, handleEvent, { signal: controller.signal });
+		return () => controller.abort();
 	}, [ event, handleEvent ]);
-
 }
 
 export function useConvergedRef<T>(ref?: React.Ref<T>) {
@@ -79,12 +71,11 @@ export function useEventMap<T extends HTMLElement | null>(ref: RefObject<T>, cus
     [K in keyof HTMLElementEventMap]: (this: Exclude<T, null>, event: HTMLElementEventMap[K] & { target: T; }) => void;
 }> = {}) {
 	useEffect(function() {
+		const controller = new AbortController();
 		const current = ref.current;
 		if (!current) return;
-		for (const [ event, handler ] of Object.entries(customEvents)) current.addEventListener(event as keyof HTMLElementEventMap, handler as EventListener);
-		return () => {
-			for (const [ event, handler ] of Object.entries(customEvents)) current.removeEventListener(event as keyof HTMLElementEventMap, handler as EventListener);
-		};
+		for (const [ event, handler ] of Object.entries(customEvents)) current.addEventListener(event as keyof HTMLElementEventMap, handler as EventListener, { signal: controller.signal });
+		return () => controller.abort();
 	}, [ ref, customEvents ]);
 }
 

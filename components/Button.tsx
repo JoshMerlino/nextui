@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ClassValue } from "clsx";
 import { merge } from "lodash";
 import { Spinner } from "nextui/components/Spinner";
 import { ButtonHTMLAttributes, forwardRef, type CSSProperties, type ReactNode } from "react";
@@ -235,7 +234,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
 		/**
 		 * Custom class overrides
 		 */
-		className: string | ClassValue;
+		className: string;
 
 		/**
 		 * Weather or not the ripple is disabled
@@ -254,7 +253,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
 		/**
 		 * Custom class overrides
 		 */
-		className: string | ClassValue;
+		className: string;
 
 		/**
 		 * Weather or not the ripple is disabled

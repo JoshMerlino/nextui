@@ -21,6 +21,10 @@ export const classes = {
 				top: "-translate-x-1/2 -left-1/2 origin-bottom",
 				left: "-translate-y-1/2 -top-1/2 origin-right",
 				right: "-translate-y-1/2 -top-1/2 origin-left",
+				"bottom-left": "-translate-x-1/2 -left-1/2 origin-top-right",
+				"bottom-right": "-translate-x-1/2 -left-1/2 origin-top-left",
+				"top-left": "-translate-x-1/2 -left-1/2 origin-bottom-right",
+				"top-right": "-translate-x-1/2 -left-1/2 origin-bottom-left",
 			}
 		}
 	}),
@@ -35,6 +39,10 @@ export const classes = {
 				top: "origin-bottom",
 				left: "origin-right",
 				right: "origin-left",
+				"bottom-left": "origin-top-right",
+				"bottom-right": "origin-top-left",
+				"top-left": "origin-bottom-right",
+				"top-right": "origin-bottom-left",
 			}
 		}
 	})
@@ -54,7 +62,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
      * The side of the target to position the popover to.
      * @default "bottom"
      */
-    position: "bottom" | "top" | "left" | "right";
+    position: "bottom" | "top" | "left" | "right" | `${ "bottom" | "top" }-${ "left" | "right" }`;
 
     /**
      * Whether the popover should close when the target loses focus.

@@ -14,15 +14,15 @@ export const classes = {
 		{
 			variants: {
 				color: {
-					primary: "checked:bg-primary dark:checked:bg-primary",
-					"primary:pastel": "checked:bg-primary dark:checked:bg-primary-300",
-					error: "checked:bg-error dark:checked:bg-error",
-					"error:pastel": "checked:bg-error dark:checked:bg-error-300",
-					success: "checked:bg-success dark:checked:bg-success",
-					"success:pastel": "checked:bg-success dark:checked:bg-success-300",
-					warning: "checked:bg-warning dark:checked:bg-warning",
-					"warning:pastel": "checked:bg-warning dark:checked:bg-warning-300",
-					neutral: "checked:bg-gray-500 dark:checked:bg-gray-500"
+					primary: "checked:bg-primary/50 dark:checked:bg-primary/50",
+					"primary:pastel": "checked:bg-primary/50 dark:checked:bg-primary-300/50",
+					error: "checked:bg-error/50 dark:checked:bg-error/50",
+					"error:pastel": "checked:bg-error/50 dark:checked:bg-error-300/50",
+					success: "checked:bg-success/50 dark:checked:bg-success/50",
+					"success:pastel": "checked:bg-success/50 dark:checked:bg-success-300/50",
+					warning: "checked:bg-warning/50 dark:checked:bg-warning/50",
+					"warning:pastel": "checked:bg-warning/50 dark:checked:bg-warning-300/50",
+					neutral: "checked:bg-gray-500/50 dark:checked:bg-gray-500/50"
 				}
 			},
 			defaultVariants: {

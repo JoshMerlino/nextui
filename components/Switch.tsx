@@ -147,7 +147,7 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 	}
 
 	return (
-		<label className="relative h-[14px] w-[34px] isolate group/switch">
+		<label className="relative h-5 w-[34px] isolate group/switch">
 			<input
 				className={ cn(classes.track({ color }), className) }
 				ref={ ref }

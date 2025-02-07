@@ -55,14 +55,8 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 
 	// Open the popover when the input is focused
 	useEventMap(ref, {
-		focus: () => {
-			ref.current?.blur();
-			setPopoverOpen(true);
-		},
-		click: () => {
-			ref.current?.blur();
-			setPopoverOpen(true);
-		},
+		focus: () => setPopoverOpen(true),
+		click: () => setPopoverOpen(true),
 	});
 	
 	// Close the popover when the focus is lost
@@ -100,6 +94,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		// Dispatch the input event
 		const event = new Event("input", { bubbles: true, target: current } as EventInit);
 		current.dispatchEvent(event);
+		setPopoverOpen(false);
 
 	}, [ children, ref, selected ]);
 

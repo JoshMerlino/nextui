@@ -1,7 +1,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { cva, type VariantProps } from "class-variance-authority";
 import dayjs from "dayjs";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "nextui/util";
 import { useCallback, useEffect, useMemo, useRef, useState, type HTMLAttributes } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -106,6 +106,7 @@ export function Calendar({
 
 	// State for year picker
 	const [ yearPicker, setYearPicker ] = useState(_yearPicker);
+	const shouldReduceMotion = useReducedMotion();
 	const yearPickerRef = useRef<HTMLDivElement>(null);
 
 	// The virtualizer
@@ -231,7 +232,7 @@ export function Calendar({
 						scrollbarWidth: "none",
 						maskImage: "linear-gradient(to bottom, #0000 0px, #000f 16px, #000f calc(100% - 16px), #0000 100%)",
 					}}
-					transition={{ duration: 0.1 }}
+					transition={{ duration: shouldReduceMotion ? 0 : 0.1 }}
 					variants={{
 						hidden: { opacity: 0, top: -16 },
 						visible: { opacity: 1, top: 0 },
@@ -292,7 +293,7 @@ export function Calendar({
 					) }
 					exit="hidden"
 					initial="hidden"
-					transition={{ duration: 0.1 }}
+					transition={{ duration: shouldReduceMotion ? 0 : 0.1 }}
 					variants={{
 						visible: { opacity: 0, top: -16 },
 						hidden: { opacity: 1, top: 0 },
@@ -322,7 +323,7 @@ export function Calendar({
 									exit={{ x: direction === "right" ? -16 : 16, opacity: 0 }}
 									initial={{ x: direction === "right" ? 16 : -16, opacity: 0 }}
 									key={ dayjs(renderDate).format("YYYY-MM") }
-									transition={{ duration: 0.1 }}>
+									transition={{ duration: shouldReduceMotion ? 0 : 0.1 }}>
 									<div className="grid grid-cols-7 m-2 select-none text-sm gap-1 font-medium">
 						
 										{ /* Blank days of week */ }

@@ -37,7 +37,7 @@ export function AdjustableHeight({ children, deps = []}: PropsWithChildren<Parti
 
 	return (
 		<div
-			className="transition-[height] bg-inherit"
+			className="not-motion-reduce:transition-[height] bg-inherit"
 			ref={ wrapperRef }>
 			{ children }
 		</div>

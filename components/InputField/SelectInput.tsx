@@ -170,7 +170,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 			<IconButton
 				className={ cn(classes.button(props as VariantProps<typeof classes.button>)) }
 				disabled={ props.disabled }
-				icon={ <MdChevronLeft className={ cn("transition-transform duration-50 rotate-90", popoverOpen || "-scale-x-100") } /> }
+				icon={ <MdChevronLeft className={ cn("not-motion-reduce:transition-transform duration-50 rotate-90", popoverOpen || "-scale-x-100") } /> }
 				onClick={ () => setPopoverOpen(!popoverOpen) }
 				size={ props.size === "dense" ? "small" : "medium" } />
 			<Popover

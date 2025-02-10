@@ -8,7 +8,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
 export const classes = {
 	track: cva(
 		[
-			"appearance-none peer focus:outline-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+			"appearance-none peer focus:outline-0 rounded-full not-motion-reduce:transition-colors disabled:cursor-not-allowed disabled:opacity-50",
 			"w-[34px] h-[14px] bg-gray-300 dark:bg-gray-600 checked:bg-opacity-50 dark:checked:bg-opacity-50 disabled:checked:!bg-opacity-50"
 		],
 		{
@@ -33,7 +33,7 @@ export const classes = {
 
 	thumb: cva(
 		[
-			"aspect-square w-5 absolute inset-0 rounded-full transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-100 dark:bg-gray-400 shadow-sm shadow-black/20 peer-disabled:bg-gray-400 peer-disabled:grayscale-[0.5] text-[0px] peer-checked:ml-3.5 peer-checked:bg-current"
+			"aspect-square w-5 absolute inset-0 rounded-full not-motion-reduce:transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-100 dark:bg-gray-400 shadow-sm shadow-black/20 peer-disabled:bg-gray-400 peer-disabled:grayscale-[0.5] text-[0px] peer-checked:ml-3.5 peer-checked:bg-current"
 		],
 		{
 			variants: {
@@ -157,7 +157,7 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 			<div className={ cn(classes.thumb({ color })) } />
 			
 			{ (props.disabled || (typeof ripple === "boolean" && !ripple)) || (
-				<div className={ cn("aspect-square w-9 h-9 -top-2 z-20 absolute rounded-full overflow-hidden transition-transform -translate-x-2 peer-checked:translate-x-1.5", classes.rippleWrapper({ color, disabled: props.disabled })) }>
+				<div className={ cn("aspect-square w-9 h-9 -top-2 z-20 absolute rounded-full overflow-hidden not-motion-reduce:transition-transform -translate-x-2 peer-checked:translate-x-1.5", classes.rippleWrapper({ color, disabled: props.disabled })) }>
 					<Ripple { ...typeof ripple === "boolean" ? {} : ripple } className={ cn(classes.ripple({ color, disabled: props.disabled }), typeof ripple === "object" && ripple.className) } emitFromCenter />
 				</div>
 			) }

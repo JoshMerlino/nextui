@@ -10,7 +10,7 @@ export const classes = {
 	]),
 
 	item: cva([
-		"relative flex items-center overflow-hidden transition-colors gap-4 text-sm font-medium px-5 text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hover:bg-gray-100 dark:active:bg-gray-700/50 w-full",
+		"relative flex items-center overflow-hidden not-motion-reduce:transition-colors gap-4 text-sm font-medium px-5 text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hover:bg-gray-100 dark:active:bg-gray-700/50 w-full",
 	], {
 
 		variants: {
@@ -42,7 +42,7 @@ export const classes = {
 
 	}),
 
-	indicator: cva("absolute transition-[top,height] z-10 pointer-events-none", {
+	indicator: cva("absolute not-motion-reduce:transition-[top,height] z-10 pointer-events-none", {
 		defaultVariants: {
 			variant: "default",
 			color: "primary"

@@ -9,7 +9,7 @@ import { MdCheck, MdRemove } from "react-icons/md";
 export const classes = {
 
 	checkbox: cva([
-		"appearance-none -translate-y-px border-2 border-gray-500 w-4 h-4 aspect-square rounded-[2px] peer checked:border-[8px] transition-[border-color,border-width] cursor-pointer z-50"
+		"appearance-none -translate-y-px border-2 border-gray-500 w-4 h-4 aspect-square rounded-[2px] peer checked:border-[8px] not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
 	], {
 		defaultVariants: {
 			color: "primary",
@@ -30,7 +30,7 @@ export const classes = {
 	}),
 
 	icon: cva([
-		"absolute inset-0 flex items-center justify-center z-10 transition-transform"
+		"absolute inset-0 flex items-center justify-center z-10 not-motion-reduce:transition-transform"
 	], {
 		defaultVariants: {
 			color: "primary",

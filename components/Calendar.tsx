@@ -184,7 +184,7 @@ export function Calendar({
 					onClick={ () => setYearPicker(!yearPicker) }
 					variant="flat">
 					{ yearFormat(renderDate) }
-					<IoMdArrowDropdown className={ cn("transition-[transform] text-xl -mx-1 duration-75", yearPicker && "rotate-180") } />
+					<IoMdArrowDropdown className={ cn("not-motion-reduce:transition-[transform] text-xl -mx-1 duration-75", yearPicker && "rotate-180") } />
 				</Button>
 
 				{ /* Month navigation */ }

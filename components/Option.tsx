@@ -17,7 +17,7 @@ export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & 
 	return (
 		<li { ...props }
 			className={ cn([
-				"min-h-10 px-4 flex items-center select-none relative overflow-hidden isolate transition-colors duration-100 cursor-pointer",
+				"min-h-10 px-4 flex items-center select-none relative overflow-hidden isolate not-motion-reduce:transition-colors duration-100 cursor-pointer",
 				"group-[.size-dense]/select:min-h-9 group-[.size-dense]/select:px-3 group-[.size-dense]/select:text-sm",
 				{
 					"bg-gray-200/50 dark:bg-gray-700/50": isFocused,

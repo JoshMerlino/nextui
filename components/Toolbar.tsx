@@ -6,7 +6,7 @@ import { Container } from "./Container";
 import { ToolbarShellContext } from "./ToolbarShell";
 
 export const classes = {
-	toolbar: cva("min-h-16 transition-[box-shadow,border-color] border-b", {
+	toolbar: cva("min-h-16 not-motion-reduce:transition-[box-shadow,border-color] border-b", {
 		variants: {
 			raised: {
 				true: "shadow-md border-transparent dark:shadow-black/30",

@@ -14,7 +14,7 @@ function ToggleButton({ isExpanded }: { isExpanded: boolean }) {
 			className="w-12 h-12 rounded-full text-2xl"
 			color="primary:pastel"
 			type="button">
-			<MdChevronLeft className={ cn("transition-transform shrink-0", isExpanded ? "rotate-90" : "-rotate-90") } />
+			<MdChevronLeft className={ cn("not-motion-reduce:transition-transform shrink-0", isExpanded ? "rotate-90" : "-rotate-90") } />
 		</NextUIButton>
 	);
 }
@@ -71,7 +71,7 @@ export default function ExpandableGroup({
 
 	return (
 		<div className={ cn("flex flex-col bg-inherit", className) } { ...props }>
-			<div className={ cn("relative bg-inherit transition-[padding]", isExpanded || "overflow-y-hidden") }
+			<div className={ cn("relative bg-inherit not-motion-reduce:transition-[padding]", isExpanded || "overflow-y-hidden") }
 				style={ merge({ paddingBottom: !buttonHidden ? shadowSize : 0 },
 					buttonHidden || {
 						WebkitMaskImage: `-webkit-linear-gradient(top, black 0%, black calc(100% - ${ shadowSize }px), transparent 100%)`,
@@ -84,7 +84,7 @@ export default function ExpandableGroup({
 				</AdjustableHeight>
 			</div>
 			<div
-				className={ cn("flex justify-center transition-[margin,transform,opacity] pointer-events-none", {
+				className={ cn("flex justify-center not-motion-reduce:transition-[margin,transform,opacity] pointer-events-none", {
 					"opacity-50 pointer-events-none -z-10 hidden": buttonHidden,
 					"-translate-y-1/2": !isExpanded && !buttonHidden,
 					"sticky bottom-12 xl:bottom-12": isExpanded

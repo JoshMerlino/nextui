@@ -32,8 +32,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 export const classes = {
 	wrapper: cva([
 		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
-		"[&:has(input:invalid)]:border-error/50 [&:has(input:invalid)]:dark:border-error/50 [&:has(input:invalid)]:focus-within:border-error [&:has(input:invalid)]:focus-within:ring-error [&:has(input:invalid)]:active:border-error [&:has(input:invalid)]:active:ring-error [&:has(input:invalid)]:dark:focus-within:border-error [&:has(input:invalid)]:dark:focus-within:ring-error [&:has(input:invalid)]:dark:active:border-error [&:has(input:invalid)]:dark:active:ring-error",
-		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 [&:has(input:disabled)]:dark:border-dashed [&:has(input:disabled)]:active:border-gray-200 [&:has(input:disabled)]:active:dark:border-gray-700",
+		"[&:has(input:invalid)]:border-error/50 dark:[&:has(input:invalid)]:border-error/50 [&:has(input:invalid)]:focus-within:border-error [&:has(input:invalid)]:focus-within:ring-error [&:has(input:invalid)]:active:border-error [&:has(input:invalid)]:active:ring-error dark:[&:has(input:invalid)]:focus-within:border-error dark:[&:has(input:invalid)]:focus-within:ring-error dark:[&:has(input:invalid)]:active:border-error dark:[&:has(input:invalid)]:active:ring-error",
+		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 dark:[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:border-gray-200 dark:[&:has(input:disabled)]:active:border-gray-700",
 	], {
 		defaultVariants: {
 			variant: "outlined",
@@ -58,7 +58,7 @@ export const classes = {
 				neutral: "focus-within:border-gray-800 focus-within:ring-gray-800 active:border-gray-800 active:ring-gray-800 dark:focus-within:border-gray-200 dark:focus-within:ring-gray-200 dark:active:border-gray-200 dark:active:ring-gray-200",
 			},
 			disabled: {
-				true: "cursor-not-allowed border-dashed active:ring-0 focus-within:ring-0 dark:border-dashed active:border-gray-200 active:dark:border-gray-700",
+				true: "cursor-not-allowed border-dashed active:ring-0 focus-within:ring-0 dark:border-dashed active:border-gray-200 dark:active:border-gray-700",
 			},
 			invalid: {
 				true: "border-error/50 dark:border-error/50 focus-within:border-error focus-within:ring-error active:border-error active:ring-error dark:focus-within:border-error dark:focus-within:ring-error dark:active:border-error dark:active:ring-error",
@@ -68,7 +68,7 @@ export const classes = {
 
 	input: cva([
 		"peer bg-transparent cursor-text outline-0 border-0 shrink grow inline-flex w-0 min-w-0 appearance-none",
-		"placeholder:text-gray-500 placeholder:dark:text-gray-400",
+		"placeholder:text-gray-500 dark:placeholder:text-gray-400",
 		"disabled:select-none"
 	], {
 		defaultVariants: {
@@ -104,7 +104,7 @@ export const classes = {
 		"absolute inline-flex ring-offset-white dark:ring-offset-gray-800 w-min text-gray-500 dark:text-gray-400",
 		"select-none font-normal pointer-events-none whitespace-nowrap not-motion-reduce:transition-[top,font-size,color,padding] -mx-1.5 px-1.5 top-1/2 -translate-y-1/2",
 		"group-focus-within/inputfield:top-0 peer-placeholder-shown:top-0",
-		"peer-invalid:text-error/85 peer-invalid:dark:text-error/85 group-focus-within/inputfield:peer-invalid:text-error group-active/inputfield:peer-invalid:text-error dark:group-focus-within/inputfield:peer-invalid:text-error dark:group-active/inputfield:peer-invalid:text-error",
+		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 peer-invalid:group-focus-within/inputfield:text-error peer-invalid:group-active/inputfield:text-error dark:peer-invalid:group-focus-within/inputfield:text-error dark:peer-invalid:group-active/inputfield:text-error",
 	], {
 		defaultVariants: {
 			size: "default",
@@ -153,7 +153,7 @@ export const classes = {
 		}
 	}),
 
-	button: cva("shrink-0 !w-auto aspect-square", {
+	button: cva("shrink-0 w-auto! aspect-square", {
 		variants: {
 			size: {
 				dense: "-mr-1.5",

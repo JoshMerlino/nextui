@@ -5,8 +5,8 @@ export function Drawer({ children, className, ...props }: HTMLAttributes<HTMLEle
 	return (
 		<aside
 			className={ cn([
-				"bg-white dark:bg-gray-800 ease-in-out w-[300px] h-full z-[10] flex flex-col overflow-y-auto shrink-0 py-2",
-				"[&_hr]:border-gray-200 [&_hr]:dark:border-gray-700/50 [&_hr]:mx-4 [&_hr]:my-2"
+				"bg-white dark:bg-gray-800 ease-in-out w-[300px] h-full z-10 flex flex-col overflow-y-auto shrink-0 py-2",
+				"[&_hr]:border-gray-200 dark:[&_hr]:border-gray-700/50 [&_hr]:mx-4 [&_hr]:my-2"
 				
 			], className) }
 			{ ...props }>

@@ -260,7 +260,7 @@ export function Calendar({
 											return (
 												<Button
 													{ ...{ "data-value": year } }
-													className="rounded-full !shadow-none"
+													className="rounded-full shadow-none!"
 													color={ year === renderDate.getFullYear() || new Date().getFullYear() === year ? color : "neutral" }
 													disabled={ disabled }
 													key={ year }

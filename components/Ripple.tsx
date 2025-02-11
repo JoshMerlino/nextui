@@ -118,7 +118,7 @@ export function Ripple({ emitFromCenter, className, disabled, duration = 500 }: 
 	if (disabled) return null;
 
 	return <div
-		className={ cn("absolute inset-0 opacity-20", className, "!bg-transparent dark:!bg-transparent") }
+		className={ cn("absolute inset-0 opacity-20", className, "bg-transparent! dark:bg-transparent!") }
 		draggable="false"
 		ref={ ref } />;
 }

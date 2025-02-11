@@ -13,7 +13,7 @@ export const classes = {
 				false: "border-gray-200 dark:border-gray-800"
 			},
 			variant: {
-				glass: "backdrop-blur bg-gray-100/60 dark:bg-gray-900/60"
+				glass: "backdrop-blur-sm bg-gray-100/60 dark:bg-gray-900/60"
 			}
 		},
 		defaultVariants: {

@@ -9,7 +9,7 @@ export const classes = {
 	track: cva(
 		[
 			"appearance-none peer focus:outline-0 rounded-full not-motion-reduce:transition-colors disabled:cursor-not-allowed disabled:opacity-50",
-			"w-[34px] h-[14px] bg-gray-300 dark:bg-gray-600 checked:bg-opacity-50 dark:checked:bg-opacity-50 disabled:checked:!bg-opacity-50"
+			"w-[34px] h-[14px] bg-gray-300 dark:bg-gray-600 checked:bg-opacity-50 dark:checked:bg-opacity-50 disabled:checked:bg-opacity-50!"
 		],
 		{
 			variants: {
@@ -33,7 +33,7 @@ export const classes = {
 
 	thumb: cva(
 		[
-			"aspect-square w-5 absolute inset-0 rounded-full not-motion-reduce:transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-100 dark:bg-gray-400 shadow-sm shadow-black/20 peer-disabled:bg-gray-400 peer-disabled:grayscale-[0.5] text-[0px] peer-checked:ml-3.5 peer-checked:bg-current"
+			"aspect-square w-5 absolute inset-0 rounded-full not-motion-reduce:transition-all text-transparent flex items-center justify-center peer-disabled:cursor-not-allowed bg-gray-100 dark:bg-gray-400 shadow-xs shadow-black/20 peer-disabled:bg-gray-400 peer-disabled:grayscale-[0.5] text-[0px] peer-checked:ml-3.5 peer-checked:bg-current"
 		],
 		{
 			variants: {
@@ -65,15 +65,15 @@ export const classes = {
 				true: "pointer-events-none",
 			},
 			color: {
-				primary: "group-has-[.peer:checked]/switch:bg-primary group-has-[.peer:checked]/switch:dark:bg-primary",
-				"primary:pastel": "group-has-[.peer:checked]/switch:bg-primary group-has-[.peer:checked]/switch:dark:bg-primary-300",
-				error: "group-has-[.peer:checked]/switch:bg-error group-has-[.peer:checked]/switch:dark:bg-error",
-				"error:pastel": "group-has-[.peer:checked]/switch:bg-error group-has-[.peer:checked]/switch:dark:bg-error-300",
-				success: "group-has-[.peer:checked]/switch:bg-success group-has-[.peer:checked]/switch:dark:bg-success",
-				"success:pastel": "group-has-[.peer:checked]/switch:bg-success group-has-[.peer:checked]/switch:dark:bg-success-300",
-				warning: "group-has-[.peer:checked]/switch:bg-warning group-has-[.peer:checked]/switch:dark:bg-warning",
-				"warning:pastel": "group-has-[.peer:checked]/switch:bg-warning group-has-[.peer:checked]/switch:dark:bg-warning-300",
-				neutral: "group-has-[.peer:checked]/switch:bg-gray-500 group-has-[.peer:checked]/switch:dark:bg-gray-500"
+				primary: "group-has-[.peer:checked]/switch:bg-primary dark:group-has-[.peer:checked]/switch:bg-primary",
+				"primary:pastel": "group-has-[.peer:checked]/switch:bg-primary dark:group-has-[.peer:checked]/switch:bg-primary-300",
+				error: "group-has-[.peer:checked]/switch:bg-error dark:group-has-[.peer:checked]/switch:bg-error",
+				"error:pastel": "group-has-[.peer:checked]/switch:bg-error dark:group-has-[.peer:checked]/switch:bg-error-300",
+				success: "group-has-[.peer:checked]/switch:bg-success dark:group-has-[.peer:checked]/switch:bg-success",
+				"success:pastel": "group-has-[.peer:checked]/switch:bg-success dark:group-has-[.peer:checked]/switch:bg-success-300",
+				warning: "group-has-[.peer:checked]/switch:bg-warning dark:group-has-[.peer:checked]/switch:bg-warning",
+				"warning:pastel": "group-has-[.peer:checked]/switch:bg-warning dark:group-has-[.peer:checked]/switch:bg-warning-300",
+				neutral: "group-has-[.peer:checked]/switch:bg-gray-500 dark:group-has-[.peer:checked]/switch:bg-gray-500"
 			}
 		},
 	}),
@@ -92,13 +92,13 @@ export const classes = {
 			},
 			color: {
 				primary: "group-hover/switch:bg-primary/10 group-focus-within/switch:bg-primary/10",
-				"primary:pastel": "group-hover/switch:peer-checked:bg-primary/10 dark:group-hover/switch:peer-checked:bg-primary-300/10 group-focus-within/switch:peer-checked:bg-primary/10 dark:group-focus-within/switch:peer-checked:bg-primary-300/10",
+				"primary:pastel": "peer-checked:group-hover/switch:bg-primary/10 dark:peer-checked:group-hover/switch:bg-primary-300/10 peer-checked:group-focus-within/switch:bg-primary/10 dark:peer-checked:group-focus-within/switch:bg-primary-300/10",
 				error: "group-hover/switch:bg-error/10 group-focus-within/switch:bg-error/10",
-				"error:pastel": "group-hover/switch:peer-checked:bg-error/10 dark:group-hover/switch:peer-checked:bg-error-300/10 group-focus-within/switch:peer-checked:bg-error/10 dark:group-focus-within/switch:peer-checked:bg-error-300/10",
+				"error:pastel": "peer-checked:group-hover/switch:bg-error/10 dark:peer-checked:group-hover/switch:bg-error-300/10 peer-checked:group-focus-within/switch:bg-error/10 dark:peer-checked:group-focus-within/switch:bg-error-300/10",
 				success: "group-hover/switch:bg-success/10 group-focus-within/switch:bg-success/10",
-				"success:pastel": "group-hover/switch:peer-checked:bg-success/10 dark:group-hover/switch:peer-checked:bg-success-300/10 group-focus-within/switch:peer-checked:bg-success/10 dark:group-focus-within/switch:peer-checked:bg-success-300/10",
+				"success:pastel": "peer-checked:group-hover/switch:bg-success/10 dark:peer-checked:group-hover/switch:bg-success-300/10 peer-checked:group-focus-within/switch:bg-success/10 dark:peer-checked:group-focus-within/switch:bg-success-300/10",
 				warning: "group-hover/switch:bg-warning/10 group-focus-within/switch:bg-warning/10",
-				"warning:pastel": "group-hover/switch:peer-checked:bg-warning/10 dark:group-hover/switch:peer-checked:bg-warning-300/10 group-focus-within/switch:peer-checked:bg-warning/10 dark:group-focus-within/switch:peer-checked:bg-warning-300/10",
+				"warning:pastel": "peer-checked:group-hover/switch:bg-warning/10 dark:peer-checked:group-hover/switch:bg-warning-300/10 peer-checked:group-focus-within/switch:bg-warning/10 dark:peer-checked:group-focus-within/switch:bg-warning-300/10",
 				neutral: "group-hover/switch:bg-gray-800/10 group-focus-within/switch:bg-gray-800/10 dark:group-hover/switch:bg-gray-200/10 dark:group-focus-within/switch:bg-gray-200/10",
 			}
 		},

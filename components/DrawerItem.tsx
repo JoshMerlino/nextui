@@ -23,13 +23,13 @@ export const classes = {
 			},
 			color: {
 				primary: "[&.selected]:text-primary [&.selected]:bg-primary/5 [&.selected]:hover:bg-primary/10",
-				"primary:pastel": "[&.selected]:text-primary [&.selected]:bg-primary/5 dark:[&.selected]:text-primary-300 [&.selected]:dark:bg-primary-300/5 [&.selected]:hover:bg-primary/10 [&.selected]:dark:hover:bg-primary-300/10",
+				"primary:pastel": "[&.selected]:text-primary [&.selected]:bg-primary/5 dark:[&.selected]:text-primary-300 dark:[&.selected]:bg-primary-300/5 [&.selected]:hover:bg-primary/10 dark:[&.selected]:hover:bg-primary-300/10",
 				error: "[&.selected]:text-error [&.selected]:bg-error/5 [&.selected]:hover:bg-error/10",
-				"error:pastel": "[&.selected]:text-error [&.selected]:bg-error/5 dark:[&.selected]:text-error-300 [&.selected]:dark:bg-error-300/5 [&.selected]:hover:bg-error/10 dark:[&.selected]:hover:bg-error-300/10",
+				"error:pastel": "[&.selected]:text-error [&.selected]:bg-error/5 dark:[&.selected]:text-error-300 dark:[&.selected]:bg-error-300/5 [&.selected]:hover:bg-error/10 dark:[&.selected]:hover:bg-error-300/10",
 				success: "[&.selected]:text-success [&.selected]:bg-success/5 [&.selected]:hover:bg-success/10",
-				"success:pastel": "[&.selected]:text-success [&.selected]:bg-success/5 dark:[&.selected]:text-success-300 [&.selected]:dark:bg-success-300/5 [&.selected]:hover:bg-success/10 dark:[&.selected]:hover:bg-success-300/10",
+				"success:pastel": "[&.selected]:text-success [&.selected]:bg-success/5 dark:[&.selected]:text-success-300 dark:[&.selected]:bg-success-300/5 [&.selected]:hover:bg-success/10 dark:[&.selected]:hover:bg-success-300/10",
 				warning: "[&.selected]:text-warning [&.selected]:bg-warning/5 [&.selected]:hover:bg-warning/10",
-				"warning:pastel": "[&.selected]:text-warning [&.selected]:bg-warning/5 dark:[&.selected]:text-warning-300 [&.selected]:dark:bg-warning-300/5 [&.selected]:hover:bg-warning/10 dark:[&.selected]:hover:bg-warning-300/10",
+				"warning:pastel": "[&.selected]:text-warning [&.selected]:bg-warning/5 dark:[&.selected]:text-warning-300 dark:[&.selected]:bg-warning-300/5 [&.selected]:hover:bg-warning/10 dark:[&.selected]:hover:bg-warning-300/10",
 				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.selected]:bg-gray-800/5 dark:[&.selected]:bg-gray-200/5 [&.selected]:hover:bg-gray-800/10 dark:[&.selected]:hover:bg-gray-200/10",
 			}
 		},

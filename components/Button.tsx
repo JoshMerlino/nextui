@@ -34,7 +34,7 @@ export const classes = {
 			variant: {
 				"raised": "shadow-md hover:shadow-lg",
 				"outlined": "border bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15] dark:bg-opacity-0 dark:hover:bg-opacity-10 dark:focus:bg-opacity-[.15]",
-				"flat": "bg-opacity-0 hover:bg-opacity-10 focus:bg-opacity-[.15] dark:bg-opacity-0 dark:hover:bg-opacity-10 dark:focus:bg-opacity-[.15]"
+				"flat": ""
 			},
 
 			color: {
@@ -59,11 +59,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "primary",
-				className: "text-primary bg-primary"
+				className: "text-primary hover:bg-primary/10 focus:bg-primary/15 active:bg-primary/20 dark:text-primary dark:hover:bg-primary/10 dark:focus:bg-primary/15 dark:active:bg-primary/20"
 			}, {
 				variant: "outlined",
 				color: "primary",
-				className: "text-primary bg-primary border-primary/50"
+				className: "text-primary hover:bg-primary/10 focus:bg-primary/15 active:bg-primary/20 dark:text-primary dark:hover:bg-primary/10 dark:focus:bg-primary/15 dark:active:bg-primary/20 border-primary/50"
 			},
 
 			{
@@ -73,11 +73,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "primary:pastel",
-				className: "text-primary bg-primary dark:text-primary-300 dark:bg-primary-300"
+				className: "text-primary bg-primary dark:text-primary-300 dark:bg-primary-300 hover:bg-primary/10 focus:bg-primary/15 active:bg-primary/20 dark:hover:bg-primary-300/10 dark:focus:bg-primary-300/15 dark:active:bg-primary-300/20"
 			}, {
 				variant: "outlined",
 				color: "primary:pastel",
-				className: "text-primary bg-primary border-primary/50 dark:text-primary-300 dark:bg-primary-300 dark:border-primary-300/50"
+				className: "text-primary bg-primary border-primary/50 dark:text-primary-300 dark:bg-primary-300 dark:border-primary-300/50 hover:bg-primary/10 focus:bg-primary/15 active:bg-primary/20 dark:hover:bg-primary-300/10 dark:focus:bg-primary-300/15 dark:active:bg-primary-300/20"
 			},
 			
 			{
@@ -101,11 +101,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "error",
-				className: "text-error bg-error"
+				className: "text-error hover:bg-error/10 focus:bg-error/15 active:bg-error/20 dark:text-error dark:hover:bg-error/10 dark:focus:bg-error/15 dark:active:bg-error/20"
 			}, {
 				variant: "outlined",
 				color: "error",
-				className: "text-error bg-error border-error/50"
+				className: "text-error hover:bg-error/10 focus:bg-error/15 active:bg-error/20 dark:text-error dark:hover:bg-error/10 dark:focus:bg-error/15 dark:active:bg-error/20 border-error/50"
 			},
 
 			{
@@ -115,13 +115,13 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "error:pastel",
-				className: "text-error bg-error dark:text-error-300 dark:bg-error-300"
+				className: "text-error bg-error dark:text-error-300 dark:bg-error-300 hover:bg-error/10 focus:bg-error/15 active:bg-error/20 dark:hover:bg-error-300/10 dark:focus:bg-error-300/15 dark:active:bg-error-300/20"
 			}, {
 				variant: "outlined",
 				color: "error:pastel",
-				className: "text-error bg-error border-error/50 dark:text-error-300 dark:bg-error-300 dark:border-error-300/50"
+				className: "text-error bg-error border-error/50 dark:text-error-300 dark:bg-error-300 dark:border-error-300/50 hover:bg-error/10 focus:bg-error/15 active:bg-error/20 dark:hover:bg-error-300/10 dark:focus:bg-error-300/15 dark:active:bg-error-300/20"
 			},
-
+			
 			{
 				variant: "raised",
 				color: "success",
@@ -129,11 +129,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "success",
-				className: "text-success bg-success"
+				className: "text-success hover:bg-success/10 focus:bg-success/15 active:bg-success/20 dark:text-success dark:hover:bg-success/10 dark:focus:bg-success/15 dark:active:bg-success/20"
 			}, {
 				variant: "outlined",
 				color: "success",
-				className: "text-success bg-success border-success/50"
+				className: "text-success hover:bg-success/10 focus:bg-success/15 active:bg-success/20 dark:text-success dark:hover:bg-success/10 dark:focus:bg-success/15 dark:active:bg-success/20 border-success/50"
 			},
 
 			{
@@ -143,11 +143,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "success:pastel",
-				className: "text-success bg-success dark:text-success-300 dark:bg-success-300"
+				className: "text-success bg-success dark:text-success-300 dark:bg-success-300 hover:bg-success/10 focus:bg-success/15 active:bg-success/20 dark:hover:bg-success-300/10 dark:focus:bg-success-300/15 dark:active:bg-success-300/20"
 			}, {
 				variant: "outlined",
 				color: "success:pastel",
-				className: "text-success bg-success border-success/50 dark:text-success-300 dark:bg-success-300 dark:border-success-300/50"
+				className: "text-success bg-success border-success/50 dark:text-success-300 dark:bg-success-300 dark:border-success-300/50 hover:bg-success/10 focus:bg-success/15 active:bg-success/20 dark:hover:bg-success-300/10 dark:focus:bg-success-300/15 dark:active:bg-success-300/20"
 			},
 
 			{
@@ -157,11 +157,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "warning",
-				className: "text-warning bg-warning"
+				className: "text-warning hover:bg-warning/10 focus:bg-warning/15 active:bg-warning/20 dark:text-warning dark:hover:bg-warning/10 dark:focus:bg-warning/15 dark:active:bg-warning/20"
 			}, {
 				variant: "outlined",
 				color: "warning",
-				className: "text-warning bg-warning border-warning/50"
+				className: "text-warning hover:bg-warning/10 focus:bg-warning/15 active:bg-warning/20 dark:text-warning dark:hover:bg-warning/10 dark:focus:bg-warning/15 dark:active:bg-warning/20 border-warning/50"
 			},
 
 			{
@@ -171,11 +171,11 @@ export const classes = {
 			}, {
 				variant: "flat",
 				color: "warning:pastel",
-				className: "text-warning bg-warning dark:text-warning-300 dark:bg-warning-300"
+				className: "text-warning bg-warning dark:text-warning-300 dark:bg-warning-300 hover:bg-warning/10 focus:bg-warning/15 active:bg-warning/20 dark:hover:bg-warning-300/10 dark:focus:bg-warning-300/15 dark:active:bg-warning-300/20"
 			}, {
 				variant: "outlined",
 				color: "warning:pastel",
-				className: "text-warning bg-warning border-warning/50 dark:text-warning-300 dark:bg-warning-300 dark:border-warning-300/50"
+				className: "text-warning bg-warning border-warning/50 dark:text-warning-300 dark:bg-warning-300 dark:border-warning-300/50 hover:bg-warning/10 focus:bg-warning/15 active:bg-warning/20 dark:hover:bg-warning-300/10 dark:focus:bg-warning-300/15 dark:active:bg-warning-300/20"
 			},
 			
 			{

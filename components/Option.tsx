@@ -2,10 +2,10 @@
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { Ripple } from "nextui/Ripple";
 import { cn } from "nextui/util";
-import { forwardRef, type HTMLAttributes, type OptionHTMLAttributes, useContext } from "react";
+import { forwardRef, type HTMLAttributes, type OptionHTMLAttributes, type ReactNode, useContext } from "react";
 import { SelectProvider } from "./InputField/SelectInput";
 
-export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & Pick<OptionHTMLAttributes<HTMLOptionElement>, "value"> & { icon?: string }>(function({ children, className, value, icon, ...props }, fref) {
+export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & Pick<OptionHTMLAttributes<HTMLOptionElement>, "value"> & { icon?: ReactNode }>(function({ children, className, value, icon, ...props }, fref) {
 	const ref = useConvergedRef(fref);
 	const { isFocused, isSelected, setSelected, setFocused } = useContext(SelectProvider);
 
@@ -30,12 +30,7 @@ export const Option = forwardRef<HTMLLIElement, HTMLAttributes<HTMLLIElement> & 
 			ref={ ref }>
 			<Ripple className="opacity-10" />
 			<div className="flex gap-2 5 items-center">
-				{ icon && (
-					<img
-						alt={ value?.toString() }
-						className="w-4 h-4"
-						src={ icon } />
-				) }
+				{ icon }
 				<option value={ value }>{ children }</option>
 			</div>
 		</li>

@@ -107,7 +107,7 @@ export function Dismissible({ children, onDismiss }: PropsWithChildren<Partial<D
 		// Cleanup
 		return () => controller.abort();
         
-	}, [ ]);
+	}, [ children ]);
 
 	return (
 		<div ref={ ref }>{ children }</div>

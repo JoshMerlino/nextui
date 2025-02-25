@@ -52,8 +52,7 @@ export function Dismissible({ children, onDismiss }: PropsWithChildren<Partial<D
 			event.preventDefault();
 
 			// Get motion X
-			const derivative = !("changedTouches" in event) ? event.movementX : lastTouch ? event.changedTouches[0].clientX - lastTouch.clientX : 0;
-			motion += derivative / window.devicePixelRatio;
+			motion += !("changedTouches" in event) ? event.movementX : lastTouch ? event.changedTouches[0].clientX - lastTouch.clientX : 0;
 
 			lastTouch = "changedTouches" in event ? event.changedTouches[0] : null;
 

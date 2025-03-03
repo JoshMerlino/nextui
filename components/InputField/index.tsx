@@ -104,7 +104,7 @@ export const classes = {
 		"absolute inline-flex ring-offset-white dark:ring-offset-gray-800 w-min text-gray-500 dark:text-gray-400",
 		"select-none font-normal pointer-events-none whitespace-nowrap not-motion-reduce:transition-[top,font-size,color,padding] -mx-1.5 px-1.5 top-1/2 -translate-y-1/2",
 		"group-focus-within/inputfield:top-0 peer-placeholder-shown:top-0",
-		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 peer-invalid:group-focus-within/inputfield:text-error peer-invalid:group-active/inputfield:text-error dark:peer-invalid:group-focus-within/inputfield:text-error dark:peer-invalid:group-active/inputfield:text-error",
+		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 group-focus-within/inputfield:peer-invalid:text-error group-active/inputfield:peer-invalid:text-error dark:group-focus-within/inputfield:peer-invalid:text-error dark:group-active/inputfield:peer-invalid:text-error",
 	], {
 		defaultVariants: {
 			size: "default",

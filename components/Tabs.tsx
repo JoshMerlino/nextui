@@ -18,7 +18,7 @@ export const classes = {
 		},
 	}),
 
-	tab: cva("text-sm rounded-sm font-medium overflow-hidden relative not-motion-reduce:transition-colors", {
+	tab: cva("text-sm rounded-xs font-medium overflow-hidden relative not-motion-reduce:transition-colors", {
 		defaultVariants: {
 			variant: "vercel",
 			color: "primary",
@@ -75,7 +75,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				vercel: "h-8 rounded-sm top-[7px] not-motion-reduce:transition-all",
+				vercel: "h-8 rounded-xs top-[7px] not-motion-reduce:transition-all",
 			},
 			color: {
 				primary: "bg-primary/20",

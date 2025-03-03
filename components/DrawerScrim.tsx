@@ -157,7 +157,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 			<ScrimProvider value={ open }>
 				<div
-					className={ cn("xl:!rounded-none absolute xl:sticky xl:shadow-md top-0 z-[60] group/drawer not-motion-reduce:transition-[transform,box-shadow] xl:!translate-x-0 xl:!not-motion-reduce:transition-none h-full", open ? "-translate-x-0 shadow-md" : "-translate-x-[300px]") }
+					className={ cn("xl:!rounded-none absolute xl:sticky xl:shadow-md top-0 z-[60] group/drawer not-motion-reduce:transition-transform xl:!translate-x-0 xl:!not-motion-reduce:transition-none h-full", open ? "-translate-x-0 shadow-md" : "-translate-x-[300px]") }
 					style={{
 						["--tw-shadow" as keyof CSSProperties]: "4px 0 6px -1px rgb(0 0 0 / 0.1), 2px 0 4px -2px rgb(0 0 0 / 0.1)",
 						["--tw-shadow-colored" as keyof CSSProperties]: "4px 0 6px -1px var(--tw-shadow-color), 2px 0 4px -2px var(--tw-shadow-color)"

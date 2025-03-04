@@ -37,9 +37,11 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 	// State for touch support
 	const [ touchSupported, setTouchSupported ] = useState(false);
 	
+	// Convert isDragging ref to a state
+	const [ isDragging, setIsDragging ] = useState(false);
+
 	// Refs for touch events
 	const touchOffset = useRef(0);
-	const isDragging = useRef(false);
 
 	// Refs for the handle, drawer, and scrim
 	const handleRef = useRef<HTMLDivElement>(null);
@@ -64,10 +66,10 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ open ? 1 - darken : 1 })`);
 		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ open ? blur : 0 }px)`);
 
-		// Apply drawer transitions
+		// // Apply drawer transitions
 		$drawer.style.transform = `translateX(${ open ? 0 : -width }px)`;
 
-		// Apply handle transitions
+		// // Apply handle transitions
 		$handle.style.transform = `translateX(${ open ? width : 0 }px)`;
 		
 	}, [ blur, darken, open ]);
@@ -86,7 +88,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 		// Record the touch offset
 		touchOffset.current = event.touches[0].clientX - $handle.getBoundingClientRect().left;
-		isDragging.current = true;
+		setIsDragging(true);
 		
 	}, []);
 	
@@ -118,7 +120,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		applyTransition();
 
 		// Reset isDragging
-		isDragging.current = false;
+		setIsDragging(false);
 		
 	}, [ applyTransition, setOpen ]);
 	
@@ -153,7 +155,6 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$handle.style.transform = `translateX(${ deltaX }px)`;
 		$drawer.style.opacity = deltaX > 0 ? "1" : "0";
 		
-		// 	setOpen(deltaX > width / 2);
 	}, [ blur, darken ]);
 
 	// Add event listeners to handle
@@ -183,11 +184,9 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 			<ScrimProvider value={ open }>
 				<div
 					className={ cn([
-						
 						"xl:!rounded-none absolute xl:sticky xl:shadow-md top-0 z-[60] group/drawer h-full transition-transform",
-
-						!open && "xl:!translate-x-[300px]"
-
+						!isDragging && !open && "-translate-x-full",
+						"xl:!translate-x-0"
 					]) }
 					ref={ drawerRef }
 					style={{

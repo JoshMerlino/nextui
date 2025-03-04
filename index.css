@@ -50,3 +50,7 @@
 		background-position: left -102% top 0%;
 	}
 }
+
+body {
+	overscroll-behavior-y: none;
+}

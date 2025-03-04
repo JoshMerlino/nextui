@@ -146,8 +146,6 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		$drawer.style.transitionProperty = "none";
 		$scrim.style.transitionProperty = "none";
 
-		console.log("touchmove", { deltaX });
-
 		// Apply the translations
 		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ 1 - darken * (deltaX / width) })`);
 		$scrim.style.setProperty("--tw-backdrop-blur", `blur(${ blur * (deltaX / width) }px)`);
@@ -186,6 +184,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 					className={ cn([
 						"xl:!rounded-none absolute xl:sticky xl:shadow-md top-0 z-[60] group/drawer h-full transition-transform",
 						!isDragging && !open && "-translate-x-full",
+						(isDragging || open) && "shadow-md",
 						"xl:!translate-x-0"
 					]) }
 					ref={ drawerRef }
@@ -208,7 +207,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 			<div className={ cn("grow relative bg-inherit", className) }>{ children }</div>
 			
 			<div
-				className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden backdrop-blur-0", open ? "pointer-events-auto" : "pointer-events-none") }
+				className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden backdrop-blur-none", open ? "pointer-events-auto" : "pointer-events-none") }
 				onClick={ () => setOpen(false) }
 				ref={ scrimRef }
 				{ ...props } />

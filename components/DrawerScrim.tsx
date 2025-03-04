@@ -1,5 +1,6 @@
 "use client";
 
+import { useEvent } from "nextui/hooks";
 import { createContext, HTMLAttributes, ReactNode, useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { cn } from "../util";
 
@@ -53,14 +54,22 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 
 	// Apply the transitions to all elements
 	const applyTransition = useCallback(function() {
-
+		
 		// Ensure we have the necessary elements
 		const $drawer = drawerRef.current;
 		const $handle = handleRef.current;
 		const $scrim = scrimRef.current;
 		if (!$drawer || !$handle || !$scrim) return;
-
+		
 		const { width } = $drawer.getBoundingClientRect();
+
+		// If the window is large enough, don't apply transitions to the drawer as it will be visible at all times
+		if (window.innerWidth >= 1280) {
+			$drawer.style.opacity = "1";
+			$drawer.style.transform = "translateX(0px)";
+			$handle.style.transform = "translateX(0px)";
+			return;
+		}
 
 		// Apply scrim transitions
 		$scrim.style.setProperty("--tw-backdrop-brightness", `brightness(${ open ? 1 - darken : 1 })`);
@@ -160,18 +169,15 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 		if (!handleRef.current) return;
 		const $handle = handleRef.current;
 		const controller = new AbortController();
-
 		$handle.addEventListener("touchstart", onTouchStart, { signal: controller.signal });
-
 		$handle.addEventListener("touchend", onTouchEnd, { signal: controller.signal });
-
 		$handle.addEventListener("touchmove", onTouchMove, { signal: controller.signal });
-		
 		return () => controller.abort();
 	}, [ onTouchEnd, onTouchMove, onTouchStart ]);
 	
 	// Apply transitions on changes
 	useEffect(applyTransition, [ applyTransition ]);
+	useEvent("resize", applyTransition);
 	
 	// On first render, remove hidden class from scrim
 	useEffect(() => scrimRef.current?.classList.remove("hidden"), [ open ]);

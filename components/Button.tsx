@@ -54,6 +54,20 @@ export const classes = {
 		
 			{
 				variant: "raised",
+				disabled: true,
+				className: "text-white bg-gray-500 shadow-none hover:shadow-none dark:text-white dark:bg-gray-500"
+			}, {
+				variant: "flat",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200"
+			}, {
+				variant: "outlined",
+				disabled: true,
+				className: "text-gray-700 dark:text-gray-200 border-gray-500/50 dark:border-gray-400/50"
+			},
+		
+			{
+				variant: "raised",
 				color: [ "primary", "primary:pastel" ],
 				className: "text-white bg-primary-600 hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800"
 			}, {

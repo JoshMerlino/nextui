@@ -18,7 +18,7 @@ export const classes = {
 		},
 	}),
 
-	tab: cva("text-sm rounded-xs font-medium overflow-hidden relative not-motion-reduce:transition-colors", {
+	tab: cva("text-sm rounded font-medium overflow-hidden relative not-motion-reduce:transition-colors", {
 		defaultVariants: {
 			variant: "vercel",
 			color: "primary",
@@ -75,7 +75,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				vercel: "h-8 rounded-xs top-[7px] not-motion-reduce:transition-all",
+				vercel: "h-8 rounded top-[7px] not-motion-reduce:transition-all",
 			},
 			color: {
 				primary: "bg-primary/20",
@@ -108,7 +108,6 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 
 }>>(function({ children, className, ...props }, fref) {
 
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const tabsRef = Children.map(children, () => useRef<HTMLLIElement>(null));
 		const indicator = useRef<HTMLDivElement>(null);
 		const background = useRef<HTMLDivElement>(null);

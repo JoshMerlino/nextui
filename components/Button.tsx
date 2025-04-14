@@ -8,7 +8,7 @@ import { Ripple } from "./Ripple";
 export const classes = {
 
 	button: cva([
-		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center outline-transparent shrink-0",
+		"w-min rounded-md font-medium uppercase tracking-[0.75px] duration-150 select-none appearance-none relative overflow-hidden whitespace-nowrap flex items-center gap-2 focus:outline-0 isolate justify-center outline-transparent shrink-0 cursor-pointer",
 	], {
 		
 		defaultVariants: {

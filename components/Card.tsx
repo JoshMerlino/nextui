@@ -13,6 +13,9 @@ export const classes = {
 				raised: "bg-white dark:bg-gray-800 shadow-md",
 				glass: "bg-white/50 dark:bg-gray-800/50 backdrop-filter backdrop-blur-md"
 			}
+		},
+		defaultVariants: {
+			variant: "raised"
 		}
 	})
     

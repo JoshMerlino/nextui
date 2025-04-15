@@ -5,12 +5,17 @@ import { cn } from "../util";
 
 export const ToolbarShellContext = createContext(false);
 
-export function ToolbarShell({ children, className, toolbar, wrapperProps, ...props }: {
+export function ToolbarShell({ children, className, toolbar, wrapperProps, wrapperRef, ...props }: {
 
 	/**
 	 * The toolbar to render
 	 */
 	toolbar: ReactNode;
+
+	/**
+	 * The scrolling wrapper to use
+	 */
+	wrapperRef?: React.RefObject<HTMLDivElement>;
 
 } & HTMLAttributes<HTMLDivElement> & { wrapperProps?: HTMLAttributes<HTMLDivElement> }) {
 
@@ -20,7 +25,7 @@ export function ToolbarShell({ children, className, toolbar, wrapperProps, ...pr
 	const [ raised, setRaised ] = useState(false);
 
 	useEffect(function() {
-		const wrapper = ref.current;
+		const wrapper = wrapperRef?.current || ref.current;
 		if (!wrapper) return;
 
 		// Get the controller

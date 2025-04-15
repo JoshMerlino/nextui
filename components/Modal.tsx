@@ -4,7 +4,7 @@ import { Card } from "nextui/Card";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { cn } from "../../../apps/web/src/components/nextui-legacy/util";
 
-export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, variant, ...props }: {
+export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, variant, alwaysRender, ...props }: {
 
 	/**
 	 * If true, the modal will render as a traditional block element.
@@ -28,6 +28,12 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	 * @default true
 	 */
 	bindEscKey?: boolean;
+
+	/**
+	 * Wether to always render the modal content in the dom, even when closed
+	 * @default false
+	 */
+	alwaysRender?: boolean;
 
 } & Pick<ExtractProps<typeof Card>, "variant"> & HTMLAttributes<HTMLDialogElement>) {
 
@@ -122,7 +128,7 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 				className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }
 				ref={ contentRef }
 				variant={ variant }>
-				{ children }
+				{ alwaysRender ? children : isOpen ? children : null }
 			</Card>
 		</dialog>
 	);

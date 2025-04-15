@@ -94,7 +94,7 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 
 				{ /* Input */ }
 				<input
-					{ ...omit(merge(props, { invalid: !isValid || invalid }), "size") }
+					{ ...omit(props, "size") }
 					className={ cn(classes.input(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.input>)) }
 					ref={ inputRef } />
 			

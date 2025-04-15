@@ -83,24 +83,24 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 
 	return (
 		<label
-			className={ cn(classes.wrapper(props as VariantProps<typeof classes.wrapper>), className) }
+			className={ cn(classes.wrapper(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.wrapper>), className) }
 			ref={ wrapperRef }>
 	
 			{ /* Leading icon */ }
-			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
 
 			{ /* Input wrapper */ }
 			<div className="flex relative h-full grow items-center">
 
 				{ /* Input */ }
 				<input
-					{ ...omit(props, "size") }
-					className={ cn(classes.input(props as VariantProps<typeof classes.input>)) }
+					{ ...omit(merge(props, { invalid: !isValid || invalid }), "size") }
+					className={ cn(classes.input(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.input>)) }
 					ref={ inputRef } />
 			
 				{ /* Floating label */ }
 				{ label && <p
-					className={ cn(classes.label(props as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
+					className={ cn(classes.label(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
 					style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
 					
 			</div>

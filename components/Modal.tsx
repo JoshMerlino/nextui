@@ -1,8 +1,8 @@
 "use client";
 
 import { Card } from "nextui/Card";
+import { cn } from "nextui/util";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
-import { cn } from "../../../apps/web/src/components/nextui-legacy/util";
 
 export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, variant, alwaysRender, ...props }: {
 

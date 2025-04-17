@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 export function useFocusLost<T extends HTMLElement>(ref: RefObject<T | null>, callback: (event: MouseEvent | TouchEvent | FocusEvent) => unknown) {
 
@@ -79,3 +79,19 @@ export function useEventMap<T extends HTMLElement | null>(ref: RefObject<T>, cus
 	}, [ ref, customEvents ]);
 }
 
+export function useCursor<T extends HTMLElement>(ref?: RefObject<T | null>) {
+	const [ position, setPosition ] = useState({ x: 0, y: 0 });
+	const handleMouseMove = useCallback((event: MouseEvent) => {
+		if (ref?.current) {
+			const rect = ref.current.getBoundingClientRect();
+			setPosition({ x: event.clientX - rect.left - rect.width / 2, y: event.clientY - rect.top - rect.height / 2 });
+		} else {
+			setPosition({ x: event.clientX, y: event.clientY });
+		}
+	}, [ ref ]);
+	useEffect(() => {
+		document.addEventListener("mousemove", handleMouseMove);
+		return () => document.removeEventListener("mousemove", handleMouseMove);
+	}, [ handleMouseMove ]);
+	return position;
+}

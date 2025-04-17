@@ -203,7 +203,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			ref={ ref }>
 			<div
 				className={ cn([
-					"not-motion-reduce:transition-[opacity,transform]",
+					"not-motion-reduce:transition-all",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					classes.animation({ position })
 				]) }

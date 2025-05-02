@@ -32,7 +32,7 @@ export function Dismissible({ children, onDismiss }: PropsWithChildren<Partial<D
 		const MGK = Math.min(window.innerWidth / 2, 200);
 
 		// Set default height
-		parent.style.height = `${ element.getBoundingClientRect().height }px`;
+		// parent.style.height = `${ element.offsetHeight }px`;
 
 		// On transition end
 		parent.addEventListener("transitionend", () => {

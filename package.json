@@ -5,7 +5,7 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.13",
-		"framer-motion": "^12.9.7",
+		"framer-motion": "^12.10.0",
 		"lodash": "^4.17.21",
 		"react": "^19.1.0",
 		"react-icons": "^5.5.0",
@@ -13,6 +13,6 @@
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.17.16",
-		"@types/react": "^19.1.2"
+		"@types/react": "^19.1.3"
 	}
 }

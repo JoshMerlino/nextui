@@ -22,7 +22,7 @@ export const classes = {
 	})
 };
 
-export function Toolbar({ children, className, contained = true, icon, ...props }: HTMLAttributes<HTMLElement> & VariantProps<typeof classes.toolbar> & Partial<{
+export function Toolbar({ children, className, contained = true, icon, raised: isRaised, ...props }: HTMLAttributes<HTMLElement> & VariantProps<typeof classes.toolbar> & Partial<{
 
 	/**
 	 * Whether the toolbar has a shadow.
@@ -49,7 +49,7 @@ export function Toolbar({ children, className, contained = true, icon, ...props 
 	icon: ReactNode;
 
 }>) {
-	const raised = props.raised || use(ToolbarShellContext);
+	const raised = isRaised || use(ToolbarShellContext);
 	return (
 		<header
 			{ ...props }

@@ -6,20 +6,20 @@ import { Ripple } from "./Ripple";
 
 export const classes = {
 	group: cva([
-		"flex flex-col items-center group/tabs relative isolate [&>li]:w-full",
+		"flex flex-col items-center group/tabs relative isolate [&>li]:w-full"
 	]),
 
 	item: cva([
-		"relative flex items-center overflow-hidden not-motion-reduce:transition-colors gap-4 text-sm font-medium px-5 text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hover:bg-gray-100 dark:active:bg-gray-700/50 w-full",
+		"relative flex items-center overflow-hidden not-motion-reduce:transition-colors gap-4 text-sm font-medium px-5 text-gray-600 active:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hover:bg-gray-100 dark:active:bg-gray-700/50 w-full outline-0"
 	], {
 
 		variants: {
 			size: {
 				"default": "h-[52px] [&>svg]:w-6 [&>svg]:h-6",
-				"dense": "h-[40px] [&>svg]:w-5 [&>svg]:h-5 [&>svg]:mx-0.5",
+				"dense": "h-[40px] [&>svg]:w-5 [&>svg]:h-5 [&>svg]:mx-0.5"
 			},
 			disabled: {
-				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none",
+				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none"
 			},
 			color: {
 				primary: "[&.selected]:text-primary [&.selected]:bg-primary/5 [&.selected]:hover:bg-primary/10",
@@ -30,7 +30,7 @@ export const classes = {
 				"success:pastel": "[&.selected]:text-success [&.selected]:bg-success/5 dark:[&.selected]:text-success-300 dark:[&.selected]:bg-success-300/5 [&.selected]:hover:bg-success/10 dark:[&.selected]:hover:bg-success-300/10",
 				warning: "[&.selected]:text-warning [&.selected]:bg-warning/5 [&.selected]:hover:bg-warning/10",
 				"warning:pastel": "[&.selected]:text-warning [&.selected]:bg-warning/5 dark:[&.selected]:text-warning-300 dark:[&.selected]:bg-warning-300/5 [&.selected]:hover:bg-warning/10 dark:[&.selected]:hover:bg-warning-300/10",
-				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.selected]:bg-gray-800/5 dark:[&.selected]:bg-gray-200/5 [&.selected]:hover:bg-gray-800/10 dark:[&.selected]:hover:bg-gray-200/10",
+				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.selected]:bg-gray-800/5 dark:[&.selected]:bg-gray-200/5 [&.selected]:hover:bg-gray-800/10 dark:[&.selected]:hover:bg-gray-200/10"
 			}
 		},
 
@@ -38,7 +38,7 @@ export const classes = {
 			size: "default",
 			color: "primary",
 			disabled: false
-		},
+		}
 
 	}),
 
@@ -49,7 +49,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				default: "w-1 left-0",
+				default: "w-1 left-0"
 			},
 			color: {
 				primary: "bg-primary",
@@ -61,16 +61,16 @@ export const classes = {
 				warning: "bg-warning",
 				"warning:pastel": "bg-warning dark:bg-warning-300",
 				neutral: "bg-gray-800 dark:bg-gray-200"
-			},
-		},
-	}),
+			}
+		}
+	})
 
 };
 
 const GroupContext = createContext({
 	isSelected: false,
 	color: "primary" as "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral",
-	setSelected: (() => { }) as Dispatch<void>,
+	setSelected: (() => { }) as Dispatch<void>
 });
 
 export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement> & VariantProps<(typeof classes)[keyof typeof classes]> & Partial<{
@@ -83,7 +83,6 @@ export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUList
 
 }>>(function({ children, className, ...props }, fref) {
 
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const tabsRef = Children.map(children, () => useRef<HTMLLIElement>(null));
 		const indicator = useRef<HTMLDivElement>(null);
 		const ref = useConvergedRef(fref);
@@ -115,7 +114,7 @@ export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUList
 					<GroupContext value={{
 						color: props.color || "primary",
 						isSelected: selected === key,
-						setSelected: () => setSelected(key),
+						setSelected: () => setSelected(key)
 					}}>
 						<li
 							key={ key }
@@ -176,7 +175,7 @@ export const DrawerItem = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButto
 		<button
 			{ ...props }
 			className={ cn(classes.item(props as VariantProps<typeof classes.item>), {
-				"selected": isSelected,
+				"selected": isSelected
 			}, className) }
 			ref={ ref }
 			tabIndex={ 0 }>

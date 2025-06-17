@@ -13,12 +13,12 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				vercel: "gap-2 h-[46px]",
-			},
-		},
+				vercel: "gap-2 h-[46px]"
+			}
+		}
 	}),
 
-	tab: cva("text-sm rounded font-medium overflow-hidden relative not-motion-reduce:transition-colors", {
+	tab: cva("text-sm rounded font-medium overflow-hidden relative not-motion-reduce:transition-colors outline-none truncate select-none", {
 		defaultVariants: {
 			variant: "vercel",
 			color: "primary",
@@ -26,10 +26,10 @@ export const classes = {
 		},
 		variants: {
 			disabled: {
-				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none",
+				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none "
 			},
 			variant: {
-				vercel: "px-3 h-8",
+				vercel: "px-3 h-8"
 			},
 			color: {
 				primary: "[&.selected]:text-primary [&.hovered]:text-primary",
@@ -40,9 +40,9 @@ export const classes = {
 				"success:pastel": "[&.selected]:text-success dark:[&.selected]:text-success-300 [&.hovered]:text-success dark:[&.hovered]:text-success-300",
 				warning: "[&.selected]:text-warning [&.hovered]:text-warning",
 				"warning:pastel": "[&.selected]:text-warning dark:[&.selected]:text-warning-300 [&.hovered]:text-warning dark:[&.hovered]:text-warning-300",
-				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.hovered]:text-gray-800 dark:[&.hovered]:text-gray-200",
+				neutral: "[&.selected]:text-gray-800 dark:[&.selected]:text-gray-200 [&.hovered]:text-gray-800 dark:[&.hovered]:text-gray-200"
 			}
-		},
+		}
 	}),
 
 	indicator: cva("absolute not-motion-reduce:transition-[left,width] z-10 pointer-events-none", {
@@ -52,7 +52,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				vercel: "h-0.5 bottom-0 translate-y-px mx-3",
+				vercel: "h-0.5 bottom-0 translate-y-px mx-3"
 			},
 			color: {
 				primary: "bg-primary",
@@ -64,8 +64,8 @@ export const classes = {
 				warning: "bg-warning",
 				"warning:pastel": "bg-warning dark:bg-warning-300",
 				neutral: "bg-gray-800 dark:bg-gray-200"
-			},
-		},
+			}
+		}
 	}),
 
 	background: cva("absolute -z-10 opacity-0", {
@@ -75,7 +75,7 @@ export const classes = {
 		},
 		variants: {
 			variant: {
-				vercel: "h-8 rounded top-[7px] not-motion-reduce:transition-all",
+				vercel: "h-8 rounded top-[7px] not-motion-reduce:transition-all"
 			},
 			color: {
 				primary: "bg-primary/20",
@@ -86,16 +86,16 @@ export const classes = {
 				"success:pastel": "bg-success/20 dark:bg-success-300/20",
 				warning: "bg-warning/20",
 				"warning:pastel": "bg-warning/20 dark:bg-warning-300/20",
-				neutral: "bg-gray-800/20 dark:bg-gray-200/20",
+				neutral: "bg-gray-800/20 dark:bg-gray-200/20"
 			}
-		},
+		}
 	})
 };
 const TabContext = createContext({
 	isSelected: false,
 	isHovered: false,
 	setSelected: (() => { }) as Dispatch<void>,
-	setHovered: (() => { }) as Dispatch<void>,
+	setHovered: (() => { }) as Dispatch<void>
 });
 
 export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement> & VariantProps<(typeof classes)[keyof typeof classes]> & Partial<{

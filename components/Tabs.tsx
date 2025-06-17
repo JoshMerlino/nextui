@@ -94,6 +94,7 @@ export const classes = {
 const TabContext = createContext({
 	isSelected: false,
 	isHovered: false,
+	color: "primary" as "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral",
 	setSelected: (() => { }) as Dispatch<void>,
 	setHovered: (() => { }) as Dispatch<void>
 });
@@ -173,6 +174,7 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 					<TabContext value={{
 						isSelected: selected === key,
 						isHovered: hovered === key,
+						color: props.color || "primary",
 						setSelected: () => setSelected(key),
 						setHovered: () => setHovered(key)
 					}}>
@@ -224,8 +226,10 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 }>>(function({ children, defaultChecked, className, ripple, ...props }, fref) {
 
 	const ref = useConvergedRef(fref);
-	const { isHovered, isSelected, setSelected, setHovered } = useContext(TabContext);
+	const { isHovered, isSelected, setSelected, setHovered, color } = useContext(TabContext);
 	useEffect(() => void (defaultChecked && setSelected()), [ defaultChecked, setSelected ]);
+
+	props.color = color;
 
 	useEventMap(ref, {
 		mouseenter: () => props.disabled || setHovered(),

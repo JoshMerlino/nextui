@@ -80,6 +80,9 @@ export function Modal({ children, renderContents = false, closeOnBlur = true, bi
 			// If click is inside of dialog
 			if (event.clientX >= left && event.clientX <= left + width && event.clientY >= top && event.clientY <= top + height) return;
 
+			// If click is on a child of the dialog, return
+			if (event.target instanceof Node && contentRef.current.contains(event.target)) return;
+
 			// If close on blur is disabled, just bounce the dialog
 			if (!closeOnBlur) {
 

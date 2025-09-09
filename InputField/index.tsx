@@ -1,6 +1,7 @@
 "use client";
 
 import { ClassValue } from "clsx";
+import { omit, pick } from "lodash";
 import { useEvent } from "nextui/hooks";
 import { InputHTMLAttributes, forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
@@ -409,7 +410,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 	return (
 		<div className={ cn("relative group input-group items-center bg-inherit rounded-lg") } ref={ ref }>
-			<label className={ cn(wrapper, "rounded-lg", className) } htmlFor={ props.id }>
+			<label className={ cn(wrapper, "rounded-lg", className) } htmlFor={ props.id } style={ pick(props.style, "width") }>
 
 				{ icon && (
 					<div className="w-6 h-6 items-center justify-center flex">
@@ -419,7 +420,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 
 				{ /* Input */ }
 				<div className="relative bg-inherit grow flex">
-					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...props } />
+					<input className={ cn(input, className, props.type === "select" && "opacity-0 w-0 grow-0") } ref={ fref } { ...omit(props, "style") } />
 					{ props.type === "select" && <p className={ cn(input, className, !(value?.label || value?.value) && "text-gray-600 dark:text-gray-400") }>{ (value?.label || value?.value) || props.placeholder }</p> }
 				</div>
 				{ label && <p className={ cn(labelStyles, className, "w-auto") } ref={ labelRef }>{ label }</p> }
@@ -462,7 +463,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 									{ !option.disabled && <Ripple className="bg-black/10 dark:bg-white/10" /> }
 									<div className="flex items-center gap-2">
 										{ option.icon && <div className="flex items-center justify-center w-6 h-6">{ option.icon }</div> }
-										<p className="text-gray-800 dark:text-gray-200">{ option.label || option.value }</p>
+										<p className="text-gray-800 dark:text-gray-200 truncate">{ option.label || option.value }</p>
 									</div>
 								</li>
 							)) }

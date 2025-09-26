@@ -4,8 +4,8 @@
 		"@tanstack/react-virtual": "^3.13.12",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
-		"dayjs": "^1.11.13",
-		"framer-motion": "^12.23.12",
+		"dayjs": "^1.11.18",
+		"framer-motion": "^12.23.22",
 		"lodash": "^4.17.21",
 		"react": "^19.1.1",
 		"react-icons": "^5.5.0",
@@ -13,6 +13,6 @@
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.17.20",
-		"@types/react": "^19.1.9"
+		"@types/react": "^19.1.13"
 	}
 }

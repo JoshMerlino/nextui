@@ -164,7 +164,7 @@ export function Dismissible({ children, duration, onDismiss }: PropsWithChildren
 	}, [ duration ]);
 
 	return (
-		<div className="relative [&_*]:select-none transition-[height,opacity,transform] flex items-center opacity-0 scale-75" style={{ height: 0 }}>
+		<div className="relative **:select-none transition-[height,opacity,transform] flex items-center opacity-0 scale-75" style={{ height: 0 }}>
 			<div className="w-full grow" ref={ ref }>{ children }</div>
 		</div>
 	);

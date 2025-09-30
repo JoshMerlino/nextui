@@ -180,7 +180,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"border-warning ring-warning dark:border-warning dark:ring-warning": dropdownVisible && color === "warning",
 		"border-success ring-success dark:border-success dark:ring-success": dropdownVisible && color === "success",
 		"[&:has(:invalid)]:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:dark:border-error/50  [&:has(:invalid)]:dark:focus-within:border-error": hasContents,
-		"!border-error focus-within:!ring-error dark:!border-error/50  dark:focus-within:!border-error": invalid,
+		"border-error! focus-within:ring-error! dark:border-error/50!  dark:focus-within:border-error!": invalid,
 
 		"focus-within:dark:ring-primary-300 focus-within:dark:border-primary-300 dark:focus-within:border-primary-300": pastel && color === "primary",
 		"focus-within:dark:ring-error-300 focus-within:dark:border-error-300 dark:focus-within:border-error-300": pastel && color === "error",
@@ -213,7 +213,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 		"text-warning dark:text-warning": dropdownVisible && color === "warning",
 		"text-success dark:text-success": dropdownVisible && color === "success",
 		"peer-invalid:text-error peer-invalid:dark:text-error": (hasContents || !!props.placeholder),
-		"!text-error dark:!text-error": invalid,
+		"text-error! dark:text-error!": invalid,
 
 		"peer-focus-within:dark:text-primary-300 dark:group-focus-within/wrapper:text-primary-300": pastel && color === "primary",
 		"peer-focus-within:dark:text-error-300 dark:group-focus-within/wrapper:text-error-300": pastel && color === "error",
@@ -447,7 +447,7 @@ export const InputField = forwardRef<HTMLInputElement, Props>(function({ color =
 			{ /* Select dropdown */ }
 			{ props.type === "select" && (
 				<dialog
-					className={ cn("m-0 w-[calc(100%_+_2px)] p-0 pt-[1px] focus-within:outline-0 -mx-[1px] top-full bg-transparent", (dropdownOpen || dropdownVisible) && "z-[10]", !dropdownVisible && "pointer-events-none") }
+					className={ cn("m-0 w-[calc(100%+2px)] p-0 pt-px focus-within:outline-0 -mx-px top-full bg-transparent", (dropdownOpen || dropdownVisible) && "z-10", !dropdownVisible && "pointer-events-none") }
 					onClick={ e => [ e.preventDefault(), e.stopPropagation() ] }
 					onMouseDown={ e => [ e.preventDefault(), e.stopPropagation() ] }
 					open={ dropdownOpen || dropdownVisible }

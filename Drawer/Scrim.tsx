@@ -168,7 +168,7 @@ export function DrawerScrim({ drawer, children, className, state: [ open, setOpe
 				style={{ touchAction: "none" }}>
 				<div className="rounded-full grow bg-gray-500/10 h-12 m-[5px] backdrop-blur-2xl shrink-0 max-w-1.5 mr-auto" />
 			</div>
-			<div className={ cn("grow relative bg-inherit", hideOnDesktop && "!translate-x-0", className) }>{ children }</div>
+			<div className={ cn("grow relative bg-inherit", hideOnDesktop && "translate-x-0!", className) }>{ children }</div>
 			<div className={ cn("absolute inset-0 transition-[backdrop-filter] xl:hidden group/scrim backdrop-blur-0", open ? "pointer-events-auto" : "pointer-events-none", hideOnDesktop && "md:hidden") } onClick={ () => setOpen(false) } { ...props } />
 		</div>
 	);

@@ -47,10 +47,10 @@ export function RadioButton({ color = "neutral", className, children, pastel, ..
 		},
 
 		// Ripple jawn
-		!props.disabled && "after:content[''] after:bg-gray-500/20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-[1] after:scale-0 focus:after:scale-100 group-active/radio:after:scale-100 group-active/radio:focus-within:after:scale-100 duration-100 after:transition-transform after:z-10",
+		!props.disabled && "after:content[''] after:bg-gray-500/20 after:absolute after:w-12 after:h-12 after:left-1/2 after:top-1/2 after:rounded-full after:-translate-x-1/2 after:-translate-y-1/2 after:pointer-events-none after:-z-1 after:scale-0 focus:after:scale-100 group-active/radio:after:scale-100 group-active/radio:focus-within:after:scale-100 duration-100 after:transition-transform after:z-10",
 
 		// Disabled
-		props.disabled && "cursor-not-allowed !border-gray-500",
+		props.disabled && "cursor-not-allowed border-gray-500!",
 
 		className,
 
@@ -80,7 +80,7 @@ export function RadioButton({ color = "neutral", className, children, pastel, ..
 		},
 
 		// Disabled
-		props.disabled && "!bg-gray-500",
+		props.disabled && "bg-gray-500!",
 
 	];
 

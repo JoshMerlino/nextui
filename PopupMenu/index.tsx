@@ -16,7 +16,7 @@ export function PopupMenu({ controls, state: [ controlsVisible, setControlsVisib
 }) {
 	return (
 		<div className="absolute top-0 right-0 mx-2">
-			<Card className={ cn("p-0 absolute overflow-hidden z-[100] top-0 right-0 transition-[transform,opacity] origin-top-right", controlsVisible ? "shadow-2xl opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none") }>
+			<Card className={ cn("p-0 absolute overflow-hidden z-100 top-0 right-0 transition-[transform,opacity] origin-top-right", controlsVisible ? "shadow-2xl opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none") }>
 				<div className="flex flex-col py-2 relative after:absolute after:inset-0 after:content-[''] after:bg-gray-200/20 dark:after:bg-gray-700/20 isolate after:-z-10">
 					{ controls.map(({ icon: Icon, text, onClick, disabled }, key) => (
 						<button className={ cn("select-none font-medium relative overflow-hidden py-3 pl-4 pr-8 flex items-center whitespace-nowrap gap-4 hover:bg-black/5 hover:dark:bg-white/5", text.split(" ")[0].toUpperCase() === "DELETE" && "text-error-600 dark:text-error-400", disabled && "opacity-50 cursor-not-allowed") }

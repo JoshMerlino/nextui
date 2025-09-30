@@ -66,7 +66,7 @@ export function MultilineInputField({ invalid = false, className, color = "prima
 		"focus-within:border-warning focus-within:ring-warning dark:focus-within:border-warning": color === "warning",
 		"focus-within:border-success focus-within:ring-success dark:focus-within:border-success": color === "success",
 		"[&:has(:invalid)]:border-error [&:has(:invalid)]:focus-within:ring-error [&:has(:invalid)]:dark:border-error": hasContents,
-		"!border-error focus-within:!ring-error dark:!border-error": invalid,
+		"border-error! focus-within:ring-error! dark:border-error!": invalid,
 	};
 
 	// Label classnames

@@ -83,7 +83,7 @@ export function Popover({ children, anchor = "top", popover, inset, state: [ sta
 	];
 
 	return (
-		<div className={ cn("group/popover relative isolate z-[10] overflow-visible") } { ...props }>
+		<div className={ cn("group/popover relative isolate z-10 overflow-visible") } { ...props }>
 			{ children }
 			<dialog className={ cn(popoverClass) } ref={ ref }>{ popover }</dialog>
 		</div>

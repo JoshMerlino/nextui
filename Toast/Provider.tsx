@@ -154,7 +154,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
 	return <ToastContext.Provider value={{ push, dismiss, error, success, warning }}>
 		
 		<div className="fixed inset-0 z-30 pointer-events-none">
-			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse [&>*]:pointer-events-auto overflow-visible">
+			<div className="absolute bottom-0 right-0 flex flex-col w-full max-w-lg p-4 lg:m-8 xl:m-16 2xl:m-24 2xl:bottom-auto 2xl:top-0 2xl:flex-col-reverse *:pointer-events-auto overflow-visible">
 				
 				{ /* Toasts */ }
 				{ Object.keys(state).map(key => <div key={ key }>

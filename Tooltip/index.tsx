@@ -36,7 +36,7 @@ export function Tooltip({ tooltip, anchor = "top", children, className, element 
 	const classes: ClassValue[] = [
 
 		// Base classnames
-		"group/tooltip relative isolate hover:z-[10]",
+		"group/tooltip relative isolate hover:z-10",
 
 		// Custom classs
 		className
@@ -47,7 +47,7 @@ export function Tooltip({ tooltip, anchor = "top", children, className, element 
 	const tooltipClasses: ClassValue[] = [
 	
 		// Base classnames
-		"absolute inline-flex items-center transition-all scale-0 opacity-0 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 z-[100]",
+		"absolute inline-flex items-center transition-all scale-0 opacity-0 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 z-100",
 	
 		// Anchor classes
 		{

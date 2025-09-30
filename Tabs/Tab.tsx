@@ -1,5 +1,5 @@
-import { Ripple } from "nextui/Ripple";
-import { cn } from "nextui/util";
+import { Ripple } from "nextui-legacy/Ripple";
+import { cn } from "nextui-legacy/util";
 import { type HTMLAttributes, useCallback, useContext, useEffect } from "react";
 import { KeyContext, TabsContext } from ".";
 

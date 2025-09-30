@@ -1,6 +1,6 @@
 "use client";
 
-import { useResize } from "nextui/hooks";
+import { useResize } from "nextui-legacy/hooks";
 import { Children, createContext, useCallback, useEffect, useLayoutEffect, useRef, useState, type Dispatch, type PropsWithChildren, type RefObject, type SetStateAction } from "react";
 export { Tab } from "./Tab";
 

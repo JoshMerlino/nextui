@@ -1,7 +1,7 @@
 "use client";
-import { Card } from "nextui/Card";
-import { Ripple } from "nextui/Ripple";
-import { cn } from "nextui/util";
+import { Card } from "nextui-legacy/Card";
+import { Ripple } from "nextui-legacy/Ripple";
+import { cn } from "nextui-legacy/util";
 import { IconType } from "react-icons";
 import { MdMoreVert } from "react-icons/md";
 

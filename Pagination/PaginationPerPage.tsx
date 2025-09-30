@@ -1,6 +1,6 @@
 "use client";
 
-import { InputField } from "nextui/InputField";
+import { InputField } from "nextui-legacy/InputField";
 import { usePagination } from ".";
 
 export function PaginationPerPage({ amounts = [ 10, 25, 50, 100 ]}: Partial<{ amounts: number[] }>) {

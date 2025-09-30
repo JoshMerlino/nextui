@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "nextui/util";
+import { cn } from "nextui-legacy/util";
 import { useCallback, useEffect, useRef } from "react";
 import { Pagination } from ".";
 import { PaginationNav, PaginationPerPage, usePagination } from "./Client";

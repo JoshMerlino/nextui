@@ -2,7 +2,7 @@
 
 import { ClassValue } from "clsx";
 import { omit, pick } from "lodash";
-import { useEvent } from "nextui/hooks";
+import { useEvent } from "nextui-legacy/hooks";
 import { InputHTMLAttributes, forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { MdArrowDropDown, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { Card } from "../Card";

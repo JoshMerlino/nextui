@@ -1,6 +1,6 @@
 "use client";
 
-import { Ripple } from "nextui/Ripple";
+import { Ripple } from "nextui-legacy/Ripple";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { usePagination } from ".";
 

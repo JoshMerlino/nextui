@@ -10,6 +10,7 @@ import PasswordInput from "./PasswordInput";
 import SelectInput from "./SelectInput";
 
 type InputFieldTypes = {
+	email: ExtractProps<typeof BaseInput>;
 	text: ExtractProps<typeof BaseInput>;
 	date: ExtractProps<typeof DateInput>;
 	file: ExtractProps<typeof FileInput>;

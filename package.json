@@ -1,5 +1,5 @@
 {
-	"name": "nextui",
+	"name": "nextui-legacy",
 	"dependencies": {
 		"clsx": "^2.1.0",
 		"react": "^18.2.0",

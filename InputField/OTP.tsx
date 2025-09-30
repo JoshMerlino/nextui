@@ -1,8 +1,8 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { InputField, type InputFieldProps } from "nextui/InputField";
-import { Spinner } from "nextui/Spinner";
-import { cn } from "nextui/util";
+import { InputField, type InputFieldProps } from "nextui-legacy/InputField";
+import { Spinner } from "nextui-legacy/Spinner";
+import { cn } from "nextui-legacy/util";
 import { InputHTMLAttributes, forwardRef, useCallback } from "react";
 import { MdCheckCircleOutline, MdErrorOutline, MdLockOutline } from "react-icons/md";
 
@@ -134,5 +134,5 @@ export const InputFieldOTP = forwardRef<HTMLInputElement, Partial<Omit<InputHTML
 		onInput={ format }
 		onKeyDown={ filter }
 		onPaste={ filter }
-		ref={ ref } />;
+	ref={ ref } />;
 });

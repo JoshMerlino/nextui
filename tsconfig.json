@@ -3,7 +3,7 @@
 		"strict": true,
 		"jsx": "react-jsx",
 		"paths": {
-			"nextui/*": [
+			"nextui-legacy/*": [
 				"./*"
 			],
 		}

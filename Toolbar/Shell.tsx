@@ -1,6 +1,6 @@
 "use client";
 
-import { useResize } from "nextui/hooks";
+import { useResize } from "nextui-legacy/hooks";
 import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 import { cn } from "../util";
 

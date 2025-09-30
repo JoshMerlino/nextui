@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "nextui/Button";
+import { Button } from "nextui-legacy/Button";
 import { MouseEventHandler } from "react";
 import { MdOutlineExpandLess, MdOutlineExpandMore } from "react-icons/md";
 

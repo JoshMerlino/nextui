@@ -36,7 +36,7 @@ export const SelectProvider = createContext({
 	/**
 	 * Set the current input as selected
 	 */
-	setSelected: (() => void 0) as React.Dispatch<React.SetStateAction<void>>,
+	setSelected: (() => void 0) as React.Dispatch<React.SetStateAction<void>>
 
 });
 
@@ -56,7 +56,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	// Open the popover when the input is focused
 	useEventMap(ref, {
 		focus: () => setPopoverOpen(true),
-		click: () => setPopoverOpen(true),
+		click: () => setPopoverOpen(true)
 	});
 	
 	// Close the popover when the focus is lost
@@ -184,7 +184,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				<Card
 					className="p-0 -mx-px mt-px border-0"
 					variant="popover">
-					<ul className={ cn("flex flex-col py-2 group/select", props.size === "dense" && "size-dense") }>
+					<ul className={ cn("flex flex-col py-2 group/select max-h-[calc(100dvh-32px)] overflow-y-auto", props.size === "dense" && "size-dense") }>
 
 						{ /* Iterate over children and provide the select context */ }
 						{ Children.map(children, (child, key) => <SelectProvider
@@ -197,7 +197,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 								setSelected: () => {
 									setSelected(key);
 									setPopoverOpen(false);
-								},
+								}
 							}}>
 							{ child }
 						</SelectProvider>) }

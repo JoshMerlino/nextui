@@ -120,8 +120,6 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
 
-		console.log({ position });
-
 		switch (position) {
 			default:
 			case "bottom": {

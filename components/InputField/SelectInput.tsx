@@ -174,7 +174,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				onClick={ () => setPopoverOpen(!popoverOpen) }
 				size={ props.size === "dense" ? "small" : "medium" } />
 			<Popover
-				className="w-full"
+				className="w-full -mx-px"
 				closeOnBlur={ false }
 				duration={ 50 }
 				screenMargin={ 16 }
@@ -182,7 +182,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				useModal={ false }
 				{ ...pick(props, POPOVER_PROPS) }>
 				<Card
-					className="p-0 -mx-px mt-px border-0"
+					className="p-0 border-0"
 					variant="popover">
 					<ul className={ cn("flex flex-col py-2 group/select max-h-[calc(100dvh-32px)] overflow-y-auto", props.size === "dense" && "size-dense") }>
 

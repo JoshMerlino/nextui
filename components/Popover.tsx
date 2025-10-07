@@ -9,7 +9,7 @@ import { forwardRef, useCallback, useEffect, useState, type HTMLAttributes, type
 export const classes = {
 
 	popover: cva([
-		"fixed bg-transparent overflow-visible focus:outline-0 m-0 z-50",
+		"absolute bg-transparent overflow-visible focus:outline-0 m-0 z-50",
 		"backdrop:bg-transparent backdrop:hidden backdrop:pointer-events-none"
 	], {
 		defaultVariants: {
@@ -120,29 +120,31 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
 
+		console.log({ position });
+
 		switch (position) {
 			default:
 			case "bottom": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().bottom }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().height }px`;
 				break;
 			}
 
 			case "top": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top - el.offsetHeight }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
+				el.style.top = "0px";
 				break;
 			}
 
 			case "left": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left - el.offsetWidth }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
+				el.style.left = "0px";
+				el.style.top = `${ wrapper.getBoundingClientRect().height / 2 }px`;
 				break;
 			}
 
 			case "right": {
-				el.style.left = `${ wrapper.getBoundingClientRect().right }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().width }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().height / 2 }px`;
 				break;
 			}
 		}

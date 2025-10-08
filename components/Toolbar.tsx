@@ -49,7 +49,7 @@ export function Toolbar({ children, className, contained = true, icon, raised: i
 	icon: ReactNode;
 
 }>) {
-	const raised = isRaised || use(ToolbarShellContext);
+	const raised = isRaised ?? use(ToolbarShellContext);
 	return (
 		<header
 			{ ...props }

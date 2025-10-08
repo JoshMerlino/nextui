@@ -52,8 +52,8 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	useEffect(function() {
 		if (!ref.current) return;
 		if (state) ref.current.showModal();
-		else ref.current.addEventListener("transitionend", () => requestAnimationFrame(() => ref.current?.close()), { once: true });
-	}, [ ref, state ]);
+		else if (isOpen !== false) ref.current.addEventListener("transitionend", () => requestAnimationFrame(() => ref.current?.close()), { once: true });
+	}, [ isOpen, ref, state ]);
 	
 	// Close on blur
 	useEffect(function() {

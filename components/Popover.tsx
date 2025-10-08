@@ -94,12 +94,19 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	duration: number;
 
+	/**
+	 * Props for the animation wrapper div.
+	 * This can be used to customize the animation further.
+	 */
+	animationProps: HTMLAttributes<HTMLDivElement>;
+
 }>>>(function({
 	children,
 	closeOnBlur = true,
 	closeOnEscape = true,
 	duration = 200,
 	position,
+	animationProps,
 	screenMargin = 8,
 	state: [ isOpen, setOpen ],
 	useModal = true,
@@ -202,11 +209,12 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
 			ref={ ref }>
 			<div
+				{ ...animationProps }
 				className={ cn([
 					"not-motion-reduce:transition-all",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					classes.animation({ position })
-				]) }
+				], animationProps?.className) }
 				style={{ transitionDuration: `${ duration }ms` }}>
 				{ children }
 			</div>

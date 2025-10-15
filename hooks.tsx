@@ -95,3 +95,99 @@ export function useCursor<T extends HTMLElement>(ref?: RefObject<T | null>) {
 	}, [ handleMouseMove ]);
 	return position;
 }
+
+type Options = {
+  blockVertical?: boolean; // also block top/bottom overscroll (default: false)
+};
+
+export function usePreventMacSwipe<T extends HTMLElement>(options: Options = {}): RefObject<T | null> {
+	const { blockVertical = false } = options;
+	const ref = useRef<T>(null);
+
+	useEffect(() => {
+
+		// Only apply on macOS desktop browsers where swipe-nav is a thing
+		const ua = navigator.userAgent;
+		if (!ua.includes("Macintosh")) return;
+
+		const isSafari = ua.includes("Safari") && !ua.includes("Chrome");
+		const isChrome = ua.includes("Chrome");
+		const isFirefox = ua.includes("Firefox");
+		if (!isSafari && !isChrome && !isFirefox) return;
+
+		function canScroll(node: HTMLElement, dir: "left" | "right" | "up" | "down") {
+			if (dir === "left") return node.scrollLeft > 0;
+			if (dir === "right") return node.scrollLeft + node.clientWidth < node.scrollWidth;
+			if (dir === "up") return node.scrollTop > 0;
+			return node.scrollTop + node.clientHeight < node.scrollHeight; // down
+		}
+
+		function shouldPrevent(e: WheelEvent, root: HTMLElement): boolean {
+			const target = e.target as HTMLElement | null;
+			if (!target || !root.contains(target)) return false;
+
+			// Determine which directions the event is attempting
+			const wantsLeft = e.deltaX < 0;
+			const wantsRight = e.deltaX > 0;
+			const wantsUp = blockVertical && e.deltaY > 0;
+			const wantsDown = blockVertical && e.deltaY < 0;
+
+			// Walk up the DOM and check if ANY ancestor can scroll in that direction
+			let node: HTMLElement | null = target;
+			let canL = false, canR = false, canU = false, canD = false;
+
+			while (node && node !== document.body && node !== document.documentElement) {
+
+				// Only consider scrollable containers
+				const style = getComputedStyle(node);
+				const overflowX = style.overflowX;
+				const overflowY = style.overflowY;
+
+				if (wantsLeft || wantsRight) {
+					if (overflowX !== "visible") {
+						if (!canL && wantsLeft) canL = canScroll(node, "left");
+						if (!canR && wantsRight) canR = canScroll(node, "right");
+					}
+				}
+				if (wantsUp || wantsDown) {
+					if (overflowY !== "visible") {
+						if (!canU && wantsUp) canU = canScroll(node, "up");
+						if (!canD && wantsDown) canD = canScroll(node, "down");
+					}
+				}
+
+				// Early exit if any scroll is possible
+				if ((wantsLeft && canL) || (wantsRight && canR) || (wantsUp && canU) || (wantsDown && canD)) {
+					return false;
+				}
+
+				node = node.parentElement;
+			}
+
+			// If we got here, no ancestor can scroll in the attempted direction(s)
+			return (wantsLeft && !canL) || (wantsRight && !canR) || (wantsUp && !canU) || (wantsDown && !canD);
+		}
+
+		function onWheel(e: WheelEvent) {
+			const root = ref.current;
+			if (!root) return;
+			if (shouldPrevent(e, root)) {
+
+				// MUST be passive: false to allow preventDefault
+				e.preventDefault();
+
+				// Avoid inertial carry-over sometimes triggering UI chrome
+				e.stopPropagation();
+			}
+		}
+
+		// Attach to window so we beat the browser’s history gesture
+		window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+
+		return () => {
+			window.removeEventListener("wheel", onWheel, { capture: true });
+		};
+	}, [ blockVertical ]);
+
+	return ref;
+}

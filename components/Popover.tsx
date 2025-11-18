@@ -13,7 +13,7 @@ export const classes = {
 		"backdrop:bg-transparent backdrop:hidden backdrop:pointer-events-none"
 	], {
 		defaultVariants: {
-			position: "bottom",
+			position: "bottom"
 		},
 		variants: {
 			position: {
@@ -24,14 +24,14 @@ export const classes = {
 				"bottom-left": "-translate-x-1/2 -left-1/2 origin-top-right",
 				"bottom-right": "-translate-x-1/2 -left-1/2 origin-top-left",
 				"top-left": "-translate-x-1/2 -left-1/2 origin-bottom-right",
-				"top-right": "-translate-x-1/2 -left-1/2 origin-bottom-left",
+				"top-right": "-translate-x-1/2 -left-1/2 origin-bottom-left"
 			}
 		}
 	}),
 
 	animation: cva(null, {
 		defaultVariants: {
-			position: "bottom",
+			position: "bottom"
 		},
 		variants: {
 			position: {
@@ -42,7 +42,7 @@ export const classes = {
 				"bottom-left": "origin-top-right",
 				"bottom-right": "origin-top-left",
 				"top-left": "origin-bottom-right",
-				"top-right": "origin-bottom-left",
+				"top-right": "origin-bottom-left"
 			}
 		}
 	})
@@ -100,6 +100,12 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	animationProps: HTMLAttributes<HTMLDivElement>;
 
+	/**
+	 * Prevent the popover from repositioning vertically when it would overflow the viewport.
+	 * Useful for dropdown menus that should only render beneath their trigger.
+	 */
+	lockVertical: boolean;
+
 }>>>(function({
 	children,
 	closeOnBlur = true,
@@ -108,6 +114,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	position,
 	animationProps,
 	screenMargin = 8,
+	lockVertical = false,
 	state: [ isOpen, setOpen ],
 	useModal = true,
 	...props
@@ -126,6 +133,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		if (!el) return;
 		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
+		const resolvedPosition = position || "bottom";
 
 		switch (position) {
 			default:
@@ -162,13 +170,21 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 		// Ensure popover stays on screen
 		const rect = el.getBoundingClientRect();
-		el.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
-		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - rect.left + screenMargin }px`;
-		if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
-		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - rect.top + screenMargin }px`;
-		if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
+		const isBottomAligned = resolvedPosition.startsWith("bottom");
+		const baseMaxHeight = lockVertical && isBottomAligned
+			? Math.max(window.innerHeight - rect.top - screenMargin, 0)
+			: Math.max(window.innerHeight - (screenMargin * 2), 0);
+		if (baseMaxHeight > 0) el.style.setProperty("--popover-max-height", `${ baseMaxHeight }px`);
+		else el.style.removeProperty("--popover-max-height");
+		const adjustedRect = el.getBoundingClientRect();
+		if (adjustedRect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - adjustedRect.left + screenMargin }px`;
+		if (adjustedRect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (adjustedRect.right - window.innerWidth) - screenMargin }px`;
+		if (!lockVertical) {
+			if (adjustedRect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - adjustedRect.top + screenMargin }px`;
+			if (adjustedRect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (adjustedRect.bottom - window.innerHeight) - screenMargin }px`;
+		}
 
-	}, [ ref, isOpen, position, screenMargin ]);
+	}, [ ref, isOpen, lockVertical, position, screenMargin ]);
 
 	// Close the dialog with animation
 	const close = useCallback(function() {
@@ -215,7 +231,13 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					classes.animation({ position })
 				], animationProps?.className) }
-				style={{ transitionDuration: `${ duration }ms` }}>
+				style={{
+					...animationProps?.style,
+					maxHeight: "var(--popover-max-height, calc(100vh - 16px))",
+					overflowX: "hidden",
+					overflowY: "auto",
+					transitionDuration: `${ duration }ms`
+				}}>
 				{ children }
 			</div>
 		</dialog>

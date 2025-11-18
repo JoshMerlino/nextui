@@ -45,6 +45,8 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	// Initialize the refs
 	const ref = useConvergedRef(forwarded);
 	const wrapperRef = useConvergedRef(wrapper);
+	const popoverProps = pick(props, POPOVER_PROPS);
+	const { lockVertical = true, ...restPopoverProps } = popoverProps;
 
 	// Get the options
 	const options = (Children.toArray(children) as ReactElement<ExtractProps<typeof Option>>[])
@@ -180,11 +182,14 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				screenMargin={ 16 }
 				state={ [ popoverOpen, setPopoverOpen ] }
 				useModal={ false }
-				{ ...pick(props, POPOVER_PROPS) }>
+				lockVertical={ lockVertical }
+				{ ...restPopoverProps }>
 				<Card
-					className="p-0 border-0"
+					className="p-0 border-0 max-h-full flex"
+					style={{ maxHeight: "inherit" }}
 					variant="popover">
-					<ul className={ cn("flex flex-col py-2 group/select max-h-[calc(100dvh-32px)] overflow-y-auto", props.size === "dense" && "size-dense") }>
+					<ul className={ cn("flex flex-col py-2 group/select max-h-full overflow-y-auto min-h-0 grow", props.size === "dense" && "size-dense") }
+						style={{ maxHeight: "inherit" }}>
 
 						{ /* Iterate over children and provide the select context */ }
 						{ Children.map(children, (child, key) => <SelectProvider

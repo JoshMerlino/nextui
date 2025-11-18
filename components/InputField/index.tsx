@@ -34,18 +34,18 @@ export const classes = {
 	wrapper: cva([
 		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
 		"[&:has(input:invalid)]:border-error/50 dark:[&:has(input:invalid)]:border-error/50 [&:has(input:invalid)]:focus-within:border-error [&:has(input:invalid)]:focus-within:ring-error [&:has(input:invalid)]:active:border-error [&:has(input:invalid)]:active:ring-error dark:[&:has(input:invalid)]:focus-within:border-error dark:[&:has(input:invalid)]:focus-within:ring-error dark:[&:has(input:invalid)]:active:border-error dark:[&:has(input:invalid)]:active:ring-error",
-		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 dark:[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:border-gray-200 dark:[&:has(input:disabled)]:active:border-gray-700",
+		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 dark:[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:border-gray-200 dark:[&:has(input:disabled)]:active:border-gray-700"
 	], {
 		defaultVariants: {
 			variant: "outlined",
-			color: "primary",
+			color: "primary"
 		},
 		variants: {
 			size: {
-				dense: "px-3",
+				dense: "px-3"
 			},
 			variant: {
-				outlined: "rounded-md border border-gray-200 dark:border-gray-700 focus-within:ring-1 active:ring-1 not-motion-reduce:transition-[border,box-shadow]",
+				outlined: "rounded-md border border-gray-200 dark:border-gray-700 focus-within:ring-1 active:ring-1 not-motion-reduce:transition-[border,box-shadow]"
 			},
 			color: {
 				primary: "focus-within:border-primary focus-within:ring-primary active:border-primary active:ring-primary dark:focus-within:border-primary-500 dark:focus-within:ring-primary-500 dark:active:border-primary-500 dark:active:ring-primary-500",
@@ -56,13 +56,13 @@ export const classes = {
 				"warning:pastel": "focus-within:border-warning focus-within:ring-warning active:border-warning active:ring-warning dark:focus-within:border-warning-300 dark:focus-within:ring-warning-300 dark:active:border-warning-300 dark:active:ring-warning-300",
 				success: "focus-within:border-success focus-within:ring-success active:border-success active:ring-success dark:focus-within:border-success-500 dark:focus-within:ring-success-500 dark:active:border-success-500 dark:active:ring-success",
 				"success:pastel": "focus-within:border-success focus-within:ring-success active:border-success active:ring-success dark:focus-within:border-success-300 dark:focus-within:ring-success-300 dark:active:border-success-300 dark:active:ring-success-300",
-				neutral: "focus-within:border-gray-800 focus-within:ring-gray-800 active:border-gray-800 active:ring-gray-800 dark:focus-within:border-gray-200 dark:focus-within:ring-gray-200 dark:active:border-gray-200 dark:active:ring-gray-200",
+				neutral: "focus-within:border-gray-800 focus-within:ring-gray-800 active:border-gray-800 active:ring-gray-800 dark:focus-within:border-gray-200 dark:focus-within:ring-gray-200 dark:active:border-gray-200 dark:active:ring-gray-200"
 			},
 			disabled: {
-				true: "cursor-not-allowed border-dashed active:ring-0 focus-within:ring-0 dark:border-dashed active:border-gray-200 dark:active:border-gray-700",
+				true: "cursor-not-allowed border-dashed active:ring-0 focus-within:ring-0 dark:border-dashed active:border-gray-200 dark:active:border-gray-700"
 			},
 			invalid: {
-				true: "border-error/50 dark:border-error/50 focus-within:border-error focus-within:ring-error active:border-error active:ring-error dark:focus-within:border-error dark:focus-within:ring-error dark:active:border-error dark:active:ring-error",
+				true: "border-error/50 dark:border-error/50 focus-within:border-error focus-within:ring-error active:border-error active:ring-error dark:focus-within:border-error dark:focus-within:ring-error dark:active:border-error dark:active:ring-error"
 			}
 		}
 	}),
@@ -90,13 +90,13 @@ export const classes = {
 				"warning:pastel": "caret-warning dark:caret-warning-300",
 				success: "caret-success",
 				"success:pastel": "caret-success dark:caret-success-300",
-				neutral: "caret-gray-800 dark:caret-gray-200",
+				neutral: "caret-gray-800 dark:caret-gray-200"
 			},
 			disabled: {
-				true: "cursor-not-allowed select-none",
+				true: "cursor-not-allowed select-none"
 			},
 			invalid: {
-				true: "caret-error dark:caret-error",
+				true: "caret-error dark:caret-error"
 			}
 		}
 	}),
@@ -105,7 +105,7 @@ export const classes = {
 		"absolute inline-flex ring-offset-white dark:ring-offset-gray-800 w-min text-gray-500 dark:text-gray-400",
 		"select-none font-normal pointer-events-none whitespace-nowrap not-motion-reduce:transition-[top,font-size,color,padding] -mx-1.5 px-1.5 top-1/2 -translate-y-1/2",
 		"group-focus-within/inputfield:top-0 peer-placeholder-shown:top-0",
-		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 group-focus-within/inputfield:peer-invalid:text-error group-active/inputfield:peer-invalid:text-error dark:group-focus-within/inputfield:peer-invalid:text-error dark:group-active/inputfield:peer-invalid:text-error",
+		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 group-focus-within/inputfield:peer-invalid:text-error group-active/inputfield:peer-invalid:text-error dark:group-focus-within/inputfield:peer-invalid:text-error dark:group-active/inputfield:peer-invalid:text-error"
 	], {
 		defaultVariants: {
 			size: "default",
@@ -125,7 +125,7 @@ export const classes = {
 				"warning:pastel": "group-focus-within/inputfield:text-warning group-active/inputfield:text-warning dark:group-focus-within/inputfield:text-warning-300 dark:group-active/inputfield:text-warning-300",
 				success: "group-focus-within/inputfield:text-success group-active/inputfield:text-success",
 				"success:pastel": "group-focus-within/inputfield:text-success group-active/inputfield:text-success dark:group-focus-within/inputfield:text-success-300 dark:group-active/inputfield:text-success-300",
-				neutral: "group-focus-within/inputfield:text-gray-800 group-active/inputfield:text-gray-800 dark:group-focus-within/inputfield:text-gray-200 dark:group-active/inputfield:text-gray-200",
+				neutral: "group-focus-within/inputfield:text-gray-800 group-active/inputfield:text-gray-800 dark:group-focus-within/inputfield:text-gray-200 dark:group-active/inputfield:text-gray-200"
 			},
 			disabled: {
 				true: "text-gray-400 dark:text-gray-500 group-focus-within/inputfield:text-gray-400 group-active/inputfield:text-gray-400 dark:group-focus-within/inputfield:text-gray-500 dark:group-active/inputfield:text-gray-500"
@@ -169,5 +169,5 @@ export const classes = {
 
 // Props to pass to the calendar
 export const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate", "color" ] as const;
-export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal" ] as const;
+export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal", "lockVertical" ] as const;
 export const BUTTON_PROPS = [ "color", "variant", "disabled", "size" ] as const;

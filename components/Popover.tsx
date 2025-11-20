@@ -128,23 +128,29 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	const ref = useConvergedRef(forwarded);
 
 	// Reposition the dialog
+	const [ activePosition, setActivePosition ] = useState(position || "bottom");
+
+	useEffect(() => setActivePosition(position || "bottom"), [ position ]);
+
 	const reposition = useCallback(function() {
 		const el = ref.current;
 		if (!el) return;
 		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
-		const resolvedPosition = position || "bottom";
+		const wrapperRect = wrapper.getBoundingClientRect();
+		let resolvedPosition = position || "bottom";
 
-		switch (position) {
+		const applyPosition = (pos: typeof resolvedPosition) => {
+			switch (pos) {
 			default:
 			case "bottom": {
-				el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().height }px`;
+					el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
+					el.style.top = `${ wrapper.getBoundingClientRect().height }px`;
 				break;
 			}
 
 			case "top": {
-				el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
+					el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
 				el.style.top = "0px";
 				break;
 			}
@@ -161,17 +167,30 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 				break;
 			}
 		}
+	};
+
+	applyPosition(resolvedPosition);
 
 		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
 		if (wrapper.classList.contains("group/popover-constraint")) {
-			const limit = wrapper.getBoundingClientRect();
-			el.style.width = `${ limit.width }px`;
+		el.style.width = `${ wrapperRect.width }px`;
 		}
 
-		// Ensure popover stays on screen
-		const rect = el.getBoundingClientRect();
-		const isBottomAligned = resolvedPosition.startsWith("bottom");
-		const baseMaxHeight = lockVertical && isBottomAligned
+	// Determine available space
+	let rect = el.getBoundingClientRect();
+	const availableBelow = Math.max(window.innerHeight - screenMargin - wrapperRect.bottom, 0);
+	const availableAbove = Math.max(wrapperRect.top - screenMargin, 0);
+	const shouldFlipUp = resolvedPosition.startsWith("bottom") && availableBelow < rect.height && availableAbove > availableBelow;
+	if (shouldFlipUp) {
+		resolvedPosition = resolvedPosition.replace("bottom", "top") as typeof resolvedPosition;
+		applyPosition(resolvedPosition);
+		rect = el.getBoundingClientRect();
+	}
+	if (activePosition !== resolvedPosition) setActivePosition(resolvedPosition);
+
+	// Ensure popover stays on screen
+	const isBottomAligned = resolvedPosition.startsWith("bottom");
+	const baseMaxHeight = lockVertical && isBottomAligned
 			? Math.max(window.innerHeight - rect.top - screenMargin, 0)
 			: Math.max(window.innerHeight - (screenMargin * 2), 0);
 		if (baseMaxHeight > 0) el.style.setProperty("--popover-max-height", `${ baseMaxHeight }px`);
@@ -184,7 +203,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			if (adjustedRect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (adjustedRect.bottom - window.innerHeight) - screenMargin }px`;
 		}
 
-	}, [ ref, isOpen, lockVertical, position, screenMargin ]);
+	}, [ activePosition, ref, isOpen, lockVertical, position, screenMargin ]);
 
 	// Close the dialog with animation
 	const close = useCallback(function() {
@@ -222,14 +241,14 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	return (
 		<dialog
 			{ ...props }
-			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
+			className={ cn(classes.popover(merge(props, { open: isOpen, position: activePosition }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
 			ref={ ref }>
 			<div
 				{ ...animationProps }
 				className={ cn([
 					"not-motion-reduce:transition-all",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
-					classes.animation({ position })
+					classes.animation({ position: activePosition })
 				], animationProps?.className) }
 				style={{
 					...animationProps?.style,

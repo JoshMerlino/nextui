@@ -9,7 +9,7 @@ import { forwardRef, useCallback, useEffect, useState, type HTMLAttributes, type
 export const classes = {
 
 	popover: cva([
-		"absolute bg-transparent overflow-visible focus:outline-0 m-0 z-50",
+		"fixed bg-transparent overflow-visible focus:outline-0 m-0 z-50",
 		"backdrop:bg-transparent backdrop:hidden backdrop:pointer-events-none"
 	], {
 		defaultVariants: {
@@ -94,27 +94,13 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	duration: number;
 
-	/**
-	 * Props for the animation wrapper div.
-	 * This can be used to customize the animation further.
-	 */
-	animationProps: HTMLAttributes<HTMLDivElement>;
-
-	/**
-	 * Prevent the popover from repositioning vertically when it would overflow the viewport.
-	 * Useful for dropdown menus that should only render beneath their trigger.
-	 */
-	lockVertical: boolean;
-
 }>>>(function({
 	children,
 	closeOnBlur = true,
 	closeOnEscape = true,
 	duration = 200,
 	position,
-	animationProps,
 	screenMargin = 8,
-	lockVertical = false,
 	state: [ isOpen, setOpen ],
 	useModal = true,
 	...props
@@ -128,82 +114,54 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	const ref = useConvergedRef(forwarded);
 
 	// Reposition the dialog
-	const [ activePosition, setActivePosition ] = useState(position || "bottom");
-
-	useEffect(() => setActivePosition(position || "bottom"), [ position ]);
-
 	const reposition = useCallback(function() {
 		const el = ref.current;
 		if (!el) return;
 		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
 		if (!isOpen) return;
-		const wrapperRect = wrapper.getBoundingClientRect();
-		let resolvedPosition = position || "bottom";
 
-		const applyPosition = (pos: typeof resolvedPosition) => {
-			switch (pos) {
+		switch (position) {
 			default:
 			case "bottom": {
-					el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
-					el.style.top = `${ wrapper.getBoundingClientRect().height }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().bottom }px`;
 				break;
 			}
 
 			case "top": {
-					el.style.left = `${ wrapper.getBoundingClientRect().width / 2 }px`;
-				el.style.top = "0px";
+				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top - el.offsetHeight }px`;
 				break;
 			}
 
 			case "left": {
-				el.style.left = "0px";
-				el.style.top = `${ wrapper.getBoundingClientRect().height / 2 }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().left - el.offsetWidth }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
 				break;
 			}
 
 			case "right": {
-				el.style.left = `${ wrapper.getBoundingClientRect().width }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().height / 2 }px`;
+				el.style.left = `${ wrapper.getBoundingClientRect().right }px`;
+				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
 				break;
 			}
 		}
-	};
-
-	applyPosition(resolvedPosition);
 
 		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
 		if (wrapper.classList.contains("group/popover-constraint")) {
-		el.style.width = `${ wrapperRect.width }px`;
+			const limit = wrapper.getBoundingClientRect();
+			el.style.width = `${ limit.width }px`;
 		}
 
-	// Determine available space
-	let rect = el.getBoundingClientRect();
-	const availableBelow = Math.max(window.innerHeight - screenMargin - wrapperRect.bottom, 0);
-	const availableAbove = Math.max(wrapperRect.top - screenMargin, 0);
-	const shouldFlipUp = resolvedPosition.startsWith("bottom") && availableBelow < rect.height && availableAbove > availableBelow;
-	if (shouldFlipUp) {
-		resolvedPosition = resolvedPosition.replace("bottom", "top") as typeof resolvedPosition;
-		applyPosition(resolvedPosition);
-		rect = el.getBoundingClientRect();
-	}
-	if (activePosition !== resolvedPosition) setActivePosition(resolvedPosition);
+		// Ensure popover stays on screen
+		const rect = el.getBoundingClientRect();
+		el.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
+		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - rect.left + screenMargin }px`;
+		if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
+		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - rect.top + screenMargin }px`;
+		if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
 
-	// Ensure popover stays on screen
-	const isBottomAligned = resolvedPosition.startsWith("bottom");
-	const baseMaxHeight = lockVertical && isBottomAligned
-			? Math.max(window.innerHeight - rect.top - screenMargin, 0)
-			: Math.max(window.innerHeight - (screenMargin * 2), 0);
-		if (baseMaxHeight > 0) el.style.setProperty("--popover-max-height", `${ baseMaxHeight }px`);
-		else el.style.removeProperty("--popover-max-height");
-		const adjustedRect = el.getBoundingClientRect();
-		if (adjustedRect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - adjustedRect.left + screenMargin }px`;
-		if (adjustedRect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (adjustedRect.right - window.innerWidth) - screenMargin }px`;
-		if (!lockVertical) {
-			if (adjustedRect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - adjustedRect.top + screenMargin }px`;
-			if (adjustedRect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (adjustedRect.bottom - window.innerHeight) - screenMargin }px`;
-		}
-
-	}, [ activePosition, ref, isOpen, lockVertical, position, screenMargin ]);
+	}, [ ref, isOpen, position, screenMargin ]);
 
 	// Close the dialog with animation
 	const close = useCallback(function() {
@@ -241,22 +199,15 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	return (
 		<dialog
 			{ ...props }
-			className={ cn(classes.popover(merge(props, { open: isOpen, position: activePosition }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
+			className={ cn(classes.popover(merge(props, { open: isOpen, position }) as VariantProps<typeof classes.popover>), isStable || "pointer-events-none") }
 			ref={ ref }>
 			<div
-				{ ...animationProps }
 				className={ cn([
 					"not-motion-reduce:transition-all",
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
-					classes.animation({ position: activePosition })
-				], animationProps?.className) }
-				style={{
-					...animationProps?.style,
-					maxHeight: "var(--popover-max-height, calc(100vh - 16px))",
-					overflowX: "hidden",
-					overflowY: "auto",
-					transitionDuration: `${ duration }ms`
-				}}>
+					classes.animation({ position })
+				]) }
+				style={{ transitionDuration: `${ duration }ms` }}>
 				{ children }
 			</div>
 		</dialog>

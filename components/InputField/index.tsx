@@ -169,5 +169,5 @@ export const classes = {
 
 // Props to pass to the calendar
 export const CALENDAR_PROPS = [ "yearFormat", "yearPicker", "yearPickerEnd", "yearPickerStart", "allowFuture", "allowPast", "openToDate", "color" ] as const;
-export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal", "lockVertical" ] as const;
+export const POPOVER_PROPS = [ "duration", "screenMargin", "position", "closeOnEscape", "closeOnBlur", "useModal", "contained" ] as const;
 export const BUTTON_PROPS = [ "color", "variant", "disabled", "size" ] as const;

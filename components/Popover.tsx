@@ -94,6 +94,12 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	 */
 	duration: number;
 
+	/**
+	 * When true, limit popover height to the viewport and enable internal scrolling.
+	 * Useful for dropdowns rendered inside constrained containers.
+	 */
+	contained: boolean;
+
 }>>>(function({
 	children,
 	closeOnBlur = true,
@@ -101,6 +107,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	duration = 200,
 	position,
 	screenMargin = 8,
+	contained = false,
 	state: [ isOpen, setOpen ],
 	useModal = true,
 	...props
@@ -155,13 +162,19 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 		// Ensure popover stays on screen
 		const rect = el.getBoundingClientRect();
-		el.style.maxHeight = `${ window.innerHeight - (screenMargin * 2) }px`;
+		if (contained) {
+			const availableHeight = Math.max(window.innerHeight - (screenMargin * 2), 0);
+			if (availableHeight > 0) el.style.setProperty("--popover-max-height", `${ availableHeight }px`);
+			else el.style.removeProperty("--popover-max-height");
+		} else {
+			el.style.removeProperty("--popover-max-height");
+		}
 		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - rect.left + screenMargin }px`;
 		if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
 		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - rect.top + screenMargin }px`;
 		if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
 
-	}, [ ref, isOpen, position, screenMargin ]);
+	}, [ contained, ref, isOpen, position, screenMargin ]);
 
 	// Close the dialog with animation
 	const close = useCallback(function() {
@@ -207,7 +220,14 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 					isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					classes.animation({ position })
 				]) }
-				style={{ transitionDuration: `${ duration }ms` }}>
+				style={{
+					...(contained ? {
+						maxHeight: "var(--popover-max-height, calc(100vh - 16px))",
+						overflowX: "hidden",
+						overflowY: "auto"
+					} : {}),
+					transitionDuration: `${ duration }ms`
+				}}>
 				{ children }
 			</div>
 		</dialog>

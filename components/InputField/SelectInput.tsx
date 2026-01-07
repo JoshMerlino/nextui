@@ -46,7 +46,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const ref = useConvergedRef(forwarded);
 	const wrapperRef = useConvergedRef(wrapper);
 	const popoverProps = pick(props, POPOVER_PROPS);
-	const { lockVertical = true, ...restPopoverProps } = popoverProps;
+	const { contained: contained = true, ...restPopoverProps } = popoverProps;
 
 	// Get the options
 	const options = (Children.toArray(children) as ReactElement<ExtractProps<typeof Option>>[])
@@ -182,7 +182,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 				screenMargin={ 16 }
 				state={ [ popoverOpen, setPopoverOpen ] }
 				useModal={ false }
-				lockVertical={ lockVertical }
+				contained={ contained }
 				{ ...restPopoverProps }>
 				<Card
 					className="p-0 border-0 max-h-full flex"

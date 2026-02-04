@@ -1,18 +1,18 @@
 {
 	"name": "nextui",
 	"dependencies": {
-		"@tanstack/react-virtual": "^3.13.17",
+		"@tanstack/react-virtual": "^3.13.18",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.19",
-		"framer-motion": "^12.24.7",
-		"lodash": "^4.17.21",
-		"react": "^19.2.3",
+		"framer-motion": "^12.31.0",
+		"lodash": "^4.17.23",
+		"react": "^19.2.4",
 		"react-icons": "^5.5.0",
 		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.17.21",
-		"@types/react": "^19.2.7"
+		"@types/lodash": "^4.17.23",
+		"@types/react": "^19.2.11"
 	}
 }

@@ -124,7 +124,13 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	const reposition = useCallback(function() {
 		const el = ref.current;
 		if (!el) return;
-		const wrapper = (el.closest(".group\\/popover-constraint") || el?.parentNode) as HTMLElement;
+		const activeAnchor = (document.activeElement instanceof HTMLElement
+			? document.activeElement.closest(".group\\/popover-constraint")
+			: null) as HTMLElement | null;
+		const wrapper = (el.parentElement?.closest(".group\\/popover-constraint")
+			|| el.parentElement
+			|| activeAnchor
+			|| document.body) as HTMLElement;
 		if (!isOpen) return;
 
 		switch (position) {
@@ -192,6 +198,7 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		if (useModal) ref.current?.showModal();
 		else ref.current?.show();
 		reposition();
+		requestAnimationFrame(() => reposition());
 		setIsVisible(true);
 		setTimeout(() => setIsStable(true), duration);
 	}, [ duration, ref, reposition, useModal ]);

@@ -118,9 +118,9 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	return (
 		<dialog
 			className={ cn([
-				"p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center flex h-full fixed",
+				"p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full justify-center open:flex h-full fixed",
 				isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none",
-				"flex items-center"
+				"items-center"
 			]) }
 			ref={ ref }
 			{ ...props }>

@@ -115,7 +115,7 @@ export function ScrollSpy({ items, htmlFor, className }: {
 					<a
 						className={ cn(
 							"block py-1 truncate transition-colors duration-100",
-							item.depth <= 2 ? "pl-4" : item.depth === 3 ? "pl-7" : "pl-10",
+							item.depth <= 1 ? "pl-4" : item.depth === 2 ? "pl-5.5" : item.depth === 3 ? "pl-7" : "pl-10",
 							active === item.href
 								? "text-primary dark:text-primary"
 								: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"

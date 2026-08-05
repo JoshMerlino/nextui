@@ -15,8 +15,8 @@ export const classes = {
 
 		variants: {
 			size: {
-				"default": "h-[52px] [&>svg]:w-6 [&>svg]:h-6",
-				"dense": "h-[40px] [&>svg]:w-5 [&>svg]:h-5 [&>svg]:mx-0.5"
+				"default": "h-13 [&>svg]:w-6 [&>svg]:h-6",
+				"dense": "h-10 [&>svg]:w-5 [&>svg]:h-5 [&>svg]:mx-0.5"
 			},
 			disabled: {
 				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none"
@@ -75,58 +75,58 @@ const GroupContext = createContext({
 
 export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement> & VariantProps<(typeof classes)[keyof typeof classes]> & Partial<{
 
-    /**
+	/**
      * The color of the input
      * @default "primary"
      */
-    color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
 
 }>>(function({ children, className, ...props }, fref) {
 
-		const tabsRef = Children.map(children, () => useRef<HTMLLIElement>(null));
-		const indicator = useRef<HTMLDivElement>(null);
-		const ref = useConvergedRef(fref);
+	const tabsRef = Children.map(children, () => useRef<HTMLLIElement>(null));
+	const indicator = useRef<HTMLDivElement>(null);
+	const ref = useConvergedRef(fref);
 
-		const [ selected, setSelected ] = useState(-1);
+	const [ selected, setSelected ] = useState(-1);
 
-		useEffect(function() {
-			const tab = tabsRef?.[selected]?.current;
-			if (!tab || !indicator.current) return;
-			const { offsetTop, clientHeight } = tab;
-			indicator.current.style.top = `${ offsetTop }px`;
-			indicator.current.style.height = `${ clientHeight }px`;
-		}, [ selected, tabsRef ]);
+	useEffect(function() {
+		const tab = tabsRef?.[selected]?.current;
+		if (!tab || !indicator.current) return;
+		const { offsetTop, clientHeight } = tab;
+		indicator.current.style.top = `${ offsetTop }px`;
+		indicator.current.style.height = `${ clientHeight }px`;
+	}, [ selected, tabsRef ]);
 
-		return (
-			<ul { ...props }
-				className={ cn(classes.group(props as VariantProps<typeof classes.group>), className) }
-				ref={ ref }>
+	return (
+		<ul { ...props }
+			className={ cn(classes.group(props as VariantProps<typeof classes.group>), className) }
+			ref={ ref }>
 
-				<li className="absolute inset-0 pointer-events-none">
+			<li className="absolute inset-0 pointer-events-none">
 
-					{ /* Indicator */ }
-					<div className={ cn(classes.indicator(props as VariantProps<typeof classes.indicator>)) } ref={ indicator } />
+				{ /* Indicator */ }
+				<div className={ cn(classes.indicator(props as VariantProps<typeof classes.indicator>)) } ref={ indicator } />
 
-				</li>
+			</li>
 
-				{ /* Tabs */ }
-				{ Children.map(children, (child, key) => (
-					<GroupContext value={{
-						color: props.color || "primary",
-						isSelected: selected === key,
-						setSelected: () => setSelected(key)
-					}}>
-						<li
-							key={ key }
-							ref={ tabsRef?.[key] }>
-							{ child }
-						</li>
-					</GroupContext>
-				)) }
-			</ul>
+			{ /* Tabs */ }
+			{ Children.map(children, (child, key) => (
+				<GroupContext value={{
+					color: props.color || "primary",
+					isSelected: selected === key,
+					setSelected: () => setSelected(key)
+				}}>
+					<li
+						key={ key }
+						ref={ tabsRef?.[key] }>
+						{ child }
+					</li>
+				</GroupContext>
+			)) }
+		</ul>
 
-		);
-	});
+	);
+});
 
 export const DrawerItem = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElement> & Pick<InputHTMLAttributes<HTMLButtonElement>, "disabled"> & VariantProps<typeof classes.item> & Partial<{
 

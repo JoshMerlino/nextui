@@ -64,9 +64,30 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 	const [ hasContents, setHasContents ] = useState(((props.defaultValue || props.value || props.placeholder)?.toString().length ?? 0) > 0);
 	const [ isValid, setIsValid ] = useState(!invalid);
 	
-	// Add event listeners
+	// Recompute from the DOM after every commit, rather than from the keystroke
+	// that caused it.
+	//
+	// These two flags only ever CHANGE on the edges — the first character typed,
+	// the last one deleted — and a change re-renders the input. Do that from the
+	// `input` event and the re-render lands while `value` is still the
+	// pre-keystroke prop (a controlled parent has not necessarily caught up, and
+	// with a deferred setter such as a query-param hook it definitely has not);
+	// React then writes that stale value back into the DOM and the keystroke is
+	// undone. A commit is precisely the moment React has finished writing `value`
+	// into the input, so what we read here agrees with the props and the
+	// resulting render cannot clobber anything.
+	useEffect(function() {
+		const input = inputRef.current;
+		if (!input) return;
+		setHasContents(input.value.length > 0);
+		setIsValid(input.checkValidity());
+	});
+
+	// An uncontrolled input re-renders for nobody, so its own typing has to
+	// schedule the sync above. A controlled one gets it from its parent's render.
 	useEventMap(inputRef, {
 		input() {
+			if (props.value !== undefined) return;
 			setHasContents(this.value.length > 0);
 			setIsValid(this.checkValidity());
 		}

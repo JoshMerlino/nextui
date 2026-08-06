@@ -133,41 +133,12 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 			|| document.body) as HTMLElement;
 		if (!isOpen) return;
 
-		switch (position) {
-			default:
-			case "bottom": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().bottom }px`;
-				break;
-			}
-
-			case "top": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2 }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top - el.offsetHeight }px`;
-				break;
-			}
-
-			case "left": {
-				el.style.left = `${ wrapper.getBoundingClientRect().left - el.offsetWidth }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
-				break;
-			}
-
-			case "right": {
-				el.style.left = `${ wrapper.getBoundingClientRect().right }px`;
-				el.style.top = `${ wrapper.getBoundingClientRect().top + wrapper.offsetHeight / 2 }px`;
-				break;
-			}
-		}
-
-		// If the popover is in a limit group, ensure it stays within the group, it should alsso take up the full width of the group
+		// Width first — it decides where a centred popover's left edge lands.
+		// A popover in a limit group spans the full width of that group.
 		if (wrapper.classList.contains("group/popover-constraint")) {
-			const limit = wrapper.getBoundingClientRect();
-			el.style.width = `${ limit.width }px`;
+			el.style.width = `${ wrapper.getBoundingClientRect().width }px`;
 		}
 
-		// Ensure popover stays on screen
-		const rect = el.getBoundingClientRect();
 		if (contained) {
 			const availableHeight = Math.max(window.innerHeight - (screenMargin * 2), 0);
 			if (availableHeight > 0) el.style.setProperty("--popover-max-height", `${ availableHeight }px`);
@@ -175,10 +146,40 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 		} else {
 			el.style.removeProperty("--popover-max-height");
 		}
-		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) - rect.left + screenMargin }px`;
-		if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - window.innerWidth) - screenMargin }px`;
-		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) - rect.top + screenMargin }px`;
-		if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - window.innerHeight) - screenMargin }px`;
+
+		// Where the popover's box should end up, in VIEWPORT coordinates.
+		const anchor = wrapper.getBoundingClientRect();
+		const target = (function() {
+			switch (position) {
+				default:
+				case "bottom": return { left: anchor.left + anchor.width / 2 - el.offsetWidth / 2, top: anchor.bottom };
+				case "top": return { left: anchor.left + anchor.width / 2 - el.offsetWidth / 2, top: anchor.top - el.offsetHeight };
+				case "left": return { left: anchor.left - el.offsetWidth, top: anchor.top + anchor.height / 2 - el.offsetHeight / 2 };
+				case "right": return { left: anchor.right, top: anchor.top + anchor.height / 2 - el.offsetHeight / 2 };
+			}
+		}());
+
+		// Write the target, then measure and correct by the error.
+		//
+		// `position: fixed` resolves against the viewport ONLY while nothing above
+		// establishes a containing block — but a transform, filter or
+		// backdrop-filter on any ancestor (a blurred panel, say) creates one, and
+		// then these viewport coordinates land offset by that ancestor's own
+		// position. Since the offset is a constant, one measured round trip
+		// recovers it without having to hunt for the culprit — and it folds in the
+		// class-level translate at the same time.
+		el.style.left = `${ target.left }px`;
+		el.style.top = `${ target.top }px`;
+		const placed = el.getBoundingClientRect();
+		el.style.left = `${ target.left + (target.left - placed.left) }px`;
+		el.style.top = `${ target.top + (target.top - placed.top) }px`;
+
+		// Ensure popover stays on screen
+		const rect = el.getBoundingClientRect();
+		if (rect.left < screenMargin) el.style.left = `${ parseFloat(el.style.left) + (screenMargin - rect.left) }px`;
+		else if (rect.right > window.innerWidth - screenMargin) el.style.left = `${ parseFloat(el.style.left) - (rect.right - (window.innerWidth - screenMargin)) }px`;
+		if (rect.top < screenMargin) el.style.top = `${ parseFloat(el.style.top) + (screenMargin - rect.top) }px`;
+		else if (rect.bottom > window.innerHeight - screenMargin) el.style.top = `${ parseFloat(el.style.top) - (rect.bottom - (window.innerHeight - screenMargin)) }px`;
 
 	}, [ contained, ref, isOpen, position, screenMargin ]);
 

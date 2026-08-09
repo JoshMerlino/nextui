@@ -20,7 +20,7 @@ export interface ScrollSpyItem {
  * Scrollspy navigation: a thin left border with a sliding indicator segment
  * that animates to the active item as the scroll container scrolls.
  */
-export function ScrollSpy({ items, htmlFor, className }: {
+export function ScrollSpy({ items, htmlFor, className, color = "primary" }: {
 
 	/** The links to render, in document order */
 	items: ScrollSpyItem[];
@@ -30,6 +30,9 @@ export function ScrollSpy({ items, htmlFor, className }: {
 
 	/** Additional classes for the list element */
 	className?: string;
+
+	/** Accent for the indicator and active link — pastel drops to primary-300 in dark mode */
+	color?: "primary" | "primary:pastel";
 
 }) {
 
@@ -107,7 +110,10 @@ export function ScrollSpy({ items, htmlFor, className }: {
 			{ indicator && (
 				<span
 					aria-hidden
-					className="absolute -left-px w-0.5 rounded-full bg-primary dark:bg-primary transition-[top,height] duration-100 ease-out"
+					className={ cn(
+						"absolute -left-px w-0.5 rounded-full transition-[top,height] duration-100 ease-out",
+						color === "primary:pastel" ? "bg-primary dark:bg-primary-300" : "bg-primary dark:bg-primary"
+					) }
 					style={{ height: indicator.height, top: indicator.top }} />
 			) }
 			{ items.map(item => (
@@ -117,7 +123,7 @@ export function ScrollSpy({ items, htmlFor, className }: {
 							"block py-1 truncate transition-colors duration-100",
 							item.depth <= 1 ? "pl-4" : item.depth === 2 ? "pl-5.5" : item.depth === 3 ? "pl-7" : "pl-10",
 							active === item.href
-								? "text-primary dark:text-primary"
+								? color === "primary:pastel" ? "text-primary dark:text-primary-300" : "text-primary dark:text-primary"
 								: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
 						) }
 						href={ item.href }

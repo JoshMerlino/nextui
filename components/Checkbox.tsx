@@ -8,8 +8,27 @@ import { MdCheck, MdRemove } from "react-icons/md";
 
 export const classes = {
 
+	// The box is 20px with a 2px border, expressed the way `box-sizing: border-box`
+	// needs it expressed: `w-5` is the OUTER size, with the border drawn inside it.
+	//
+	// It used to read `w-4 ... checked:border-[8px]`, which is the same intent
+	// written for content-box — 16px plus 2px of border on each side. Tailwind's
+	// preflight sets `box-sizing: border-box` on everything, so that collapsed to a
+	// 16px box with a 12px core instead, and the checkbox rendered a size smaller
+	// than it was drawn to be everywhere it was used.
+	//
+	// `checked:border-*` has to stay exactly half the box: the checked state is
+	// drawn by growing the border until it meets in the middle, and any less leaves
+	// a hole in the centre of a checkbox that is supposed to read as filled.
+	// `block` so the box fills its wrapper exactly. An input is inline by default,
+	// which sits it on a text baseline and leaves descender space under it — the
+	// box then hangs low inside the wrapper, and the check and the ripple, which
+	// are positioned against the WRAPPER, no longer line up with it.
+	//
+	// The optical nudge that used to live here is on the wrapper now, so the box,
+	// the tick and the ripple all move together.
 	checkbox: cva([
-		"appearance-none -translate-y-px border-2 border-gray-500 w-4 h-4 aspect-square rounded-[2px] peer checked:border-[8px] not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
+		"appearance-none block border-2 border-gray-500 w-5 h-5 aspect-square rounded-[2px] peer checked:border-[10px] not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
 	], {
 		defaultVariants: {
 			color: "primary",
@@ -29,8 +48,13 @@ export const classes = {
 		}
 	}),
 
+	// `text-xl` sizes the glyph, which react-icons draws at 1em: 20px, matching the
+	// box, so the icon element never spills past it. The tick itself has margins
+	// inside its own viewBox and lands around 12px, which is the proportion
+	// Material draws a checkmark at. Without a size here it inherited whatever the
+	// surrounding text happened to be and changed size per call site.
 	icon: cva([
-		"absolute inset-0 flex items-center justify-center z-10 not-motion-reduce:transition-transform"
+		"absolute inset-0 flex items-center justify-center z-10 text-xl not-motion-reduce:transition-transform"
 	], {
 		defaultVariants: {
 			color: "primary",
@@ -149,8 +173,13 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 		</label>
 	);
 
+	// Tracks the box: this is what the check overlay and the ripple below are both
+	// positioned against, so a wrapper of a different size — or one the box is
+	// offset within — leaves them off-centre inside it. The optical nudge that
+	// aligns the box against adjacent text belongs here for the same reason: on
+	// the wrapper it moves all three, on the input it moved only the box.
 	return (
-		<label className="relative h-4 w-4 isolate group/checkbox">
+		<label className="relative h-5 w-5 -translate-y-px isolate group/checkbox">
 			
 			<input
 				className={ cn(classes.checkbox(props as VariantProps<typeof classes.checkbox>), className) }

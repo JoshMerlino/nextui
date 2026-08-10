@@ -156,6 +156,17 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 				case "top": return { left: anchor.left + anchor.width / 2 - el.offsetWidth / 2, top: anchor.top - el.offsetHeight };
 				case "left": return { left: anchor.left - el.offsetWidth, top: anchor.top + anchor.height / 2 - el.offsetHeight / 2 };
 				case "right": return { left: anchor.right, top: anchor.top + anchor.height / 2 - el.offsetHeight / 2 };
+
+				// The corners name the direction the popover EXTENDS, so the edge it
+				// extends away from is the one that stays pinned to the anchor — which
+				// is exactly the corner the class map already gives them as a transform
+				// origin. Without these cases they fell through to `default` and were
+				// centred like a plain "bottom", so the growth animation started from a
+				// corner the box was never anchored by.
+				case "bottom-left": return { left: anchor.right - el.offsetWidth, top: anchor.bottom };
+				case "bottom-right": return { left: anchor.left, top: anchor.bottom };
+				case "top-left": return { left: anchor.right - el.offsetWidth, top: anchor.top - el.offsetHeight };
+				case "top-right": return { left: anchor.left, top: anchor.top - el.offsetHeight };
 			}
 		}());
 

@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { Children, createContext, forwardRef, useContext, useEffect, useRef, useState, type Dispatch, type HTMLAttributes, type InputHTMLAttributes } from "react";
+import { Children, createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState, type HTMLAttributes, type InputHTMLAttributes } from "react";
 import { Ripple } from "./Ripple";
 
 export const classes = {
@@ -70,7 +70,12 @@ export const classes = {
 const GroupContext = createContext({
 	isSelected: false,
 	color: "primary" as "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral",
-	setSelected: (() => { }) as Dispatch<void>
+
+	/** This item's position in the group, passed rather than closed over so the
+	 *  setter below can stay referentially stable. */
+	index: -1,
+
+	select: (() => { }) as (index: number, checked: boolean) => void
 });
 
 export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement> & VariantProps<(typeof classes)[keyof typeof classes]> & Partial<{
@@ -89,9 +94,28 @@ export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUList
 
 	const [ selected, setSelected ] = useState(-1);
 
+	/**
+	 * Claim or release the group's one selected slot.
+	 *
+	 * Written as a functional update so the result does not depend on the order
+	 * the items' effects happen to run in: an item releasing the slot can only
+	 * clear it while it still holds it, so a sibling that has already claimed it
+	 * is never wiped by the departing item running second.
+	 */
+	const select = useCallback((index: number, checked: boolean) => setSelected(current => checked ? index : current === index ? -1 : current), []);
+
 	useEffect(function() {
+		if (!indicator.current) return;
 		const tab = tabsRef?.[selected]?.current;
-		if (!tab || !indicator.current) return;
+
+		// Collapse when the group holds nothing, rather than leaving the bar parked
+		// on whatever row was last active. A group the route has moved away from
+		// has no current row to point at.
+		if (!tab) {
+			indicator.current.style.height = "0px";
+			return;
+		}
+
 		const { offsetTop, clientHeight } = tab;
 		indicator.current.style.top = `${ offsetTop }px`;
 		indicator.current.style.height = `${ clientHeight }px`;
@@ -113,8 +137,9 @@ export const DrawerGroup = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUList
 			{ Children.map(children, (child, key) => (
 				<GroupContext value={{
 					color: props.color || "primary",
+					index: key,
 					isSelected: selected === key,
-					setSelected: () => setSelected(key)
+					select
 				}}>
 					<li
 						key={ key }
@@ -164,10 +189,19 @@ export const DrawerItem = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButto
 }>>(function({ children, defaultChecked, className, ripple, ...props }, fref) {
 
 	const ref = useConvergedRef(fref);
-	const { isSelected, color, setSelected } = useContext(GroupContext);
-	useEffect(() => void (defaultChecked && setSelected()), [ defaultChecked, setSelected ]);
+	const { isSelected, color, index, select } = useContext(GroupContext);
 
-	useEventMap(ref, { click: () => setSelected() });
+	// `defaultChecked` is what a router-driven drawer binds to the current route,
+	// so it has to deselect as well as select. Without the false branch a group
+	// only ever heard which of ITS items had become active — so navigating to a
+	// route owned by a different group left this one highlighting its old row,
+	// with two rows lit at once.
+	//
+	// Depends on `defaultChecked` alone (index and select are stable), so an item
+	// selected by a plain click is not cleared again on the next render.
+	useEffect(() => select(index, !!defaultChecked), [ defaultChecked, index, select ]);
+
+	useEventMap(ref, { click: () => select(index, true) });
 
 	props.color ||= color;
 

@@ -12,6 +12,13 @@ import SelectInput from "./SelectInput";
 type InputFieldTypes = {
 	email: ExtractProps<typeof BaseInput>;
 	text: ExtractProps<typeof BaseInput>;
+
+	/** `date` is the picker; these are the browser's own native controls, which
+	 *  fall through to BaseInput and carry a time of day the picker has no field
+	 *  for. */
+	"datetime-local": ExtractProps<typeof BaseInput>;
+	time: ExtractProps<typeof BaseInput>;
+
 	date: ExtractProps<typeof DateInput>;
 	file: ExtractProps<typeof FileInput>;
 	select: ExtractProps<typeof SelectInput>;

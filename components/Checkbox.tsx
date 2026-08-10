@@ -28,12 +28,22 @@ export const classes = {
 	// The optical nudge that used to live here is on the wrapper now, so the box,
 	// the tick and the ripple all move together.
 	checkbox: cva([
-		"appearance-none block border-2 border-gray-500 w-5 h-5 aspect-square rounded-[2px] peer checked:border-[10px] not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
+		"appearance-none block border-2 border-gray-500 aspect-square rounded-[2px] peer not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
 	], {
 		defaultVariants: {
 			color: "primary",
+			size: "default"
 		},
 		variants: {
+
+			// The checked border is always HALF the box — see the note above; it is
+			// what fills the middle in. A dense box keeps the same 2px unchecked
+			// border, so it reads as the same control drawn smaller rather than as a
+			// thinner one.
+			size: {
+				default: "w-5 h-5 checked:border-[10px]",
+				dense: "w-4 h-4 checked:border-[8px]"
+			},
 			color: {
 				primary: "checked:border-primary",
 				"primary:pastel": "checked:border-primary dark:checked:border-primary-300",
@@ -54,12 +64,19 @@ export const classes = {
 	// Material draws a checkmark at. Without a size here it inherited whatever the
 	// surrounding text happened to be and changed size per call site.
 	icon: cva([
-		"absolute inset-0 flex items-center justify-center z-10 text-xl not-motion-reduce:transition-transform"
+		"absolute inset-0 flex items-center justify-center z-10 not-motion-reduce:transition-transform"
 	], {
 		defaultVariants: {
 			color: "primary",
+			size: "default"
 		},
 		variants: {
+
+			// One em per box, so the glyph never spills past it at either size.
+			size: {
+				default: "text-xl",
+				dense: "text-base"
+			},
 			checked: {
 				false: "scale-0",
 				true: "scale-100",
@@ -129,13 +146,24 @@ export const classes = {
 
 };
 
-export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
+// `size` is omitted from the input's own attributes: on an <input> it is a
+// number of characters, which means nothing to a checkbox, and keeping it would
+// intersect with the variant below into `never`.
+export const Checkbox = forwardRef<HTMLInputElement, Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & VariantProps<typeof classes[keyof typeof classes]> & Partial<{
 
 	/**
 	 * The color of the input
 	 * @default "primary"
 	 */
 	color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
+	/**
+	 * How big the box is. `dense` is 16px against the default's 20px, for a list
+	 * of them beside one line of text each — where the full-size control is
+	 * taller than the row it belongs to.
+	 * @default "default"
+	 */
+	size: "default" | "dense";
 
 	/**
 	 * Whether the checkbox is indeterminate
@@ -167,7 +195,7 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 	const ref = useConvergedRef(fref);
 
 	if (children) return (
-		<label className={ cn("flex items-center gap-4 group/checkbox", className) }>
+		<label className={ cn("flex items-center group/checkbox", props.size === "dense" ? "gap-2" : "gap-4", className) }>
 			<Checkbox { ...props } />
 			{ children }
 		</label>
@@ -178,22 +206,25 @@ export const Checkbox = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInp
 	// offset within — leaves them off-centre inside it. The optical nudge that
 	// aligns the box against adjacent text belongs here for the same reason: on
 	// the wrapper it moves all three, on the input it moved only the box.
+	const dense = props.size === "dense";
+
 	return (
-		<label className="relative h-5 w-5 -translate-y-px isolate group/checkbox">
-			
+		<label className={ cn("relative -translate-y-px isolate group/checkbox", dense ? "h-4 w-4" : "h-5 w-5") }>
+
 			<input
 				className={ cn(classes.checkbox(props as VariantProps<typeof classes.checkbox>), className) }
 				ref={ ref }
 				type="checkbox"
-				{ ...omit(props, "indeterminate") } />
+				{ ...omit(props, "indeterminate", "size") } />
 			
 			<div className={ cn(classes.icon(props as VariantProps<typeof classes.icon>)) }>
 				{ indeterminate ? <MdRemove /> : <MdCheck /> }
 			</div>
 
-			{ /* Ripple */ }
+			{ /* Ripple. Its halo hangs the same distance off the box at either size,
+			     so a dense one keeps a target worth pointing at. */ }
 			{ (props.disabled || (typeof ripple === "boolean" && !ripple)) || (
-				<div className={ cn("-inset-2.5 z-20 absolute rounded-full overflow-hidden", classes.rippleWrapper(props as VariantProps<typeof classes.rippleWrapper>)) }>
+				<div className={ cn("z-20 absolute rounded-full overflow-hidden", dense ? "-inset-2" : "-inset-2.5", classes.rippleWrapper(props as VariantProps<typeof classes.rippleWrapper>)) }>
 					<Ripple { ...typeof ripple === "boolean" ? {} : ripple } className={ cn(classes.ripple(props as VariantProps<typeof classes.ripple>), typeof ripple === "object" && ripple.className) } emitFromCenter />
 				</div>
 			) }

@@ -4,7 +4,7 @@ import { Card } from "nextui/Card";
 import { cn } from "nextui/util";
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 
-export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: [ state, setState ], className, variant, alwaysRender, ...props }: {
+export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmitShortcut, state: [ state, setState ], className, variant, alwaysRender, ...props }: {
 
 	/**
 	 * If true, the modal will render as a traditional block element.
@@ -34,6 +34,16 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 	 * @default false
 	 */
 	alwaysRender?: boolean;
+
+	/**
+	 * Called on Ctrl+Enter (or Cmd+Enter) while the modal is open — the save
+	 * chord for a dialog that ends in a primary action, the counterpart of the
+	 * Escape binding above it. The modal owns only the binding: whether the
+	 * action is currently allowed (validation, an in-flight save) is the
+	 * handler's own question, exactly as it is for the button it mirrors.
+	 * @default undefined — the chord does nothing
+	 */
+	onSubmitShortcut?: () => void;
 
 } & Pick<ExtractProps<typeof Card>, "variant"> & HTMLAttributes<HTMLDialogElement>) {
 
@@ -114,6 +124,25 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, state: 
 		return () => window.removeEventListener("keydown", onKeydown);
 
 	}, [ ref, isOpen, state, setState, bindEscKey ]);
+
+	// On Ctrl/Cmd+Enter, hand the dialog to its primary action. A window
+	// listener like the Escape one above, and for the same reason: the chord
+	// must work from wherever focus happens to be — a text field, a checkbox,
+	// nothing at all — not only when the dialog itself holds it.
+	useEffect(function() {
+		if (!onSubmitShortcut) return;
+
+		function onKeydown(event: KeyboardEvent) {
+			if (event.key !== "Enter" || !(event.ctrlKey || event.metaKey)) return;
+			if (!ref.current || !ref.current.open) return;
+			event.preventDefault();
+			onSubmitShortcut?.();
+		}
+
+		window.addEventListener("keydown", onKeydown);
+		return () => window.removeEventListener("keydown", onKeydown);
+
+	}, [ ref, isOpen, onSubmitShortcut ]);
 
 	return (
 		<dialog

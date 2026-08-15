@@ -25,7 +25,15 @@ type InputFieldTypes = {
     password: ExtractProps<typeof PasswordInput>;
 };
 
-type InputFactoryProps<T extends keyof InputFieldTypes> = { type: T } & InputFieldTypes[T];
+/**
+ * Distributed over `T`, so this is a union of one shape per `type` rather than
+ * an intersection of all of them. It has to be: the members no longer agree —
+ * a textarea's `onChange` carries an HTMLTextAreaElement — and intersected,
+ * every handler's parameter collapses to a type nothing satisfies. As a union
+ * the `type` prop discriminates, which is also what lets the switch below
+ * narrow to one component's props.
+ */
+type InputFactoryProps<T extends keyof InputFieldTypes> = T extends unknown ? { type: T } & InputFieldTypes[T] : never;
 
 export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof InputFieldTypes>>(function(props, ref) {
 	switch (props.type) {
@@ -34,13 +42,19 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 		case "file": return <FileInput { ...props } ref={ ref } />;
 		case "password": return <PasswordInput { ...props } ref={ ref } />;
 		case "select" : return <SelectInput { ...props } ref={ ref } />;
+
 	}
 });
 
 export const classes = {
 	wrapper: cva([
+
+		// `:user-invalid` rather than `:invalid`: the latter matches an empty
+		// required field from its first paint, so a form opened with one on it came
+		// up outlined in red before the reader had typed anything. The user-scoped
+		// pseudo-class waits until they have actually been in the field.
 		"relative group/inputfield inline-flex items-center cursor-text gap-2 px-4 shrink-0 min-w-32",
-		"[&:has(input:invalid)]:border-error/50 dark:[&:has(input:invalid)]:border-error/50 [&:has(input:invalid)]:focus-within:border-error [&:has(input:invalid)]:focus-within:ring-error [&:has(input:invalid)]:active:border-error [&:has(input:invalid)]:active:ring-error dark:[&:has(input:invalid)]:focus-within:border-error dark:[&:has(input:invalid)]:focus-within:ring-error dark:[&:has(input:invalid)]:active:border-error dark:[&:has(input:invalid)]:active:ring-error",
+		"[&:has(input:user-invalid)]:border-error/50 dark:[&:has(input:user-invalid)]:border-error/50 [&:has(input:user-invalid)]:focus-within:border-error [&:has(input:user-invalid)]:focus-within:ring-error [&:has(input:user-invalid)]:active:border-error [&:has(input:user-invalid)]:active:ring-error dark:[&:has(input:user-invalid)]:focus-within:border-error dark:[&:has(input:user-invalid)]:focus-within:ring-error dark:[&:has(input:user-invalid)]:active:border-error dark:[&:has(input:user-invalid)]:active:ring-error",
 		"[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:ring-0 [&:has(input:disabled)]:focus-within:ring-0 dark:[&:has(input:disabled)]:border-dashed [&:has(input:disabled)]:active:border-gray-200 dark:[&:has(input:disabled)]:active:border-gray-700"
 	], {
 		defaultVariants: {
@@ -112,7 +126,7 @@ export const classes = {
 		"absolute inline-flex ring-offset-white dark:ring-offset-gray-800 w-min text-gray-500 dark:text-gray-400",
 		"select-none font-normal pointer-events-none whitespace-nowrap not-motion-reduce:transition-[top,font-size,color,padding] -mx-1.5 px-1.5 top-1/2 -translate-y-1/2",
 		"group-focus-within/inputfield:top-0 peer-placeholder-shown:top-0",
-		"peer-invalid:text-error/85 dark:peer-invalid:text-error/85 group-focus-within/inputfield:peer-invalid:text-error group-active/inputfield:peer-invalid:text-error dark:group-focus-within/inputfield:peer-invalid:text-error dark:group-active/inputfield:peer-invalid:text-error"
+		"peer-[:user-invalid]:text-error/85 dark:peer-[:user-invalid]:text-error/85 group-focus-within/inputfield:peer-[:user-invalid]:text-error group-active/inputfield:peer-[:user-invalid]:text-error dark:group-focus-within/inputfield:peer-[:user-invalid]:text-error dark:group-active/inputfield:peer-[:user-invalid]:text-error"
 	], {
 		defaultVariants: {
 			size: "default",

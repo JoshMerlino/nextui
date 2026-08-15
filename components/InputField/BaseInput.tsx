@@ -2,7 +2,7 @@ import { type VariantProps } from "class-variance-authority";
 import { isFunction, merge, omit } from "lodash";
 import { useConvergedRef, useEventMap } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useEffect, useState, type InputHTMLAttributes, type ReactElement, type RefObject } from "react";
+import { forwardRef, useEffect, useState, type InputHTMLAttributes, type ReactElement, type RefObject, type TextareaHTMLAttributes } from "react";
 import type { IconType } from "react-icons";
 import { classes } from ".";
 
@@ -34,6 +34,22 @@ type BaseInputProps =
         label: string;
 
         /**
+         * Renders a textarea instead of an input, wearing the same outline,
+         * colours and floating label as every other field.
+         *
+         * A prop rather than a `type` of its own: everything about a multi-line
+         * field except the element is what a single-line one already does, and a
+         * parallel component meant every fix to the focus handling, the label
+         * float or the validity tracking had to be made twice.
+         *
+         * @default false
+         */
+        multiline: boolean;
+
+        /** How many lines a `multiline` field opens at. @default 4 */
+        rows: number;
+
+        /**
          * The size of the input
          * @default "default"
          */
@@ -52,6 +68,8 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 	icon: Icon,
 	label,
 	invalid = false,
+	multiline = false,
+	rows = 4,
 	wrapper,
 	...props
 }, ref) {
@@ -102,27 +120,49 @@ export default forwardRef<HTMLInputElement, BaseInputProps>(function({
 	// Sync  props with state
 	useEffect(() => setIsValid(!invalid), [ invalid ]);
 
+	const state = merge(props, { invalid: !isValid || invalid });
+
+	// Shared by both elements, so the two can never drift apart on colour, caret
+	// or disabled handling. Multi-line only overrides what a fixed row height
+	// means: the box takes its height from `rows` and the reader's drag.
+	const field = {
+		...omit(props, "size"),
+		invalid: (!isValid || invalid) || undefined,
+		className: cn(classes.input(state as VariantProps<typeof classes.input>), multiline && "h-auto w-full resize-y leading-6"),
+		ref: inputRef
+	};
+
 	return (
 		<label
-			className={ cn(classes.wrapper(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.wrapper>), className) }
+			className={ cn(
+				classes.wrapper(state as VariantProps<typeof classes.wrapper>),
+
+				// A multi-line box can't take its height from a fixed-height child, so
+				// the wrapper carries its own padding and lines the icon up with the
+				// first line rather than the middle of the paragraph.
+				multiline && [ "items-start", props.size === "dense" ? "py-2.5" : "py-4" ],
+				className
+			) }
 			ref={ wrapperRef }>
 	
 			{ /* Leading icon */ }
-			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.icon>)) } /> : Icon }
+			{ Icon && isFunction(Icon) ? <Icon className={ cn(classes.icon(state as VariantProps<typeof classes.icon>)) } /> : Icon }
 
 			{ /* Input wrapper */ }
-			<div className="flex relative h-full grow items-center">
+			<div className={ cn("flex relative grow", multiline ? "items-start w-full" : "h-full items-center") }>
 
 				{ /* Input */ }
-				<input
-					{ ...omit(props, "size") }
-					{ ...{ invalid: (!isValid || invalid) || undefined } }
-					className={ cn(classes.input(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.input>)) }
-					ref={ inputRef } />
+				{ multiline
+					? <textarea
+						{ ...field as unknown as TextareaHTMLAttributes<HTMLTextAreaElement> }
+						rows={ rows } />
+					: <input { ...field } /> }
 			
-				{ /* Floating label */ }
+				{ /* Floating label. Pinned to the top on a multi-line field: "centred"
+				     in a four-row box is the middle of a paragraph, not a resting place
+				     a label floats up from. */ }
 				{ label && <p
-					className={ cn(classes.label(merge(props, { invalid: !isValid || invalid }) as VariantProps<typeof classes.label>), (hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
+					className={ cn(classes.label(state as VariantProps<typeof classes.label>), (multiline || hasContents || props.placeholder) && [ "top-0", props.size === "dense" ? "text-xs" : "text-sm" ]) }
 					style={{ backgroundColor: "var(--tw-ring-offset-color)" }}>{ label }</p> }
 					
 			</div>

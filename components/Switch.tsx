@@ -147,7 +147,10 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 	}
 
 	return (
-		<label className="relative h-5 w-[34px] isolate group/switch">
+		// flex + items-center vertically centres the track: it is shorter than the
+		// label (the thumb overhangs it, iOS-style), and without this it sits at the
+		// top rather than through the middle of the thumb.
+		<label className="relative flex items-center h-5 w-[34px] isolate group/switch">
 			<input
 				className={ cn(classes.track({ color }), className) }
 				ref={ ref }

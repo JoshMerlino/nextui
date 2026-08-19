@@ -1,17 +1,37 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { forwardRef } from "react";
+import { omit } from "lodash";
+import { forwardRef, type ForwardedRef } from "react";
 
 import BaseInput from "./BaseInput";
 import DateInput from "./DateInput";
 import FileInput from "./FileInput";
 import PasswordInput from "./PasswordInput";
 import SelectInput from "./SelectInput";
+import TextareaInput from "./TextareaInput";
 
 type InputFieldTypes = {
 	email: ExtractProps<typeof BaseInput>;
-	text: ExtractProps<typeof BaseInput>;
+
+	/**
+	 * One shape, not a union of the two elements: a props union breaks the
+	 * contextual typing of every `onChange` a caller writes, because TS infers
+	 * a handler's parameter against all candidate members at once. The public
+	 * face stays BaseInput's — which is also what it always was — and the
+	 * factory routes and recasts when `multiline` picks the textarea variant.
+	 */
+	text: ExtractProps<typeof BaseInput> & Partial<{
+
+		/** Renders the dedicated textarea variant instead of an input, wearing
+		 *  the same outline, colours and floating label, with the height
+		 *  following the content. */
+		multiline: boolean;
+
+		/** How many lines a `multiline` field opens at, and the fewest it ever
+		 *  shrinks back to. @default 4 */
+		rows: number;
+	}>;
 
 	/** `date` is the picker; these are the browser's own native controls, which
 	 *  fall through to BaseInput and carry a time of day the picker has no field
@@ -42,6 +62,17 @@ export const InputField = forwardRef<HTMLInputElement, InputFactoryProps<keyof I
 		case "file": return <FileInput { ...props } ref={ ref } />;
 		case "password": return <PasswordInput { ...props } ref={ ref } />;
 		case "select" : return <SelectInput { ...props } ref={ ref } />;
+
+		// The public props and ref are typed for an input — see the note on the
+		// `text` entry — but a textarea is what this branch renders, so both are
+		// recast for the one variant whose element differs. Without `multiline`
+		// the flags are stripped rather than passed through, or React would
+		// forward them to the DOM as unknown attributes.
+		case "text": return props.multiline
+			? <TextareaInput
+				{ ...props as unknown as ExtractProps<typeof TextareaInput> }
+				ref={ ref as unknown as ForwardedRef<HTMLTextAreaElement> } />
+			: <BaseInput { ...omit(props, "multiline", "rows") as ExtractProps<typeof BaseInput> & { type: "text" } } ref={ ref } />;
 
 	}
 });

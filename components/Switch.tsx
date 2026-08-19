@@ -62,7 +62,7 @@ export const classes = {
 		},
 		variants: {
 			disabled: {
-				true: "pointer-events-none",
+				true: "pointer-events-none"
 			},
 			color: {
 				primary: "group-has-[.peer:checked]/switch:bg-primary dark:group-has-[.peer:checked]/switch:bg-primary",
@@ -75,7 +75,7 @@ export const classes = {
 				"warning:pastel": "group-has-[.peer:checked]/switch:bg-warning dark:group-has-[.peer:checked]/switch:bg-warning-300",
 				neutral: "group-has-[.peer:checked]/switch:bg-gray-500 dark:group-has-[.peer:checked]/switch:bg-gray-500"
 			}
-		},
+		}
 	}),
 
 	rippleWrapper: cva([
@@ -88,7 +88,7 @@ export const classes = {
 		},
 		variants: {
 			disabled: {
-				true: "pointer-events-none",
+				true: "pointer-events-none"
 			},
 			color: {
 				primary: "group-hover/switch:bg-primary/10 group-focus-within/switch:bg-primary/10",
@@ -99,9 +99,9 @@ export const classes = {
 				"success:pastel": "group-hover/switch:peer-checked:bg-success/10 dark:group-hover/switch:peer-checked:bg-success-300/10 group-focus-within/switch:peer-checked:bg-success/10 dark:group-focus-within/switch:peer-checked:bg-success-300/10",
 				warning: "group-hover/switch:bg-warning/10 group-focus-within/switch:bg-warning/10",
 				"warning:pastel": "group-hover/switch:peer-checked:bg-warning/10 dark:group-hover/switch:peer-checked:bg-warning-300/10 group-focus-within/switch:peer-checked:bg-warning/10 dark:group-focus-within/switch:peer-checked:bg-warning-300/10",
-				neutral: "group-hover/switch:bg-gray-800/10 group-focus-within/switch:bg-gray-800/10 dark:group-hover/switch:bg-gray-200/10 dark:group-focus-within/switch:bg-gray-200/10",
+				neutral: "group-hover/switch:bg-gray-800/10 group-focus-within/switch:bg-gray-800/10 dark:group-hover/switch:bg-gray-200/10 dark:group-focus-within/switch:bg-gray-200/10"
 			}
-		},
+		}
 	})
 };
 
@@ -147,6 +147,7 @@ export const Switch = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInput
 	}
 
 	return (
+
 		// flex + items-center vertically centres the track: it is shorter than the
 		// label (the thumb overhangs it, iOS-style), and without this it sits at the
 		// top rather than through the middle of the thumb.

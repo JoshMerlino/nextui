@@ -109,7 +109,12 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 
 }>>(function({ children, className, ...props }, fref) {
 
-		const tabsRef = Children.map(children, () => useRef<HTMLLIElement>(null));
+		// One ref holding every tab's node, filled by the callback refs below.
+		// The old shape — Children.map(children, () => useRef(...)) — ran a
+		// hook per child, which corrupts React's hook order the moment the
+		// child count changes between renders (a conditional tab is enough).
+		const tabsRef = useRef<(HTMLLIElement | null)[]>([]);
+		tabsRef.current.length = Children.count(children);
 		const indicator = useRef<HTMLDivElement>(null);
 		const background = useRef<HTMLDivElement>(null);
 		const ref = useConvergedRef(fref);
@@ -124,13 +129,13 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 		useFocusLost(ref, () => setHovered(-1));
 
 		useEffect(function() {
-			const tab = tabsRef?.[selected]?.current;
+			const tab = tabsRef.current[selected];
 			if (!tab || !indicator.current) return;
 			const { offsetLeft, clientWidth } = tab;
 			const marginx = parseInt(getComputedStyle(indicator.current).marginRight);
 			indicator.current.style.left = `${ offsetLeft }px`;
 			indicator.current.style.width = `${ clientWidth - marginx * 2 }px`;
-		}, [ selected, tabsRef ]);
+		}, [ selected, children ]);
 
 		useEffect(function() {
 			if (!background.current) return;
@@ -141,7 +146,7 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 				return;
 			}
 
-			const tab = tabsRef?.[hovered]?.current;
+			const tab = tabsRef.current[hovered];
 			if (!tab) return;
 
 			const { offsetLeft, clientWidth } = tab;
@@ -152,7 +157,7 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 				if (!background.current) return;
 				background.current.style.transitionProperty = "opacity, left, width";
 			});
-		}, [ hovered, tabsRef ]);
+		}, [ hovered, children ]);
 
 		return (
 			<ul { ...props }
@@ -180,7 +185,7 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 					}}>
 						<li
 							key={ key }
-							ref={ tabsRef?.[key] }>
+							ref={ node => void (tabsRef.current[key] = node) }>
 							{ child }
 						</li>
 					</TabContext>

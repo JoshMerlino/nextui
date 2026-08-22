@@ -90,7 +90,7 @@ export default forwardRef<HTMLTextAreaElement, TextareaInputProps>(function({
 	const wrapperRef = useConvergedRef(wrapper);
 
 	// Initialize the state
-	const [ hasContents, setHasContents ] = useState(((props.defaultValue || props.value || props.placeholder)?.toString().length ?? 0) > 0);
+	const [ , setHasContents ] = useState(((props.defaultValue || props.value || props.placeholder)?.toString().length ?? 0) > 0);
 	const [ isValid, setIsValid ] = useState(!invalid);
 
 	/** Fit the box to what it holds — see the component note. */

@@ -54,15 +54,34 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 	const ref = useRef<HTMLDialogElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
-	// Hook into open prop
+	// Hook into open prop.
 	const [ isOpen, setIsOpen ] = useState(state === true);
-	useEffect(() => setIsOpen(state === true), [ state ]);
-	
-	// Open dialog using the new dialog element in accordance with the state
+
+	// Open and close the native dialog in accordance with the state.
+	//
+	// The ENTRANCE animation is not choreographed here — it can't reliably
+	// be. A closed <dialog> is `display: none`, and no ordering of
+	// showModal() against the class flip guarantees the browser a painted
+	// closed frame to transition from, so a JS-timed entrance either pops or
+	// depends on rAF timing the platform doesn't promise. The entrance
+	// belongs to CSS instead: the `starting:` utilities on the element below
+	// are `@starting-style` rules, the platform's own "first rendered frame
+	// looks like this" hook, and the browser animates from them to the open
+	// styles the moment the dialog is shown.
+	//
+	// Closing stays JS-sequenced, because it needs the opposite guarantee:
+	// the classes flip first, the fade-out plays over a still-open element,
+	// and close() only lands once the transition has finished.
 	useEffect(function() {
 		if (!ref.current) return;
-		if (state) ref.current.showModal();
-		else if (isOpen !== false) ref.current.addEventListener("transitionend", () => requestAnimationFrame(() => ref.current?.close()), { once: true });
+
+		if (state) {
+			if (!ref.current.open) ref.current.showModal();
+			setIsOpen(true);
+		} else if (isOpen) {
+			setIsOpen(false);
+			ref.current.addEventListener("transitionend", () => requestAnimationFrame(() => ref.current?.close()), { once: true });
+		}
 	}, [ isOpen, ref, state ]);
 	
 	// Close on blur
@@ -154,13 +173,33 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 				// shorter than the screen and parking it ~19px high; on a tall
 				// phone that reads as a dialog visibly above centre.
 				"p-0 bg-transparent overflow-visible focus:outline-0 transition-opacity transform-gpu backdrop:transform-gpu backdrop:transition-[backdrop-filter,background-color] w-full max-w-full justify-center open:flex h-full max-h-full fixed",
-				isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur" : "opacity-0 backdrop:backdrop-blur-0 backdrop:bg-transparent pointer-events-none",
+
+				// @starting-style: what the FIRST rendered frame looks like when
+				// the dialog is shown, which is what makes the entrance a real
+				// transition — see the note on the open/close effect. Blur is
+				// pinned at an explicit 0px (there is no `backdrop-blur-0`
+				// utility, and `none` is discrete) so the filter interpolates
+				// instead of snapping.
+				"starting:opacity-0 starting:backdrop:bg-transparent starting:backdrop:backdrop-blur-[0px]",
+				isOpen ? "backdrop:bg-black/25 dark:backdrop:bg-black/50 opacity-100 backdrop:backdrop-blur" : "opacity-0 backdrop:backdrop-blur-[0px] backdrop:bg-transparent pointer-events-none",
 				"items-center"
 			]) }
 			ref={ ref }
 			{ ...props }>
 			<Card
-				className={ cn("shadow-2xl dark:shadow-black/20 drop-shadow-xl transition-transform transform-gpu overflow-visible", isOpen ? (isBouncing ? "scale-105" : "scale-100") : "scale-75", className) }
+				className={ cn(
+
+				// No transform and no FILTER at rest, deliberately: either one
+				// (even scale-100, translateZ(0), or a drop-shadow) makes the
+				// card the containing block for every position:fixed
+				// descendant, and its overflow then CLIPS them — which is how
+				// suggestion popovers ended up cut off at the card's edge. The
+				// shadow is box-shadow only, and the scale classes exist only
+				// while animating.
+				"shadow-2xl dark:shadow-black/20 transition-transform overflow-visible starting:scale-75",
+				isOpen ? (isBouncing ? "scale-105" : null) : "scale-75",
+				className
+			) }
 				ref={ contentRef }
 				variant={ variant }>
 				{ alwaysRender ? children : isOpen ? children : null }

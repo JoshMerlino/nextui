@@ -27,8 +27,13 @@ export const classes = {
 	//
 	// The optical nudge that used to live here is on the wrapper now, so the box,
 	// the tick and the ripple all move together.
+	// `disabled:` comes from the prop landing on the input, and the icon
+	// mirrors it through `peer-disabled:` below, so a disabled box and its
+	// glyph dim together. Half strength rather than hidden: a disabled
+	// checkbox still states its value, it just refuses the click.
 	checkbox: cva([
-		"appearance-none block border-2 border-gray-500 aspect-square rounded-[2px] peer not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50"
+		"appearance-none block border-2 border-gray-500 aspect-square rounded-[2px] peer not-motion-reduce:transition-[border-color,border-width] cursor-pointer z-50",
+		"disabled:cursor-not-allowed disabled:opacity-50"
 	], {
 		defaultVariants: {
 			color: "primary",
@@ -64,7 +69,7 @@ export const classes = {
 	// Material draws a checkmark at. Without a size here it inherited whatever the
 	// surrounding text happened to be and changed size per call site.
 	icon: cva([
-		"absolute inset-0 flex items-center justify-center z-10 not-motion-reduce:transition-transform"
+		"absolute inset-0 flex items-center justify-center z-10 not-motion-reduce:transition-transform peer-disabled:opacity-50"
 	], {
 		defaultVariants: {
 			color: "primary",

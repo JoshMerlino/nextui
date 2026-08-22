@@ -195,13 +195,29 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const overlay = chosen && typeof chosen.props.children !== "string" ? chosen.props.children : null;
 
 	return (
+
+		// `name` moves off the visible input, deliberately: that input's native
+		// value is the chosen option's LABEL (what the closed field displays),
+		// and FormData serializes the native value — the `.value` getter that
+		// answers the VALUE only exists for scripts. So a form asking this
+		// field by name received "Simulated" where code read "Simulator". The
+		// hidden input below carries the name instead, and always holds the
+		// value.
 		<BaseInput
-			{ ...omit(props, POPOVER_PROPS) }
+			{ ...omit(props, [ ...POPOVER_PROPS, "name" ]) }
 			className={ cn("group/popover-constraint", overlay && "[&_input]:text-transparent", className) }
 			readOnly
 			ref={ ref }
 			type="text"
 			wrapper={ wrapperRef }>
+
+			{ props.name && (
+				<input
+					name={ props.name }
+					readOnly
+					type="hidden"
+					value={ chosen ? chosen.props.value?.toString() || chosen.props.label || Children.toArray(chosen.props.children).join("") : "" } />
+			) }
 
 			{ /* Over the input, not in it. Positioned against the field's own
 			     padding rather than its border, since this renders as a sibling of

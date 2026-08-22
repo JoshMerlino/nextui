@@ -35,14 +35,28 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const selectionRange = useRef<{ start: number | null, end: number | null } | null>(null);
     
 	// On date value change, update the input value
+	//
+	// `props` is NOT a dependency, and must not become one: it is a fresh rest
+	// object on every render, so depending on it ran this after every commit —
+	// and what this does is dispatch an `input` event, whose handler below
+	// parses the field into a NEW Date, which is never Object.is-equal to the
+	// last one, which re-renders, which runs this again. That is the loop React
+	// reports as "Maximum update depth exceeded", and it took only a date field
+	// carrying a value to start it. Nothing in here reads `props`.
 	useEffect(function() {
 		if (!dateValue || !ref.current) return;
 		const date = dayjs(dateValue).toDate();
 		if (date.toString() === "Invalid Date") return;
+
+		// Already what the field shows: writing it again would announce a
+		// change that has not happened, which is the other half of the loop
+		// above and would fight the caret while someone is typing.
+		const value = dateValue.toLocaleDateString();
+		if (ref.current.value === value) return;
+
 		const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
 
 		// Set the value
-		const value = dateValue.toLocaleDateString();
 		nativeInputValueSetter?.call(ref.current, value);
 
 		// Set the selection range
@@ -53,7 +67,7 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 		const event = new Event("input", { bubbles: true });
 		ref.current.dispatchEvent(event);
 
-	}, [ dateValue, props, ref ]);
+	}, [ dateValue, ref ]);
 
 	// Add event listeners
 	useEventMap(ref, {
@@ -65,7 +79,11 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 			const sel = event.target?.selectionStart || null;
 			const len = event.target?.value.length || null;
 			selectionRange.current = { start: sel, end: len };
-			setDateValue(date);
+
+			// The same instant keeps the same object: a parsed date is a new
+			// instance every time, and handing React one it cannot tell from
+			// the last is what turns an echoed event into a render loop.
+			setDateValue(current => current?.getTime() === date.getTime() ? current : date);
 		}
 	});
 

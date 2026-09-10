@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { merge } from "lodash";
 import { useConvergedRef, useEvent, useFocusLost, useKeybind } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { forwardRef, useCallback, useEffect, useState, type HTMLAttributes, type PropsWithChildren } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useState, type HTMLAttributes, type PropsWithChildren } from "react";
 
 export const classes = {
 
@@ -48,6 +48,21 @@ export const classes = {
 	})
 
 };
+
+/**
+ * Every scroll container above `el`, the document's included, so a scroll the
+ * browser makes on its own can be put back.
+ */
+function scrollAncestors(el: HTMLElement | null) {
+	const found: Element[] = [];
+	for (let node = el?.parentElement; node; node = node.parentElement) {
+		const { overflowX, overflowY } = getComputedStyle(node);
+		if (/(auto|scroll)/.test(overflowY) || /(auto|scroll)/.test(overflowX)) found.push(node);
+	}
+	const root = document.scrollingElement;
+	if (root && !found.includes(root)) found.push(root);
+	return found;
+}
 
 export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTMLAttributes<HTMLDivElement>, "className" | "style"> & {
 
@@ -207,8 +222,23 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 	// Open the dialog with animation
 	const open = useCallback(function() {
 		setIsStable(false);
+
+		// `show()` runs the dialog focusing steps, and a menu with nothing
+		// focusable inside lands that focus on the dialog itself — which the
+		// browser scrolls into view. At that instant the box is still wherever
+		// the LAST open left it (the inline left/top persist) or at its static
+		// position, and under a blurred panel — a containing block for `fixed`,
+		// see `reposition` — that spot is routinely off the visible part of the
+		// page's scroll container. So every open jolted the page down before
+		// `reposition` had moved the box into place: picking a filter on a table
+		// read as the page scrolling itself to the bottom. Focus takes no
+		// `preventScroll` from here, so hold the scroll positions across the
+		// call instead: the jolt is synchronous and undone before it can paint.
+		const pinned = scrollAncestors(ref.current).map(node => [ node, node.scrollTop, node.scrollLeft ] as const);
 		if (useModal) ref.current?.showModal();
 		else ref.current?.show();
+		pinned.forEach(([ node, top, left ]) => node.scrollTo({ top, left, behavior: "instant" }));
+
 		reposition();
 		requestAnimationFrame(() => reposition());
 		setIsVisible(true);
@@ -221,6 +251,36 @@ export const Popover = forwardRef<HTMLDialogElement, PropsWithChildren<Pick<HTML
 
 	// On resize, reposition the dialog
 	useEvent("resize", () => reposition());
+
+	// And after every render while open, before paint. The measured
+	// correction in `reposition` is only good for the containing block the
+	// dialog had at the time: `position: fixed` answers to the viewport until
+	// an ancestor gains a transform, filter or backdrop-filter, and a toolbar
+	// that blurs itself once the page scrolls under it is exactly such an
+	// ancestor — the same left/top then resolve from the toolbar's corner
+	// instead of the viewport's, and an open popover jumped sideways by the
+	// width of the drawer. The ancestor's change is a render this dialog
+	// shares, so re-measuring here lands the fix in the same frame.
+	useLayoutEffect(function() {
+		if (isOpen) reposition();
+	});
+
+	// And once per frame while open. The flip can land AFTER the render: a
+	// toolbar that transitions its blur away keeps a (shrinking)
+	// backdrop-filter — and so keeps being the containing block — until the
+	// transition ends, and only then hands the dialog back to the viewport.
+	// No render marks that moment, and an anchor that scrolls marks none
+	// either, so the frame does: a measured correction before each paint,
+	// only while a popover is up. Frame callbacks run before that frame's
+	// style and layout settle, so a flip is corrected before it is drawn.
+	useEffect(function() {
+		if (!isOpen) return;
+		let frame = requestAnimationFrame(function tick() {
+			reposition();
+			frame = requestAnimationFrame(tick);
+		});
+		return () => cancelAnimationFrame(frame);
+	}, [ isOpen, reposition ]);
 
 	// Bind modal state to open prop
 	useEffect(function() {

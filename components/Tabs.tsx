@@ -3,7 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { useConvergedRef, useEventMap, useFocusLost } from "nextui/hooks";
 import { cn } from "nextui/util";
-import { Children, createContext, type Dispatch, forwardRef, type HTMLAttributes, type InputHTMLAttributes, useContext, useEffect, useRef, useState } from "react";
+import { Children, createContext, type Dispatch, forwardRef, type HTMLAttributes, type InputHTMLAttributes, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Ripple } from "./Ripple";
 
 export const classes = {
@@ -128,7 +128,13 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 		});
 		useFocusLost(ref, () => setHovered(-1));
 
-		useEffect(function() {
+		// Layout effects, both here and where a Tab claims `defaultChecked`:
+		// the page arrives with the first tab marked and the indicator under
+		// it, and the real selection lands a render later. As passive effects
+		// that render came after a paint — one frame of the wrong tab lit, and
+		// the indicator sliding over from it on every load. Before paint, the
+		// first frame is already right.
+		useLayoutEffect(function() {
 			const tab = tabsRef.current[selected];
 			if (!tab || !indicator.current) return;
 			const { offsetLeft, clientWidth } = tab;
@@ -232,7 +238,15 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 
 	const ref = useConvergedRef(fref);
 	const { isHovered, isSelected, setSelected, setHovered, color } = useContext(TabContext);
-	useEffect(() => void (defaultChecked && setSelected()), [ defaultChecked, setSelected ]);
+	// Only when the claim itself changes. `setSelected` is a fresh closure on
+	// every render of Tabs, and as a dep it made this run on every hover —
+	// re-selecting the tab the route says is current, which undid a click on
+	// another tab until the navigation caught up, and in a scrolling row sent
+	// it back to the old tab and out again to the new one. Read through a
+	// ref, so the effect keys on `defaultChecked` alone.
+	const select = useRef(setSelected);
+	select.current = setSelected;
+	useLayoutEffect(() => void (defaultChecked && select.current()), [ defaultChecked ]);
 
 	props.color = color;
 

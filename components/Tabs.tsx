@@ -9,19 +9,28 @@ import { Ripple } from "./Ripple";
 export const classes = {
 	tabs: cva("flex items-center group/tabs relative isolate", {
 		defaultVariants: {
-			variant: "vercel"
+			variant: "vercel",
+			size: "default"
 		},
 		variants: {
 			variant: {
-				vercel: "gap-2 h-[46px]"
+				vercel: "gap-2"
+			},
+
+			/** `small` is the strip inside a card or a pane, where the toolbar's
+			 *  46px row would be taller than the rows it sits over. */
+			size: {
+				default: "h-[46px]",
+				small: "h-9"
 			}
 		}
 	}),
 
-	tab: cva("text-sm rounded font-medium overflow-hidden relative not-motion-reduce:transition-colors outline-none truncate select-none", {
+	tab: cva("rounded font-medium overflow-hidden relative not-motion-reduce:transition-colors outline-none truncate select-none", {
 		defaultVariants: {
 			variant: "vercel",
 			color: "primary",
+			size: "default",
 			disabled: false
 		},
 		variants: {
@@ -29,7 +38,11 @@ export const classes = {
 				true: "cursor-not-allowed text-gray-600 dark:text-gray-400 pointer-events-none "
 			},
 			variant: {
-				vercel: "px-3 h-8"
+				vercel: "px-3"
+			},
+			size: {
+				default: "h-8 text-sm",
+				small: "h-7 text-xs px-2"
 			},
 			color: {
 				primary: "[&.selected]:text-primary [&.hovered]:text-primary",
@@ -48,11 +61,18 @@ export const classes = {
 	indicator: cva("absolute not-motion-reduce:transition-[left,width] z-10 pointer-events-none", {
 		defaultVariants: {
 			variant: "vercel",
-			color: "primary"
+			color: "primary",
+			size: "default"
 		},
 		variants: {
 			variant: {
-				vercel: "h-0.5 bottom-0 translate-y-px mx-3"
+				vercel: "h-0.5 bottom-0 translate-y-px"
+			},
+
+			/** The tab's own inset, so the line runs under its text. */
+			size: {
+				default: "mx-3",
+				small: "mx-2"
 			},
 			color: {
 				primary: "bg-primary",
@@ -71,11 +91,19 @@ export const classes = {
 	background: cva("absolute -z-10 opacity-0", {
 		defaultVariants: {
 			variant: "vercel",
-			color: "primary"
+			color: "primary",
+			size: "default"
 		},
 		variants: {
 			variant: {
-				vercel: "h-8 rounded top-[7px] not-motion-reduce:transition-all"
+				vercel: "rounded not-motion-reduce:transition-all"
+			},
+
+			/** The wash sits behind the tab, so it is the tab's height, centred
+			 *  in the strip's. */
+			size: {
+				default: "h-8 top-[7px]",
+				small: "h-7 top-1"
 			},
 			color: {
 				primary: "bg-primary/20",
@@ -95,6 +123,7 @@ const TabContext = createContext({
 	isSelected: false,
 	isHovered: false,
 	color: "primary" as "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral",
+	size: "default" as "default" | "small",
 	setSelected: (() => { }) as Dispatch<void>,
 	setHovered: (() => { }) as Dispatch<void>
 });
@@ -106,6 +135,12 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
      * @default "primary"
      */
     color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
+	/**
+	 * How tall the strip and its tabs are; every Tab inside takes it.
+	 * @default "default"
+	 */
+	size: "default" | "small";
 
 }>>(function({ children, className, ...props }, fref) {
 
@@ -186,6 +221,7 @@ export const Tabs = forwardRef<HTMLUListElement, HTMLAttributes<HTMLUListElement
 						isSelected: selected === key,
 						isHovered: hovered === key,
 						color: props.color || "primary",
+						size: props.size || "default",
 						setSelected: () => setSelected(key),
 						setHovered: () => setHovered(key)
 					}}>
@@ -208,6 +244,13 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
      * @default "primary"
      */
     color: "primary" | "primary:pastel" | "error" | "error:pastel" | "warning" | "warning:pastel" | "success" | "success:pastel" | "neutral";
+
+	/**
+	 * How tall the tab is. Taken from the strip when unset, so a Tab need
+	 * not repeat what its Tabs said.
+	 * @default "default"
+	 */
+	size: "default" | "small";
     
 	/**
 	 * Weather or not to show the ripple effect
@@ -237,7 +280,8 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 }>>(function({ children, defaultChecked, className, ripple, ...props }, fref) {
 
 	const ref = useConvergedRef(fref);
-	const { isHovered, isSelected, setSelected, setHovered, color } = useContext(TabContext);
+	const { isHovered, isSelected, setSelected, setHovered, color, size } = useContext(TabContext);
+
 	// Only when the claim itself changes. `setSelected` is a fresh closure on
 	// every render of Tabs, and as a dep it made this run on every hover —
 	// re-selecting the tab the route says is current, which undid a click on
@@ -249,6 +293,7 @@ export const Tab = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonElemen
 	useLayoutEffect(() => void (defaultChecked && select.current()), [ defaultChecked ]);
 
 	props.color = color;
+	props.size = props.size || size;
 
 	useEventMap(ref, {
 		mouseenter: () => props.disabled || setHovered(),

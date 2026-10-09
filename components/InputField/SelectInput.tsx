@@ -70,6 +70,10 @@ export default forwardRef<HTMLInputElement, ExtractProps<typeof BaseInput> & Pic
 	const isInsideMenu = useCallback(function(node: EventTarget | Node | null) {
 		if (!node || !popoverRef.current) return false;
 		if (node === popoverRef.current) return false;
+
+		// The window losing focus reports the window itself, which is an event
+		// target and not a node, and `contains` throws on anything else.
+		if (!(node instanceof Node)) return false;
 		return popoverRef.current.contains(node as Node);
 	}, []);
 

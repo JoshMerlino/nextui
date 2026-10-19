@@ -54,6 +54,12 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 	const ref = useRef<HTMLDialogElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
+	// Whether the current press began in a dialog nested in this one; see the
+	// close-on-blur effect. A ref, not the effect's own variable: the effect
+	// re-subscribes whenever `setState` is a new function, which a pick in a
+	// nested menu causes, between the press and the click it is read at.
+	const nestedPress = useRef(false);
+
 	// Hook into open prop.
 	const [ isOpen, setIsOpen ] = useState(state === true);
 
@@ -89,8 +95,19 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 		const element = ref.current;
 		if (!element) return;
 
+		// A press that began inside another dialog nested in this one (a
+		// select's menu opened with `useModal`) belongs to that dialog, wherever
+		// it lands. Judged at the press rather than the click, because the menu
+		// sits inside the field's <label>: picking an option also clicks the
+		// field's input, at the option's coordinates, and an option outside
+		// this box would otherwise close it.
+		function onPointerDown(event: PointerEvent) {
+			nestedPress.current = event.target instanceof Element && event.target.closest("dialog") !== element;
+		}
+
 		function onClick(event: MouseEvent) {
 			if (!element || !element.open || !contentRef.current) return;
+			if (nestedPress.current || (event.target instanceof Element && event.target.closest("dialog") !== element)) return;
 
 			// Get dialog bounds
 			const { top, left, width, height } = contentRef.current.getBoundingClientRect();
@@ -113,8 +130,12 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 
 		}
 
+		element.addEventListener("pointerdown", onPointerDown, true);
 		element.addEventListener("click", onClick);
-		return () => element.removeEventListener("click", onClick);
+		return function() {
+			element.removeEventListener("pointerdown", onPointerDown, true);
+			element.removeEventListener("click", onClick);
+		};
 		
 	}, [ ref, closeOnBlur, isOpen, state, setState ]);
 	

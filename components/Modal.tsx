@@ -109,6 +109,16 @@ export function Modal({ children, closeOnBlur = true, bindEscKey = true, onSubmi
 			if (!element || !element.open || !contentRef.current) return;
 			if (nestedPress.current || (event.target instanceof Element && event.target.closest("dialog") !== element)) return;
 
+			// A click on anything in the card is inside it, whatever its
+			// coordinates say. Enter or Space on a button, a form's implicit
+			// submission and a scripted `click()` all dispatch a click at (0, 0),
+			// which the bounds check below would read as a click on the backdrop
+			// — closing the dialog under every button pressed from the keyboard.
+			// Only a click on the <dialog> itself (its ::backdrop, or a corner
+			// the card's rounding leaves to it) can be outside, and only a real
+			// pointer lands there.
+			if (event.target instanceof Node && contentRef.current.contains(event.target)) return;
+
 			// Get dialog bounds
 			const { top, left, width, height } = contentRef.current.getBoundingClientRect();
 
